@@ -7,14 +7,41 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A907214921C1A20D00C25849 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A907214821C1A20D00C25849 /* DataController.swift */; };
+		A907214A21C1A20D00C25849 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A907214821C1A20D00C25849 /* DataController.swift */; };
+		A907214B21C1A20D00C25849 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A907214821C1A20D00C25849 /* DataController.swift */; };
+		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
+		A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
+		A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
 		A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B26F21BEF1AB0029B43B /* AppDelegate.swift */; };
 		A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B27121BEF1AB0029B43B /* ViewController.swift */; };
 		A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27321BEF1AB0029B43B /* Main.storyboard */; };
-		A997B27821BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
 		A997B27A21BEF1AC0029B43B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A997B27921BEF1AC0029B43B /* Assets.xcassets */; };
 		A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */; };
 		A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B28721BEF1AC0029B43B /* radar_prmt_iosTests.swift */; };
 		A997B29321BEF1AC0029B43B /* radar_prmt_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B29221BEF1AC0029B43B /* radar_prmt_iosUITests.swift */; };
+		A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
+		A997B2A621BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
+		A997B2A721BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
+		A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
+		A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
+		A997B2B921BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
+		A997B2BA21BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
+		A997B2BB21BFA8510029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
+		A9B4A32C21E7575C00C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
+		A9B4A32D21E77D5000C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
+		A9B4A32E21E77D5000C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
+		A9BB00CF21F10CF90012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00CD21F10CEB0012077F /* BlueSteel.framework */; };
+		A9BB00D021F10CFC0012077F /* BlueSteel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00CD21F10CEB0012077F /* BlueSteel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */; };
+		A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807121DE60C90067FA77 /* LocationManager.swift */; };
+		A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
+		A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
+		A9F970B521C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
+		A9F970B621C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
+		A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
+		A9F9719421C0FDA60003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
+		A9F9719521C0FDA70003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,7 +61,23 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		A9F9716221C0F5DB0003FF5F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A9BB00D021F10CFC0012077F /* BlueSteel.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		A907214821C1A20D00C25849 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		A9350E5D21CC1DEF004BECCA /* OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth.swift; sourceTree = "<group>"; };
 		A997B26C21BEF1AB0029B43B /* radar-prmt-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "radar-prmt-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B26F21BEF1AB0029B43B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A997B27121BEF1AB0029B43B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -49,6 +92,16 @@
 		A997B28E21BEF1AC0029B43B /* radar-prmt-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "radar-prmt-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B29221BEF1AC0029B43B /* radar_prmt_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = radar_prmt_iosUITests.swift; sourceTree = "<group>"; };
 		A997B29421BEF1AC0029B43B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A997B2A421BEFFF70029B43B /* TopicWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicWriter.swift; sourceTree = "<group>"; };
+		A997B2A921BF9FB60029B43B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		A997B2AB21BF9FBD0029B43B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A9B4A32B21E7575C00C650E8 /* TopicReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicReader.swift; sourceTree = "<group>"; };
+		A9BB00CD21F10CEB0012077F /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Carthage/Build/iOS/BlueSteel.framework; sourceTree = "<group>"; };
+		A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		A9CC807121DE60C90067FA77 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		A9CC807421DE63B40067FA77 /* AvroTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvroTopic.swift; sourceTree = "<group>"; };
+		A9F970B321C03C340003FF5F /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
+		A9F9715D21C040370003FF5F /* radar-schemas.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = "radar-schemas.bundle"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,6 +109,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9BB00CF21F10CF90012077F /* BlueSteel.framework in Frameworks */,
+				A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */,
+				A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */,
+				A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +133,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A907214721C1A1E900C25849 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */,
+				A907214821C1A20D00C25849 /* DataController.swift */,
+				A9B4A32B21E7575C00C650E8 /* TopicReader.swift */,
+				A997B2A421BEFFF70029B43B /* TopicWriter.swift */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		A9350E5C21CC1DDC004BECCA /* auth */ = {
+			isa = PBXGroup;
+			children = (
+				A9350E5D21CC1DEF004BECCA /* OAuth.swift */,
+			);
+			path = auth;
+			sourceTree = "<group>";
+		};
 		A997B26321BEF1AB0029B43B = {
 			isa = PBXGroup;
 			children = (
@@ -83,6 +159,7 @@
 				A997B28621BEF1AC0029B43B /* radar-prmt-iosTests */,
 				A997B29121BEF1AC0029B43B /* radar-prmt-iosUITests */,
 				A997B26D21BEF1AB0029B43B /* Products */,
+				A997B2A821BF9FB60029B43B /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -99,13 +176,19 @@
 		A997B26E21BEF1AB0029B43B /* radar-prmt-ios */ = {
 			isa = PBXGroup;
 			children = (
+				A9CC807321DE61540067FA77 /* source */,
+				A9CC806F21DE609D0067FA77 /* plugins */,
+				A9350E5C21CC1DDC004BECCA /* auth */,
+				A907214721C1A1E900C25849 /* data */,
+				A9F970B221C03C1D0003FF5F /* source */,
+				A997B2B021BFA57D0029B43B /* kafka */,
 				A997B26F21BEF1AB0029B43B /* AppDelegate.swift */,
 				A997B27121BEF1AB0029B43B /* ViewController.swift */,
 				A997B27321BEF1AB0029B43B /* Main.storyboard */,
 				A997B27921BEF1AC0029B43B /* Assets.xcassets */,
 				A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */,
 				A997B27E21BEF1AC0029B43B /* Info.plist */,
-				A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */,
+				A9F9715D21C040370003FF5F /* radar-schemas.bundle */,
 			);
 			path = "radar-prmt-ios";
 			sourceTree = "<group>";
@@ -128,6 +211,57 @@
 			path = "radar-prmt-iosUITests";
 			sourceTree = "<group>";
 		};
+		A997B2A821BF9FB60029B43B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A9BB00CD21F10CEB0012077F /* BlueSteel.framework */,
+				A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */,
+				A997B2AB21BF9FBD0029B43B /* Foundation.framework */,
+				A997B2A921BF9FB60029B43B /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		A997B2B021BFA57D0029B43B /* kafka */ = {
+			isa = PBXGroup;
+			children = (
+				A9CC807421DE63B40067FA77 /* AvroTopic.swift */,
+			);
+			path = kafka;
+			sourceTree = "<group>";
+		};
+		A9CC806F21DE609D0067FA77 /* plugins */ = {
+			isa = PBXGroup;
+			children = (
+				A9CC807021DE60B00067FA77 /* location */,
+			);
+			path = plugins;
+			sourceTree = "<group>";
+		};
+		A9CC807021DE60B00067FA77 /* location */ = {
+			isa = PBXGroup;
+			children = (
+				A9CC807121DE60C90067FA77 /* LocationManager.swift */,
+			);
+			path = location;
+			sourceTree = "<group>";
+		};
+		A9CC807321DE61540067FA77 /* source */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = source;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		A9F970B221C03C1D0003FF5F /* source */ = {
+			isa = PBXGroup;
+			children = (
+				A9F970B321C03C340003FF5F /* SourceManager.swift */,
+			);
+			path = source;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -138,6 +272,7 @@
 				A997B26821BEF1AB0029B43B /* Sources */,
 				A997B26921BEF1AB0029B43B /* Frameworks */,
 				A997B26A21BEF1AB0029B43B /* Resources */,
+				A9F9716221C0F5DB0003FF5F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -196,6 +331,11 @@
 				TargetAttributes = {
 					A997B26B21BEF1AB0029B43B = {
 						CreatedOnToolsVersion = 10.1;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+						};
 					};
 					A997B28221BEF1AC0029B43B = {
 						CreatedOnToolsVersion = 10.1;
@@ -234,6 +374,7 @@
 			files = (
 				A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */,
 				A997B27A21BEF1AC0029B43B /* Assets.xcassets in Resources */,
+				A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */,
 				A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -242,6 +383,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9F9719421C0FDA60003FF5F /* radar-schemas.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -249,6 +391,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9F9719521C0FDA70003FF5F /* radar-schemas.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -260,8 +403,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */,
+				A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */,
+				A907214921C1A20D00C25849 /* DataController.swift in Sources */,
+				A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */,
 				A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */,
-				A997B27821BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A9B4A32C21E7575C00C650E8 /* TopicReader.swift in Sources */,
+				A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */,
+				A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */,
+				A997B2B921BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -270,6 +420,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */,
+				A997B2BB21BFA8510029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A9F970B521C03C340003FF5F /* SourceManager.swift in Sources */,
+				A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */,
+				A997B2A621BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A907214A21C1A20D00C25849 /* DataController.swift in Sources */,
+				A9B4A32E21E77D5000C650E8 /* TopicReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,6 +434,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B29321BEF1AC0029B43B /* radar_prmt_iosUITests.swift in Sources */,
+				A997B2BA21BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A9F970B621C03C340003FF5F /* SourceManager.swift in Sources */,
+				A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */,
+				A997B2A721BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A907214B21C1A20D00C25849 /* DataController.swift in Sources */,
+				A9B4A32D21E77D5000C650E8 /* TopicReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,6 +599,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -454,6 +621,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+					"$(PROJECT_DIR)",
+				);
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -472,6 +644,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "radar-prmt-iosTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -492,6 +668,10 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "radar-prmt-iosTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -511,6 +691,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "radar-prmt-iosUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -530,6 +714,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = "radar-prmt-iosUITests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

@@ -1,0 +1,107 @@
+//
+//  LocationManager.swift
+//  radar-prmt-ios
+//
+//  Created by Joris Borgdorff on 03/01/2019.
+//  Copyright © 2019 Joris Borgdorff. All rights reserved.
+//
+
+import Foundation
+import CoreLocation
+import BlueSteel
+import os.log
+
+class LocationManager : SourceManager {
+    var locationTopic: AvroTopicCacheContext!
+    let manager: CLLocationManager
+    fileprivate var locationReceiver: LocationReceiver!
+    
+    override init?(topicWriter: TopicWriter, sourceId: String) {
+        manager = CLLocationManager()
+        super.init(topicWriter: topicWriter, sourceId: sourceId)
+        if let locTopic = createTopic(name: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") {
+            locationTopic = locTopic
+        } else {
+            return nil
+        }
+        locationReceiver = LocationReceiver(manager: self, topic: locationTopic)
+        manager.delegate = locationReceiver
+    }
+    
+    func startReceivingLocalLocationChanges() {
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined:
+            manager.requestWhenInUseAuthorization()
+        case .authorizedAlways, .authorizedWhenInUse:
+            break
+        default:
+            // User has not authorized access to location information.
+            return
+        }
+        
+        manager.startUpdatingLocation()
+        
+    }
+    
+    func startReceivingSignificantLocationChanges() {
+        switch CLLocationManager.authorizationStatus() {
+        case .notDetermined, .authorizedWhenInUse:
+            manager.requestAlwaysAuthorization()
+        case .authorizedAlways:
+            break
+        default:
+            // User has not authorized access to location information.
+            return
+        }
+        
+        if !CLLocationManager.significantLocationChangeMonitoringAvailable() {
+            // The service is not available.
+            return
+        }
+        
+        manager.startMonitoringSignificantLocationChanges()
+        manager.stopUpdatingLocation()
+    }
+}
+
+fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
+    let manager: LocationManager
+    let topic: AvroTopicCacheContext
+    
+    init(manager: LocationManager, topic: AvroTopicCacheContext) {
+        self.manager = manager
+        self.topic = topic
+    }
+
+    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        switch status {
+        case .authorizedAlways:
+            self.manager.startReceivingSignificantLocationChanges()
+            self.manager.startReceivingLocalLocationChanges()
+        case .authorizedWhenInUse:
+            self.manager.startReceivingLocalLocationChanges()
+        default:
+            break
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager,  didUpdateLocations locations: [CLLocation]) {
+        for location in locations {
+            topic.addRecord([
+                "time": location.timestamp.timeIntervalSince1970,
+                "timeReceived": Date().timeIntervalSince1970,
+                "provider": "UNKNOWN",
+                "latitude": location.coordinate.latitude,
+                "longitude": location.coordinate.longitude,
+                "altitude": location.altitude,
+                "accuracy": location.horizontalAccuracy,
+                "speed": location.speed,
+                "bearing": location.course,
+                ])
+        }
+    }
+//    
+//    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+//        
+//    }
+}

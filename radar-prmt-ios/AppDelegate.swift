@@ -8,15 +8,30 @@
 
 import UIKit
 import CoreData
+import os.log
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        let topicWriter = TopicWriter(container: persistentContainer)
+        guard let locationManager = LocationManager(topicWriter: topicWriter, sourceId: "test") else {
+            return false
+        }
+        locationManager.startReceivingLocalLocationChanges()
+        locationManager.startReceivingSignificantLocationChanges()
+        DispatchQueue.global(qos: .userInitiated).asyncAfter(deadline: .now() + 5.0) { [weak self] in
+            guard let strongSelf = self else { return }
+            locationManager.flush()
+            let topicReader = TopicReader(container: strongSelf.persistentContainer)
+            topicReader.getNextRecords { recordCache in
+                os_log("Got data from %@: %@", recordCache.topic.name, recordCache.values)
+            }
+        }
+        
         return true
     }
 

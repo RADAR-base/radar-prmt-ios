@@ -2,6 +2,361 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:radar-prmt-ios.xcodeproj">
+      location = "group:/Users/joris/Developer/radar/radar-prmt-ios/radar-prmt-ios/radar-schemas.bundle">
+   </FileRef>
+   <Group
+      location = "group:/Users/joris/Developer/radar/radar-prmt-ios/radar-prmt-ios/commons"
+      name = "commons">
+      <Group
+         location = "group:monitor"
+         name = "monitor">
+         <Group
+            location = "group:questionnaire"
+            name = "questionnaire">
+            <FileRef
+               location = "group:questionnaire_completion_log.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:application"
+            name = "application">
+            <FileRef
+               location = "group:application_server_status.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:application_uptime.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:application_external_time.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:application_record_counts.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:application_time_zone.avsc">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:stream"
+         name = "stream">
+         <FileRef
+            location = "group:source_statistics.avsc">
+         </FileRef>
+         <Group
+            location = "group:aggregator"
+            name = "aggregator">
+            <FileRef
+               location = "group:aggregate_list.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:numeric_aggregate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_usage_aggregate.avsc">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:passive"
+         name = "passive">
+         <Group
+            location = "group:opensmile"
+            name = "opensmile">
+            <FileRef
+               location = "group:open_smile_2_phone_audio.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:pebble"
+            name = "pebble">
+            <FileRef
+               location = "group:pebble2_acceleration.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:pebble2_heart_rate_filtered.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:pebble2_heart_rate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:pebble2_battery_level.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:empatica"
+            name = "empatica">
+            <FileRef
+               location = "group:empatica_e4_inter_beat_interval.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_electrodermal_activity.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_battery_level.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_blood_volume_pulse.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_tag.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_temperature.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_acceleration.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:empatica_e4_sensor_status.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:phone"
+            name = "phone">
+            <FileRef
+               location = "group:phone_usage_event.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_call.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_step_count.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_sms.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_relative_location.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_bluetooth_devices.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_battery_level.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_magnetic_field.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_light.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_contact_list.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_acceleration.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_sms_unread.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_user_interaction.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:phone_gyroscope.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:bittium"
+            name = "bittium">
+            <FileRef
+               location = "group:bittium_faros_battery_level.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:bittium_faros_acceleration.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:bittium_faros_inter_beat_interval.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:bittium_faros_temperature.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:bittium_faros_ecg.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:weather"
+            name = "weather">
+            <FileRef
+               location = "group:local_weather.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:ppg"
+            name = "ppg">
+            <FileRef
+               location = "group:phone_camera_ppg.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:biovotion"
+            name = "biovotion">
+            <FileRef
+               location = "group:biovotion_vsm1_oxygen_saturation.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_galvanic_skin_response.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_ppg_raw.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_heart_rate_variability.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_temperature.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_led_current.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_respiration_rate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_acceleration.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_battery_level.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_heart_rate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_blood_pulse_wave.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:biovotion_vsm1_energy.avsc">
+            </FileRef>
+         </Group>
+      </Group>
+      <FileRef
+         location = "group:README.md">
+      </FileRef>
+      <Group
+         location = "group:kafka"
+         name = "kafka">
+         <FileRef
+            location = "group:record_set.avsc">
+         </FileRef>
+         <FileRef
+            location = "group:observation_key.avsc">
+         </FileRef>
+         <FileRef
+            location = "group:aggregate_key.avsc">
+         </FileRef>
+      </Group>
+      <Group
+         location = "group:connector"
+         name = "connector">
+         <Group
+            location = "group:fitbit"
+            name = "fitbit">
+            <FileRef
+               location = "group:fitbit_intraday_heart_rate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_intraday_steps.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_sleep_classic.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_time_zone.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_activity_levels.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_activity_log_record.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_activity_heart_rate.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_source.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_sleep_stage.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:fitbit_manual_data_entry.avsc">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:active"
+         name = "active">
+         <Group
+            location = "group:opensmile"
+            name = "opensmile">
+            <FileRef
+               location = "group:open_smile_2_audio_analysis.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:open_smile_2_audio_recording.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:notification"
+            name = "notification">
+            <FileRef
+               location = "group:notification.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:questionnaire"
+            name = "questionnaire">
+            <FileRef
+               location = "group:questionnaire.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:task"
+            name = "task">
+            <FileRef
+               location = "group:task.avsc">
+            </FileRef>
+         </Group>
+         <Group
+            location = "group:thincit"
+            name = "thincit">
+            <FileRef
+               location = "group:thinc_it_spotter.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:thinc_it_symbol_check.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:thinc_it_code_breaker.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:thinc_it_pdq.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:thinc_it_input_type.avsc">
+            </FileRef>
+            <FileRef
+               location = "group:thinc_it_trails.avsc">
+            </FileRef>
+         </Group>
+      </Group>
+      <Group
+         location = "group:catalogue"
+         name = "catalogue">
+         <FileRef
+            location = "group:time_window.avsc">
+         </FileRef>
+         <FileRef
+            location = "group:unit.avsc">
+         </FileRef>
+         <FileRef
+            location = "group:processing_state.avsc">
+         </FileRef>
+      </Group>
+   </Group>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>
