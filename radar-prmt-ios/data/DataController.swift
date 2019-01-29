@@ -1,45 +1,53 @@
 //
-//  File.swift
+//  DataManager.swift
 //  radar-prmt-ios
 //
-//  Created by Joris Borgdorff on 12/12/2018.
-//  Copyright © 2018 Joris Borgdorff. All rights reserved.
+//  Created by Joris Borgdorff on 23/01/2019.
+//  Copyright © 2019 Joris Borgdorff. All rights reserved.
 //
 
 import Foundation
 import CoreData
 
 class DataController {
-    let managedObjectContext: NSManagedObjectContext
-    let queue: DispatchQueue
+    // MARK: - Core Data stack
+    private let persistentContainer: NSPersistentContainer
+    let writer: TopicWriter
+    let reader: TopicReader
 
-    init(completionClosure: @escaping () -> ()) {
-        //This resource is the same name as your xcdatamodeld contained in your project
-        guard let modelURL = Bundle.main.url(forResource: "radar_prmt_ios", withExtension:"momd") else {
-            fatalError("Error loading model from bundle")
-        }
-        // The managed object model for the application. It is a fatal error for the application not to be able to find and load its model.
-        guard let mom = NSManagedObjectModel(contentsOf: modelURL) else {
-            fatalError("Error initializing mom from: \(modelURL)")
-        }
-        
-        let psc = NSPersistentStoreCoordinator(managedObjectModel: mom)
-        
-        queue = DispatchQueue(label: "prmt_core_data", qos: .background, attributes: .concurrent)
-        managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        managedObjectContext.persistentStoreCoordinator = psc
-        
-        queue.async {
-            guard let docURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).last else {
-                fatalError("Unable to resolve document directory")
+    init() {
+        persistentContainer = NSPersistentContainer(name: "radar_prmt_ios")
+        persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+            if let error = error as NSError? {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+
+                /*
+                 Typical reasons for an error here include:
+                 * The parent directory does not exist, cannot be created, or disallows writing.
+                 * The persistent store is not accessible, due to permissions or data protection when the device is locked.
+                 * The device is out of space.
+                 * The store could not be migrated to the current model version.
+                 Check the error message to determine what the actual problem was.
+                 */
+                fatalError("Unresolved error \(error), \(error.userInfo)")
             }
-            let storeURL = docURL.appendingPathComponent("radar_prmt_ios.sqlite")
+        })
+        self.writer = TopicWriter(container: persistentContainer)
+        self.reader = TopicReader(container: persistentContainer)
+    }
+
+    // MARK: - Core Data Saving support
+    func saveContext () {
+        let context = persistentContainer.viewContext
+        if context.hasChanges {
             do {
-                try psc.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeURL, options: nil)
-                //The callback block is expected to complete the User Interface and therefore should be presented back on the main queue so that the user interface does not need to be concerned with which queue this call is coming from.
-                DispatchQueue.main.sync(execute: completionClosure)
+                try context.save()
             } catch {
-                fatalError("Error migrating store: \(error)")
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nserror = error as NSError
+                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }

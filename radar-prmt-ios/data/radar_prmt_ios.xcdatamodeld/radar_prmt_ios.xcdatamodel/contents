@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18C54" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="RecordData" representedClassName="RecordData" syncable="YES" codeGenerationType="class">
-        <attribute name="count" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="data" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
         <attribute name="offset" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
-        <attribute name="time" attributeType="Date" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="time" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="group" maxCount="1" deletionRule="Nullify" destinationEntity="RecordDataGroup" inverseName="dataset" inverseEntity="RecordDataGroup" syncable="YES"/>
     </entity>
     <entity name="RecordDataGroup" representedClassName="RecordDataGroup" syncable="YES" codeGenerationType="class">
-        <attribute name="earliestTime" attributeType="Date" defaultDateTimeInterval="-3600" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="disableUntil" optional="YES" attributeType="Date" defaultDateTimeInterval="-3600" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="earliestTime" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="priority" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="sourceId" attributeType="String" syncable="YES"/>
         <attribute name="topic" attributeType="String" syncable="YES"/>
         <attribute name="valueSchema" attributeType="String" syncable="YES"/>
         <relationship name="dataset" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="RecordData" inverseName="group" inverseEntity="RecordData" syncable="YES"/>
+        <fetchIndex name="byPriorityAndTime">
+            <fetchIndexElement property="priority" type="Binary" order="descending"/>
+            <fetchIndexElement property="earliestTime" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byProperties">
+            <fetchIndexElement property="topic" type="Binary" order="ascending"/>
+            <fetchIndexElement property="sourceId" type="Binary" order="ascending"/>
+            <fetchIndexElement property="valueSchema" type="Binary" order="ascending"/>
+        </fetchIndex>
     </entity>
     <elements>
-        <element name="RecordData" positionX="-357.44921875" positionY="333.12109375" width="128" height="118"/>
-        <element name="RecordDataGroup" positionX="-664.59375" positionY="117.421875" width="128" height="133"/>
+        <element name="RecordData" positionX="-357.44921875" positionY="333.12109375" width="128" height="103"/>
+        <element name="RecordDataGroup" positionX="-664.59375" positionY="117.421875" width="128" height="148"/>
     </elements>
 </model>

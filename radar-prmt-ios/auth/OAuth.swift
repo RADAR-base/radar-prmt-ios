@@ -9,6 +9,38 @@
 import Foundation
 import Security
 
+protocol Authorizer {
+    func addAuthorization(to: inout URLRequest)
+    func invalidate()
+    func ensureValid(otherwiseRun callback: @escaping () -> Void) -> Bool
+    var projectId: String { get }
+    var userId: String { get }
+}
+
+class OAuth : Authorizer {
+    var token: String? = nil
+
+    func addAuthorization(to request: inout URLRequest) {
+        request.addValue("Bearer \(token ?? "")", forHTTPHeaderField: "Authorization")
+    }
+
+    func ensureValid(otherwiseRun callback: @escaping () -> Void) -> Bool {
+        if token == nil {
+            token = "aa"
+            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0, execute: callback)
+            return false
+        } else {
+            return true
+        }
+    }
+
+    var userId = "u"
+    var projectId = "p"
+    func invalidate() {
+        token = nil
+    }
+}
+
 public class Strongbox {
     let keyPrefix: String
     public var lastStatus = errSecSuccess

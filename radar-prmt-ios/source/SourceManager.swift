@@ -22,38 +22,41 @@ class SourceManager {
         self.topicWriter = topicWriter
         self.sourceId = sourceId
         writeQueue = DispatchQueue(label: "prmt_core_data", qos: .background)
-        self.encoder = GenericAvroEncoder(encoding: .binary)
-        self.dataCaches = []
+        encoder = GenericAvroEncoder(encoding: .binary)
+        dataCaches = []
     }
     
-    func createTopic(name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
+    func define(topic name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
         guard let path = Bundle.main.path(forResource: "radar-schemas.bundle/" + valueSchemaPath, ofType: "avsc") else {
-            os_log("Schema in location radar-schemas.bundle/%@.avsc for topic %@ is not found", type: .error, valueSchemaPath, name)
+            os_log("Schema in location radar-schemas.bundle/%@.avsc for topic %@ is not found", type: .error,
+                   valueSchemaPath, name)
             return nil
         }
         guard let contents = try? String(contentsOfFile: path) else {
-            os_log("Cannot read schema path %@ for topic %@", type: .error, valueSchemaPath, name)
+            os_log("Cannot read schema path %@ for topic %@", type: .error,
+                   valueSchemaPath, name)
             return nil
         }
 
         do {
-            let topic = try AvroTopic(name: "test", valueSchema: contents)
+            let topic = try AvroTopic(name: name, valueSchema: contents)
 
-            var dataGroup: NSManagedObjectID? = nil
-            topicWriter.registerRecordGroup(topic: topic, sourceId: sourceId)  { dataGroup = $0 }
-
-            guard let initDataGroup = dataGroup else {
+            guard let dataGroup = topicWriter.register(topic: topic, sourceId: sourceId) else {
                 os_log("Cannot create RecordDataGroup for topic %@", type: .error, name)
                 return nil
             }
 
-            let dataCache = AvroTopicCacheContext(topic: topic, dataGroup: initDataGroup, queue: writeQueue, encoder: encoder, topicWriter: topicWriter)
+            let dataCache = AvroTopicCacheContext(topic: topic, dataGroup: dataGroup, queue: writeQueue, encoder: encoder, topicWriter: topicWriter)
             dataCaches.append(dataCache)
             return dataCache
         } catch {
             os_log("Cannot parse schema path %@ for topic %@: %@", type: .error, valueSchemaPath, name, error.localizedDescription)
             return nil
         }
+    }
+
+    func start() {
+        os_log("Source %@ does not need to be started", sourceId)
     }
 
     func flush() {
@@ -80,7 +83,7 @@ class AvroTopicCacheContext {
     private let encoder: AvroEncoder
     private let topicWriter: TopicWriter
     private var data: Data
-    private var hasFuture: Bool
+    private var storeFuture: DispatchWorkItem?
 
     init(topic: AvroTopic, dataGroup: NSManagedObjectID, queue: DispatchQueue, encoder: AvroEncoder, topicWriter: TopicWriter) {
         self.topic = topic
@@ -89,59 +92,50 @@ class AvroTopicCacheContext {
         self.writeQueue = queue
         self.dataGroup = dataGroup
         self.topicWriter = topicWriter
-        self.hasFuture = false
+        self.storeFuture = nil
     }
     
-    func addRecord(_ value: AvroValueConvertible) {
-        do {
-            let avroValue = try AvroValue(value: value, as: topic.valueSchema)
-            writeQueue.async {
-                self.encodeRecord(avroValue)
+    func add(record value: AvroValueConvertible) {
+        writeQueue.async { [weak self] in
+            guard let self = self else { return }
+            self.encode(record: value)
+            self.storeDataEventually()
+        }
+    }
 
-                if (!self.hasFuture) {
-                    self.hasFuture = true
-                    self.writeQueue.asyncAfter(deadline: .now() + 10) { [weak self] in
-                        guard let strongSelf = self else { return }
-                        strongSelf.storeCache()
-                    }
-                }
+    private func storeDataEventually() {
+        if storeFuture == nil {
+            storeFuture = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                self.storeData()
+                self.storeFuture = nil
             }
-        } catch {
-            os_log("Failed to convert Avro value %@", value.toAvro().description)
+            writeQueue.asyncAfter(deadline: .now() + 10, execute: storeFuture!)
         }
     }
     
     func flush() {
         writeQueue.sync {
-            self.storeCache()
+            if let storeFuture = self.storeFuture {
+                storeFuture.cancel()
+                self.storeFuture = nil
+                self.storeData()
+            }
         }
     }
     
-    private func storeCache() {
-        if (hasFuture) {
-            topicWriter.storeRecords(topic: topic, dataGroupId: dataGroup, data: data)
-            data = Data()
-            hasFuture = false
-        }
+    private func storeData() {
+        topicWriter.store(records: data, in: dataGroup, for: topic)
+        data = Data()
     }
 
-    private func encodeRecord(_ value: AvroValue) {
+    private func encode(record value: AvroValueConvertible) {
         do {
             let encodedBytes = try encoder.encode(value, as: topic.valueSchema)
             data.append(Data(from: encodedBytes.count.littleEndian))
             data.append(contentsOf: encodedBytes)
         } catch {
-            os_log("Cannot encode Avro value for topic %@", topic.name)
+            os_log("Cannot encode Avro value for topic %@", type: .error, topic.name)
         }
     }
-}
-
-enum CoreDataError: Error {
-    case cannotCreate
-}
-
-enum SchemaError: Error {
-    case notFound
-    case invalid
-    case notReadable
 }

@@ -19,9 +19,10 @@ struct AvroTopic {
     init(name: String, valueSchema: String) throws {
         self.name = name
         let parsedSchema = try Schema(json: valueSchema)
+        try parsedSchema.validate()
         self.valueSchema = parsedSchema
         guard let canonicalForm = parsedSchema.jsonString() else {
-            throw AvroConversionError.mismatch
+            throw Schema.ValidationError.invalidType(AvroCodingContext())
         }
         self.valueSchemaString = canonicalForm
     }

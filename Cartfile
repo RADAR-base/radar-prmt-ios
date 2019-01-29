@@ -1,1 +1,1 @@
-github "thehyve/BlueSteel" == 3.0.0-alpha.1
+github "thehyve/BlueSteel" ~> 4.0.0-alpha.1

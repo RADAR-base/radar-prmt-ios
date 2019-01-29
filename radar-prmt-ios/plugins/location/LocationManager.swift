@@ -19,7 +19,7 @@ class LocationManager : SourceManager {
     override init?(topicWriter: TopicWriter, sourceId: String) {
         manager = CLLocationManager()
         super.init(topicWriter: topicWriter, sourceId: sourceId)
-        if let locTopic = createTopic(name: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") {
+        if let locTopic = define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") {
             locationTopic = locTopic
         } else {
             return nil
@@ -27,7 +27,12 @@ class LocationManager : SourceManager {
         locationReceiver = LocationReceiver(manager: self, topic: locationTopic)
         manager.delegate = locationReceiver
     }
-    
+
+    override func start() {
+        startReceivingSignificantLocationChanges()
+        startReceivingLocalLocationChanges()
+    }
+
     func startReceivingLocalLocationChanges() {
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
@@ -40,7 +45,6 @@ class LocationManager : SourceManager {
         }
         
         manager.startUpdatingLocation()
-        
     }
     
     func startReceivingSignificantLocationChanges() {
@@ -66,11 +70,11 @@ class LocationManager : SourceManager {
 
 fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
     let manager: LocationManager
-    let topic: AvroTopicCacheContext
+    let locationTopic: AvroTopicCacheContext
     
     init(manager: LocationManager, topic: AvroTopicCacheContext) {
         self.manager = manager
-        self.topic = topic
+        self.locationTopic = topic
     }
 
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -87,7 +91,8 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
     
     func locationManager(_ manager: CLLocationManager,  didUpdateLocations locations: [CLLocation]) {
         for location in locations {
-            topic.addRecord([
+            os_log("Did update location to lat %f lon %f", type: .debug, location.coordinate.latitude, location.coordinate.longitude)
+            locationTopic.add(record: [
                 "time": location.timestamp.timeIntervalSince1970,
                 "timeReceived": Date().timeIntervalSince1970,
                 "provider": "UNKNOWN",
@@ -100,7 +105,7 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
                 ])
         }
     }
-//    
+//
 //    func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
 //        
 //    }
