@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
+		A920C3432202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
+		A920C3442202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
+		A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
+		A920C3472203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
+		A920C3482203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
 		A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
 		A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
@@ -96,6 +102,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A920C3412202F3F8000F6337 /* NetworkReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkReachability.swift; sourceTree = "<group>"; };
+		A920C3452203429F000F6337 /* KafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafkaSendContext.swift; sourceTree = "<group>"; };
 		A9350E5D21CC1DEF004BECCA /* OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth.swift; sourceTree = "<group>"; };
 		A997B26C21BEF1AB0029B43B /* radar-prmt-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "radar-prmt-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B26F21BEF1AB0029B43B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -257,6 +265,8 @@
 				A9D9280C21F8A917007BB030 /* KafkaSender.swift */,
 				A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */,
 				A9D9281C21F8C4E0007BB030 /* KafkaController.swift */,
+				A920C3412202F3F8000F6337 /* NetworkReachability.swift */,
+				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
 			);
 			path = kafka;
 			sourceTree = "<group>";
@@ -452,7 +462,9 @@
 				A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */,
 				A9D9281D21F8C4E0007BB030 /* KafkaController.swift in Sources */,
 				A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */,
+				A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */,
 				A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */,
 				A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */,
 				A9B4A32C21E7575C00C650E8 /* TopicReader.swift in Sources */,
@@ -475,10 +487,12 @@
 				A9D9281221F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
 				A9BB00D121F5CBD30012077F /* AvroTopic.swift in Sources */,
 				A997B2BB21BFA8510029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A920C3472203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9D9280E21F8A917007BB030 /* KafkaSender.swift in Sources */,
 				A9F970B521C03C340003FF5F /* SourceManager.swift in Sources */,
 				A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */,
 				A9D9282321F9D539007BB030 /* CachedCollections.swift in Sources */,
+				A920C3432202F3F8000F6337 /* NetworkReachability.swift in Sources */,
 				A997B2A621BEFFF70029B43B /* TopicWriter.swift in Sources */,
 				A9D9281E21F8C4E0007BB030 /* KafkaController.swift in Sources */,
 				A9B4A32E21E77D5000C650E8 /* TopicReader.swift in Sources */,
@@ -495,10 +509,12 @@
 				A9D9281321F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
 				A9BB00D221F5CBD30012077F /* AvroTopic.swift in Sources */,
 				A997B2BA21BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A920C3482203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9D9280F21F8A917007BB030 /* KafkaSender.swift in Sources */,
 				A9F970B621C03C340003FF5F /* SourceManager.swift in Sources */,
 				A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */,
 				A9D9282421F9D539007BB030 /* CachedCollections.swift in Sources */,
+				A920C3442202F3F8000F6337 /* NetworkReachability.swift in Sources */,
 				A997B2A721BEFFF70029B43B /* TopicWriter.swift in Sources */,
 				A9D9281F21F8C4E0007BB030 /* KafkaController.swift in Sources */,
 				A9B4A32D21E77D5000C650E8 /* TopicReader.swift in Sources */,

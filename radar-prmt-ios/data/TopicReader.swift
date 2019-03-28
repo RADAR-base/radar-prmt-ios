@@ -29,23 +29,31 @@ class TopicReader {
         self.decoder = BinaryAvroDecoder()
     }
 
-    func readNextRecords(excludingGroups exclude: [NSManagedObjectID] = [], to resultCallback: @escaping (RecordSet?) throws -> Void) {
+    func readNextRecords(excludingGroups exclude: [String] = [], minimumPriority: Int? = nil, to resultCallback: @escaping (RecordSet?) throws -> Void) {
         moc.perform { [weak self] in
             guard let self = self else { return }
-            let request: NSFetchRequest<RecordDataGroup> = RecordDataGroup.fetchRequest()
+            let request: NSFetchRequest<KafkaTopic> = KafkaTopic.fetchRequest()
+            var predicates: [NSPredicate] = []
+            predicates.append(NSPredicate(format: "upload = NULL"))
             if !exclude.isEmpty {
-                request.predicate = NSPredicate(format: "NOT (self IN %@)", exclude)
+                predicates.append(NSPredicate(format: "NOT (name IN %@)", exclude))
             }
+            if let minimumPriority = minimumPriority {
+                predicates.append(NSPredicate(format: "priority >= %@", minimumPriority))
+            }
+            predicates.append(NSPredicate(format: "earliestTime <= %@", Date() as NSDate))
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
             request.sortDescriptors = [NSSortDescriptor(key: "priority", ascending: false), NSSortDescriptor(key: "earliestTime", ascending: true)]
             request.fetchLimit = 1
+
             do {
-                let results: [RecordDataGroup] = try self.moc.fetch(request)
-                guard let dataGroup = results.first, dataGroup.earliestTime == nil || dataGroup.earliestTime! <= Date() else {
+                let topics = try self.moc.fetch(request)
+                guard let topic = topics.first else {
                     os_log("No stored data", type: .info)
                     try resultCallback(nil)
                     return
                 }  // no groups registered
-                guard let topic = try? AvroTopic(name: dataGroup.topic!, valueSchema: dataGroup.valueSchema!) else {
+                guard let avroTopic = try? AvroTopic(name: dataGroup.topic!, valueSchema: dataGroup.valueSchema!) else {
                     os_log("Schema for topic %@ cannot be parsed: %@", type: .error, dataGroup.topic!, dataGroup.valueSchema!)
                     self.moc.delete(dataGroup)
                     try? self.moc.save()
@@ -59,37 +67,53 @@ class TopicReader {
         }
     }
 
-    func remove(cache: RecordSet) {
+    func rollbackUpload(for topic: String) {
         moc.perform {
-            var didSetTime = false
-            for origin in cache.origins {
-                let recordData = self.moc.object(with: origin.recordDataId) as! RecordData
-                if let offset = origin.upToOffset {
-                    os_log("Resetting offset to %d of data for topic %@ added at %{time_t}d", type: .debug,
-                           offset, cache.topic.name, time_t(recordData.time!.timeIntervalSince1970))
-                    recordData.offset = Int64(offset)
-                    if cache.origins.count > 1 {
-                        recordData.group?.earliestTime = recordData.time
-                    }
-                    didSetTime = true
-                } else {
-                    os_log("Removing sent data for topic %@", type: .debug,
-                           cache.topic.name)
-                    self.moc.delete(recordData)
-                }
-            }
-            if !didSetTime {
-                let group = self.moc.object(with: cache.dataGroupId) as! RecordDataGroup
-                if let earliestData = group.dataset?.firstObject as? RecordData {
-                    group.earliestTime = earliestData.time
-                } else {
-                    group.earliestTime = Date.distantFuture
-                }
-            }
+            let request: NSFetchRequest<RecordSetUpload> = RecordSetUpload.fetchRequest()
+            request.predicate = NSPredicate(format: "name = %@", topic)
             do {
+                let uploads = try self.moc.fetch(request)
+                for upload in uploads {
+                    self.moc.delete(upload)
+                }
+            } catch {
+                os_log("Failed to rollback upload for topic %@: %@", type: .error, topic, error.localizedDescription)
+            }
+        }
+    }
+
+    func removeUpload(for topic: String) {
+        moc.perform {
+            let request: NSFetchRequest<RecordSetUpload> = RecordSetUpload.fetchRequest()
+            request.predicate = NSPredicate(format: "topic = %@", topic)
+            do {
+                let results: [RecordSetUpload] = try self.moc.fetch(request)
+                guard !results.isEmpty else {
+                    os_log("Cannot remove non-registered upload for topic %@", type: .error, topic)
+                    return
+                }
+                for result in results {
+                    var earliestTime: Date? = nil
+                    for uploadPart in result.uploadPart! {
+                        if let offset = uploadPart.upToOffset {
+                            uploadPart.data?.offset = upToOffset
+                            earliestTime = uploadPart.data?.time
+                        } else {
+                            self.moc.delete(uploadPart.data)
+                        }
+                    }
+                    if let earliestTime = earliestTime {
+                        result.group?.earliestTime = earliestTime
+                    } else if let first = result.group?.dataset?.firstObject {
+                        result.group?.earliestTime = first.earliestTime
+                    } else {
+                        result.group?.earliestTime = Date.distantFuture
+                    }
+                }
+
                 try self.moc.save()
             } catch {
-                os_log("Failed to remove old values: %@", type: .error, error.localizedDescription)
+                os_log("Failed to remove old values for topic %@: %@", type: .error, topic, error.localizedDescription)
             }
         }
     }
@@ -111,12 +135,12 @@ class TopicReader {
         return recordSet
     }
 
-    private func parseValues(from recordData: RecordData, to set: inout RecordSet, currentSize: Int) -> Int {
+    private func parseValues(from recordData: RecordData, to set: inout RecordSet, as schema: Schema, currentSize: Int) -> Int {
         var origin = RecordSet.Origin(recordDataId: recordData.objectID)
-        set.origins.append(RecordSet.Origin(recordDataId: recordData.objectID))
-        guard let data = recordData.data else {
-            os_log("No data in RecordData entry for topic %@", type: .error, set.topic.name)
-            set.origins.append(origin)
+        set.metadata.origins.append(RecordSet.Origin(recordDataId: recordData.objectID))
+        guard let data = recordData.data?.data else {
+            os_log("No data in RecordData entry for topic %@", type: .error, set.metadata.topic.name)
+            set.metadata.origins.append(origin)
             return currentSize
         }
         var size = currentSize
@@ -129,10 +153,10 @@ class TopicReader {
             }
             offset += MemoryLayout<Int>.size
             do {
-                let avroValue = try decoder.decode(data.subdata(in: offset ..< offset + nextSize), as: set.topic.valueSchema)
+                let avroValue = try decoder.decode(data.subdata(in: offset ..< offset + nextSize), as: schema)
                 set.values.append(avroValue)
             } catch {
-                os_log("Failed to decode AvroValue for topic %@", type: .error, set.topic.name)
+                os_log("Failed to decode AvroValue for topic %@", type: .error, set.topic)
             }
             offset += nextSize
         }
@@ -140,35 +164,19 @@ class TopicReader {
         if offset < data.count {
             origin.upToOffset = offset
         }
-        set.origins.append(origin)
+        set.metadata.origins.append(origin)
         return size
     }
 }
 
 struct RecordSet {
-    let topic: AvroTopic
-    let dataGroupId: NSManagedObjectID
+    let topic: String
     let sourceId: String
     var values: [AvroValue]
-    fileprivate var origins: [Origin]
 
-    init?(topic: AvroTopic, dataGroup: RecordDataGroup) {
-        self.topic = topic
-        dataGroupId = dataGroup.objectID
-        guard let sourceId = dataGroup.sourceId else {
-            return nil
-        }
-        self.sourceId = sourceId
+    init?(topic: AvroTopic) {
+        self.topic = topic.name
         values = []
-        origins = []
-    }
-
-    fileprivate struct Origin {
-        let recordDataId: NSManagedObjectID
-        var upToOffset: Int? = nil
-
-        init(recordDataId: NSManagedObjectID) {
-            self.recordDataId = recordDataId
-        }
     }
 }
+

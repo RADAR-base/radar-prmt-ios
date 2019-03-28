@@ -26,11 +26,13 @@ class TopicWriter {
                 return
             }
             let recordData = RecordData(context: self.moc)
+            let dataContainer = DataContainer(context: self.moc)
             let now = Date()
             recordData.time = now
-            recordData.data = data
+            recordData.data = dataContainer
             recordData.group = dataGroup
             recordData.offset = 0
+            self.moc.insert(dataContainer)
             self.moc.insert(recordData)
 
             if dataGroup.earliestTime == nil || recordData.time! < dataGroup.earliestTime! {
@@ -48,28 +50,42 @@ class TopicWriter {
     }
     
     func register(topic: AvroTopic, sourceId: String) -> NSManagedObjectID? {
-        let fetchRequest: NSFetchRequest<RecordDataGroup> = RecordDataGroup.fetchRequest()
-        fetchRequest.predicate = NSPredicate(format: "topic == %@ AND sourceId == %@ AND valueSchema == %@", topic.name, sourceId, topic.valueSchemaString)
-
         var result: NSManagedObjectID?
         moc.performAndWait {
+            let topicRequest: NSFetchRequest<KafkaTopic> = KafkaTopic.fetchRequest()
+            topicRequest.predicate = NSPredicate(format: "topic == %@")
+
             do {
-                let topics = try self.moc.fetch(fetchRequest)
-                let recordDataGroup: RecordDataGroup
+                let topics = try self.moc.fetch(topicRequest)
+
+                let kafkaTopic: KafkaTopic
                 if topics.isEmpty {
+                    kafkaTopic = KafkaTopic(context: self.moc)
+                    kafkaTopic.name = topic.name
+                    kafkaTopic.earliestTime = Date.distantFuture
+                    self.moc.insert(kafkaTopic)
+                } else {
+                    kafkaTopic = topics[0]
+                }
+                if kafkaTopic.priority != topic.priority {
+                    kafkaTopic.priority = topic.priority
+                }
+
+                let recordDataGroup: RecordDataGroup
+                if let group = (kafkaTopic.dataGroups as? Set<RecordDataGroup>)?.first(where: { g in
+                    g.valueSchema == topic.valueSchemaString && g.sourceId == sourceId
+                }) {
+                    recordDataGroup = group
+                } else {
                     recordDataGroup = RecordDataGroup(context: self.moc)
-                    recordDataGroup.sourceId = sourceId
+                    recordDataGroup.topic = kafkaTopic
                     recordDataGroup.valueSchema = topic.valueSchemaString
-                    recordDataGroup.topic = topic.name
+                    recordDataGroup.sourceId = sourceId
                     recordDataGroup.earliestTime = Date.distantFuture
                     self.moc.insert(recordDataGroup)
-                } else {
-                    recordDataGroup = topics[0]
                 }
-                if topic.priority != recordDataGroup.priority {
-                    recordDataGroup.priority = topic.priority
-                }
-                if recordDataGroup.hasChanges {
+
+                if kafkaTopic.hasChanges || recordDataGroup.hasChanges {
                     try self.moc.save()
                 }
                 result = recordDataGroup.objectID

@@ -10,18 +10,19 @@ import Foundation
 import BlueSteel
 import os.log
 
-class KafkaSender: NSObject, URLSessionTaskDelegate {
+class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     let context: KafkaSendContext
     let auth: Authorizer
-    var queue: OperationQueue!
+    var queue: DispatchQueue!
     let schemaRegistry: SchemaRegistryClient
     let baseUrl: URL
     let bodyEncoder: KafkaRequestEncoder
-    var minimumPriorityWithCellular = 1
     var highPrioritySession: URLSession!
     var lowPrioritySession: URLSession!
+    var highPrioritySessionCompletionHandler: (() -> Void)? = nil
+    var lowPrioritySessionCompletionHandler: (() -> Void)? = nil
 
-    init(baseUrl: URL, context: KafkaSendContext, auth: Authorizer) {
+    init?(baseUrl: URL, context: KafkaSendContext, auth: Authorizer) {
         var kafkaUrl = baseUrl
         kafkaUrl.appendPathComponent("kafka", isDirectory: true)
         kafkaUrl.appendPathComponent("topics", isDirectory: true)
@@ -31,62 +32,103 @@ class KafkaSender: NSObject, URLSessionTaskDelegate {
         self.schemaRegistry = SchemaRegistryClient(baseUrl: baseUrl)
         self.bodyEncoder = JsonKafkaRequestEncoder(auth: auth)
 
-        let sessionConfig = URLSessionConfiguration()
+        super.init()
+    }
+
+    public func start() {
+        guard queue == nil else { return }
+
+        queue = DispatchQueue(label: "KafkaSender", qos: .background)
+        let operationQueue = OperationQueue()
+        operationQueue.underlyingQueue = queue
+
+        var sessionConfig = URLSessionConfiguration.background(withIdentifier: "kafkaSenderHighPriority")
         sessionConfig.waitsForConnectivity = true
         sessionConfig.allowsCellularAccess = true
-        super.init()
-        queue = OperationQueue()
-        highPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: queue)
+        highPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: operationQueue)
+
+        sessionConfig = URLSessionConfiguration.background(withIdentifier: "kafkaSenderLowPriority")
+        sessionConfig.waitsForConnectivity = true
         sessionConfig.allowsCellularAccess = false
-        lowPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: queue)
+        lowPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: operationQueue)
     }
 
     func send(data cache: RecordSet) {
-        schemaRegistry.requestSchemas(for: cache.topic) { [weak self] pair in
+        schemaRegistry.requestSchemas(for: cache.metadata.topic) { [weak self] pair in
             guard let self = self else { return }
 
             guard let pair = pair else {
-                self.context.didFail(cache: cache)
+                self.context.didFail(for: cache.topic.name)
                 return
             }
             guard let body = self.bodyEncoder.encode(data: cache, as: pair) else {
-                os_log("Failed to encode data for topic %@, discarding,", cache.topic.name)
-                self.context.didSucceed(cache: cache)
+                os_log("Failed to encode data for topic %@, discarding,", cache.name)
+                self.context.didSucceed(for: cache.topic.name)
                 return
             }
-            let url = self.baseUrl.appendingPathComponent(cache.topic.name, isDirectory: false)
+            let url = self.baseUrl.appendingPathComponent(cache.name, isDirectory: false)
             var request = URLRequest(url: url)
+            request.httpMethod = "POST"
             request.setValue(self.bodyEncoder.contentType, forHTTPHeaderField: "Content-Type")
             self.auth.addAuthorization(to: &request)
 
-            let session = cache.topic.priority >= self.minimumPriorityWithCellular ? self.highPrioritySession : self.lowPrioritySession
+            let session: URLSession! = cache.metadata.topic.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
 
-            session!.uploadTask(with: request, from: body) { [weak self] (data, response, error) in
-                self?.processUpload(of: cache, data: data, response: response, error: error)
-            }
+            let uploadTask = session.uploadTask(with: request, from: body)
+            uploadTask.resume()
         }
     }
 
-    private func processUpload(of records: RecordSet, data: Data?, response: URLResponse?, error: Error?) {
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+
         guard let response = response as? HTTPURLResponse else { return }
 
         switch response.statusCode {
         case 200 ..< 300:
-            self.context.didSucceed(cache: records)
+            context.didSucceed(metadata: records.metadata)
         case 401, 403:
-            self.auth.invalidate()
-            self.context.mayRetry(cache: records)
+            os_log("Authentication with RADAR-base failed.")
+            auth.invalidate()
+            context.mayRetry(cache: records)
         case 400 ..< 500:
             if let data = data, let responseBody = String(data: data, encoding: .utf8) {
                 os_log("Failed code %d: %@", type: .error, response.statusCode, responseBody)
             } else {
                 os_log("Failed code %d", type: .error, response.statusCode)
             }
-            self.context.didFail(cache: records)
-        case 500...:
-            self.context.serverFailure(cache: records)
+            context.didFail(metadata: records.metadata)
+            completionHandler(.cancel)
         default:
-            self.context.couldNotConnect(cache: records)
+            context.serverFailure()
+        }
+    }
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        if let error = error {
+            let nsError = error as NSError
+            switch nsError.code {
+            case NSURLErrorInternationalRoamingOff,
+                 NSURLErrorCallIsActive,
+                 NSURLErrorDataNotAllowed,
+                 NSURLErrorNotConnectedToInternet:
+                context.couldNotConnect(metadata: records.metadata)
+            default:
+                context.serverFailure()
+            }
+            return
+        }
+    }
+
+    func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
+        if session == highPrioritySession, let completionHandler = highPrioritySessionCompletionHandler {
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
+        if session == lowPrioritySession, let completionHandler = lowPrioritySessionCompletionHandler {
+            DispatchQueue.main.async {
+                completionHandler()
+            }
         }
     }
 }
@@ -119,9 +161,9 @@ struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
         let keyData: Data
         let encoder = GenericAvroEncoder(encoding: .json)
         do {
-            keyData = try encoder.encode(["projectId": auth.projectId, "userId": auth.userId, "sourceId": cache.sourceId], as: keySchema.schema)
+            keyData = try encoder.encode(["projectId": auth.projectId, "userId": auth.userId, "sourceId": cache.metadata.sourceId], as: keySchema.schema)
         } catch {
-            os_log("Cannot convert %@ key to schema %@", cache.topic.name, keySchema.schema.description)
+            os_log("Cannot convert %@ key to schema %@", cache.name, keySchema.schema.description)
             return nil
         }
 
@@ -135,7 +177,7 @@ struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
         var first = true
         for value in cache.values {
             guard let encodedValue = try? encoder.encode(value, as: valueSchema.schema) else {
-                os_log("Cannot convert %@ value %@ to schema %@. Skipping", cache.topic.name, value.description, valueSchema.schema.description)
+                os_log("Cannot convert %@ value %@ to schema %@. Skipping", cache.name, value.description, valueSchema.schema.description)
                 continue
             }
             if first {

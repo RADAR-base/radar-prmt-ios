@@ -54,7 +54,8 @@ class SchemaRegistryClient {
         url.appendPathComponent("latest", isDirectory: false)
         var request = URLRequest(url: url)
         request.addValue("application/vnd.schemaregistry.v1+json", forHTTPHeaderField: "Accept")
-        URLSession.shared.dataTask(with: request) { [weak self] (data, response, error) in
+        os_log("Requesting schema %@-%@", topic.name, part.rawValue)
+        URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, error) in
             guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
                 os_log("Failed to retrieve schema at %@", type: .error, url.absoluteString)
                 block(nil)
@@ -72,7 +73,7 @@ class SchemaRegistryClient {
 
             let schemaMetadata = SchemaMetadata(id: schemaId, version: schemaVersion, schema: schema)
             self?.updatePair(part: part, for: topic, with: schemaMetadata, reportCompleted: block)
-        }
+        }).resume()
     }
 
     private func updatePair(part: RecordPart, for topic: AvroTopic, with schemaMetadata: SchemaMetadata, reportCompleted block: @escaping (FetchedSchemaPair?) -> ()) {
@@ -86,6 +87,7 @@ class SchemaRegistryClient {
                 pair.valueSchema = schemaMetadata
             }
             self.cache[topic.name] = pair
+            os_log("Requested schema: {key: %@, value: %@}", pair.keySchema?.schema.description ?? "??", pair.valueSchema?.schema.description ?? "??")
             if pair.isComplete {
                 block(pair)
             }
