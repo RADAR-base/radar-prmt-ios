@@ -122,7 +122,7 @@ class TopicReader {
         var size = currentSize
         var offset = Int(recordData.offset)
         while offset < data.count, set.values.count < maxCount {
-            let nextSize = data.advanced(by: offset).scan() as Int
+            let nextSize = data.advanced(by: offset).load(as: Int.self)
             size += nextSize
             if set.values.count > 0 && size > maxSize {
                 break

@@ -70,8 +70,8 @@ extension Data {
         self = Swift.withUnsafeBytes(of: value) { Data($0) }
     }
     
-    func scan<T>() -> T {
-        return withUnsafeBytes { $0.pointee }
+    func load<T>(as type: T.Type) -> T {
+        return withUnsafeBytes { $0.load(as: type) }
     }
 }
 

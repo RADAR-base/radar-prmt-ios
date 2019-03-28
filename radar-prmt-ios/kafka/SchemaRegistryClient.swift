@@ -60,7 +60,7 @@ class SchemaRegistryClient {
                 block(nil)
                 return
             }
-            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as! [String: Any],
+            guard let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                     let schemaId = jsonObject["id"] as? Int,
                     let schemaVersion = jsonObject["version"] as? Int,
                     let schemaString = jsonObject["schema"] as? String,

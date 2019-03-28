@@ -115,7 +115,7 @@
 		A997B2A921BF9FB60029B43B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A997B2AB21BF9FBD0029B43B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A9B4A32B21E7575C00C650E8 /* TopicReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicReader.swift; sourceTree = "<group>"; };
-		A9BB00E721F62BBB0012077F /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = BlueSteel.framework; sourceTree = "<group>"; };
+		A9BB00E721F62BBB0012077F /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Carthage/Build/iOS/BlueSteel.framework; sourceTree = "<group>"; };
 		A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A9CC807121DE60C90067FA77 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A9CC807421DE63B40067FA77 /* AvroTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvroTopic.swift; sourceTree = "<group>"; };
@@ -372,6 +372,7 @@
 				TargetAttributes = {
 					A997B26B21BEF1AB0029B43B = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -380,10 +381,12 @@
 					};
 					A997B28221BEF1AC0029B43B = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 						TestTargetID = A997B26B21BEF1AB0029B43B;
 					};
 					A997B28D21BEF1AC0029B43B = {
 						CreatedOnToolsVersion = 10.1;
+						LastSwiftMigration = 1020;
 						TestTargetID = A997B26B21BEF1AB0029B43B;
 					};
 				};
@@ -671,7 +674,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -694,7 +697,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-ios";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -718,7 +721,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-iosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/radar-prmt-ios.app/radar-prmt-ios";
 			};
@@ -743,7 +746,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-iosTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/radar-prmt-ios.app/radar-prmt-ios";
 			};
@@ -767,7 +770,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-iosUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "radar-prmt-ios";
 			};
@@ -791,7 +794,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-iosUITests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = "radar-prmt-ios";
 			};

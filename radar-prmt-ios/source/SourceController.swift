@@ -15,7 +15,7 @@ class SourceController {
 
     init(dataController: DataController) {
         self.dataController = dataController
-        sources = SourceController.load(dataController: dataController)
+        self.sources = SourceController.load(dataController: dataController)
     }
 
     private static func load(dataController: DataController) -> [SourceManager] {
