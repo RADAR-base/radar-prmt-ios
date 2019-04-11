@@ -15,29 +15,26 @@ class TopicWriter {
     
     init(container: NSPersistentContainer) {
         self.moc = container.newBackgroundContext()
-        self.moc.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+//        self.moc.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
     }
 
     func store(records data: Data, in dataGroupId: NSManagedObjectID, for topic: AvroTopic) {
         moc.perform {
             os_log("Storing records for topic %@ (size %{iec-bytes}d)", type: .debug, topic.name, data.count)
-            guard let object = try? self.moc.existingObject(with: dataGroupId), let dataGroup = object as? RecordDataGroup else {
+            guard let object = try? self.moc.existingObject(with: dataGroupId), let group = object as? RecordSetGroup else {
                 os_log("Cannot find data group for topic %@", type: .error, topic.name)
                 return
             }
-            let recordData = RecordData(context: self.moc)
-            let dataContainer = DataContainer(context: self.moc)
-            let now = Date()
-            recordData.time = now
-            recordData.data = dataContainer
-            recordData.group = dataGroup
-            recordData.offset = 0
+            let dataContainer = DataContainer(entityContext: self.moc)
+            dataContainer.data = data
             self.moc.insert(dataContainer)
+            let recordData = RecordSet(entityContext: self.moc)
+            recordData.time = Date()
+            recordData.dataContainer = dataContainer
+            recordData.group = group
+            recordData.offset = 0
+            recordData.topic = group.topic
             self.moc.insert(recordData)
-
-            if dataGroup.earliestTime == nil || recordData.time! < dataGroup.earliestTime! {
-                dataGroup.earliestTime = recordData.time
-            }
 
             do {
                 try self.moc.save()
@@ -53,16 +50,15 @@ class TopicWriter {
         var result: NSManagedObjectID?
         moc.performAndWait {
             let topicRequest: NSFetchRequest<KafkaTopic> = KafkaTopic.fetchRequest()
-            topicRequest.predicate = NSPredicate(format: "topic == %@")
+            topicRequest.predicate = NSPredicate(format: "name == %@", topic.name)
 
             do {
                 let topics = try self.moc.fetch(topicRequest)
 
                 let kafkaTopic: KafkaTopic
                 if topics.isEmpty {
-                    kafkaTopic = KafkaTopic(context: self.moc)
+                    kafkaTopic = KafkaTopic(entityContext: self.moc)
                     kafkaTopic.name = topic.name
-                    kafkaTopic.earliestTime = Date.distantFuture
                     self.moc.insert(kafkaTopic)
                 } else {
                     kafkaTopic = topics[0]
@@ -71,17 +67,16 @@ class TopicWriter {
                     kafkaTopic.priority = topic.priority
                 }
 
-                let recordDataGroup: RecordDataGroup
-                if let group = (kafkaTopic.dataGroups as? Set<RecordDataGroup>)?.first(where: { g in
+                let recordDataGroup: RecordSetGroup
+                if let group = (kafkaTopic.dataGroups as? Set<RecordSetGroup>)?.first(where: { g in
                     g.valueSchema == topic.valueSchemaString && g.sourceId == sourceId
                 }) {
                     recordDataGroup = group
                 } else {
-                    recordDataGroup = RecordDataGroup(context: self.moc)
+                    recordDataGroup = RecordSetGroup(entityContext: self.moc)
                     recordDataGroup.topic = kafkaTopic
                     recordDataGroup.valueSchema = topic.valueSchemaString
                     recordDataGroup.sourceId = sourceId
-                    recordDataGroup.earliestTime = Date.distantFuture
                     self.moc.insert(recordDataGroup)
                 }
 

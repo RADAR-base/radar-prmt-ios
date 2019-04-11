@@ -10,14 +10,11 @@ import Foundation
 import SystemConfiguration
 
 class NetworkReachability {
-    enum Mode: Int, Comparable {
-        case none
-        case cellular
-        case wifiOrEthernet
+    struct Mode: OptionSet {
+        let rawValue: Int
 
-        static func < (lhs: Mode, rhs: Mode) -> Bool {
-            return lhs.rawValue < rhs.rawValue
-        }
+        static let cellular = Mode(rawValue: 1)
+        static let wifiOrEthernet = Mode(rawValue: 2)
     }
 
     private let reachability: SCNetworkReachability
@@ -105,7 +102,7 @@ class NetworkReachability {
             let status: NetworkReachability.Mode
             if !flags.contains(.reachable)
                 || (flags.contains(.connectionRequired) && !flags.contains(.connectionOnTraffic)) {
-                status = .none
+                status = []
             } else if flags.contains(.isWWAN) {
                 status = .cellular
             } else {

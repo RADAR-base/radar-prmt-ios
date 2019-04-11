@@ -20,6 +20,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        guard NSClassFromString("XCTestCase") == nil else {
+            // Do not run main application code in tests
+            return true
+        }
         sourceController = SourceController(dataController: dataController)
         sourceController.start()
 

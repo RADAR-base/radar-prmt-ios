@@ -20,12 +20,12 @@ class SourceController {
 
     private static func load(dataController: DataController) -> [SourceManager] {
         var sources: [SourceManager] = []
-        if let locationManager = LocationManager(topicWriter: dataController.writer, sourceId: "test") {
+        if let locationManager = LocationManager(topicWriter: dataController.writer, sourceId: "phonesource") {
             sources.append(locationManager)
         } else {
             os_log("Failed to initialize location tracking", type: .error)
         }
-        if let spamManager = SpamManager(topicWriter: dataController.writer, sourceId: "test") {
+        if let spamManager = SpamManager(topicWriter: dataController.writer, sourceId: "phonesource") {
             sources.append(spamManager)
         } else {
             os_log("Failed to initialize spamming", type: .error)

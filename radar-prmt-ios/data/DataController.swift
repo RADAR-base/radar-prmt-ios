@@ -52,3 +52,14 @@ class DataController {
         }
     }
 }
+
+/// Ensure that entity definitions are separate for different contexts (i.e. testing and main).
+/// https://stackoverflow.com/a/54126839/574082
+public extension NSManagedObject {
+    convenience init(entityContext context: NSManagedObjectContext) {
+        let name = String(describing: type(of: self))
+        let entity = NSEntityDescription.entity(forEntityName: name, in: context)!
+        self.init(entity: entity, insertInto: context)
+    }
+}
+

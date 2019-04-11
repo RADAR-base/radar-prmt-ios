@@ -8,14 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
-		A920C3432202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
-		A920C3442202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
 		A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
-		A920C3472203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
-		A920C3482203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
-		A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
-		A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
+		A98D39BA225F349B00385D2C /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
+		A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */; };
 		A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B26F21BEF1AB0029B43B /* AppDelegate.swift */; };
 		A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B27121BEF1AB0029B43B /* ViewController.swift */; };
 		A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27321BEF1AB0029B43B /* Main.storyboard */; };
@@ -24,18 +20,26 @@
 		A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B28721BEF1AC0029B43B /* radar_prmt_iosTests.swift */; };
 		A997B29321BEF1AC0029B43B /* radar_prmt_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B29221BEF1AC0029B43B /* radar_prmt_iosUITests.swift */; };
 		A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
-		A997B2A621BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
-		A997B2A721BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
 		A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
 		A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
-		A997B2B921BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
-		A997B2BA21BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
-		A997B2BB21BFA8510029B43B /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */; };
-		A9B4A32C21E7575C00C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
-		A9B4A32D21E77D5000C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
-		A9B4A32E21E77D5000C650E8 /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
-		A9BB00D121F5CBD30012077F /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
-		A9BB00D221F5CBD30012077F /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
+		A99AAE5C225F390D005B57DA /* KafkaTopic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE50225F390D005B57DA /* KafkaTopic+CoreDataClass.swift */; };
+		A99AAE5D225F390D005B57DA /* UploadPart+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE51225F390D005B57DA /* UploadPart+CoreDataClass.swift */; };
+		A99AAE5E225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE52225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift */; };
+		A99AAE5F225F390D005B57DA /* RecordSet+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE53225F390D005B57DA /* RecordSet+CoreDataProperties.swift */; };
+		A99AAE60225F390D005B57DA /* RecordSet+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE54225F390D005B57DA /* RecordSet+CoreDataClass.swift */; };
+		A99AAE61225F390D005B57DA /* DataContainer+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE55225F390D005B57DA /* DataContainer+CoreDataClass.swift */; };
+		A99AAE62225F390D005B57DA /* DataContainer+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE56225F390D005B57DA /* DataContainer+CoreDataProperties.swift */; };
+		A99AAE63225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE57225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift */; };
+		A99AAE64225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE58225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift */; };
+		A99AAE65225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE59225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift */; };
+		A99AAE66225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE5A225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift */; };
+		A99AAE67225F390D005B57DA /* UploadPart+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE5B225F390D005B57DA /* UploadPart+CoreDataProperties.swift */; };
+		A99AAE84225F55AD005B57DA /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */; };
+		A99AAE85225F55AD005B57DA /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */; };
+		A99AAE86225F55B2005B57DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
+		A99AAE87225F55B2005B57DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
+		A99AAE88225F55B5005B57DA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
+		A99AAE89225F55B5005B57DA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
 		A9BB00E821F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
 		A9BB00E921F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
 		A9BB00EA21F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
@@ -45,29 +49,13 @@
 		A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
 		A9D9280A21F87EE7007BB030 /* SpamManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9280921F87EE7007BB030 /* SpamManager.swift */; };
 		A9D9280D21F8A917007BB030 /* KafkaSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9280C21F8A917007BB030 /* KafkaSender.swift */; };
-		A9D9280E21F8A917007BB030 /* KafkaSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9280C21F8A917007BB030 /* KafkaSender.swift */; };
-		A9D9280F21F8A917007BB030 /* KafkaSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9280C21F8A917007BB030 /* KafkaSender.swift */; };
 		A9D9281121F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */; };
-		A9D9281221F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */; };
-		A9D9281321F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */; };
 		A9D9281521F8BFB9007BB030 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281421F8BFB9007BB030 /* DataController.swift */; };
-		A9D9281621F8BFB9007BB030 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281421F8BFB9007BB030 /* DataController.swift */; };
-		A9D9281721F8BFB9007BB030 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281421F8BFB9007BB030 /* DataController.swift */; };
 		A9D9281921F8C1B2007BB030 /* SourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281821F8C1B2007BB030 /* SourceController.swift */; };
-		A9D9281A21F8C1B2007BB030 /* SourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281821F8C1B2007BB030 /* SourceController.swift */; };
-		A9D9281B21F8C1B2007BB030 /* SourceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281821F8C1B2007BB030 /* SourceController.swift */; };
 		A9D9281D21F8C4E0007BB030 /* KafkaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281C21F8C4E0007BB030 /* KafkaController.swift */; };
-		A9D9281E21F8C4E0007BB030 /* KafkaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281C21F8C4E0007BB030 /* KafkaController.swift */; };
-		A9D9281F21F8C4E0007BB030 /* KafkaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9281C21F8C4E0007BB030 /* KafkaController.swift */; };
 		A9D9282221F9D539007BB030 /* CachedCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9282121F9D539007BB030 /* CachedCollections.swift */; };
-		A9D9282321F9D539007BB030 /* CachedCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9282121F9D539007BB030 /* CachedCollections.swift */; };
-		A9D9282421F9D539007BB030 /* CachedCollections.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D9282121F9D539007BB030 /* CachedCollections.swift */; };
 		A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
-		A9F970B521C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
-		A9F970B621C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
 		A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
-		A9F9719421C0FDA60003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
-		A9F9719521C0FDA70003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,11 +93,11 @@
 		A920C3412202F3F8000F6337 /* NetworkReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkReachability.swift; sourceTree = "<group>"; };
 		A920C3452203429F000F6337 /* KafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafkaSendContext.swift; sourceTree = "<group>"; };
 		A9350E5D21CC1DEF004BECCA /* OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth.swift; sourceTree = "<group>"; };
+		A98D39BC225F34E700385D2C /* radar_prmt_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = radar_prmt_ios.xcdatamodel; sourceTree = "<group>"; };
 		A997B26C21BEF1AB0029B43B /* radar-prmt-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "radar-prmt-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B26F21BEF1AB0029B43B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A997B27121BEF1AB0029B43B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A997B27421BEF1AB0029B43B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		A997B27721BEF1AB0029B43B /* radar_prmt_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = radar_prmt_ios.xcdatamodel; sourceTree = "<group>"; };
 		A997B27921BEF1AC0029B43B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A997B27C21BEF1AC0029B43B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A997B27E21BEF1AC0029B43B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -122,7 +110,19 @@
 		A997B2A421BEFFF70029B43B /* TopicWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicWriter.swift; sourceTree = "<group>"; };
 		A997B2A921BF9FB60029B43B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A997B2AB21BF9FBD0029B43B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		A9B4A32B21E7575C00C650E8 /* TopicReader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicReader.swift; sourceTree = "<group>"; };
+		A99AAE50225F390D005B57DA /* KafkaTopic+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KafkaTopic+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE51225F390D005B57DA /* UploadPart+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UploadPart+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE52225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KafkaTopic+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A99AAE53225F390D005B57DA /* RecordSet+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSet+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A99AAE54225F390D005B57DA /* RecordSet+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSet+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE55225F390D005B57DA /* DataContainer+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataContainer+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE56225F390D005B57DA /* DataContainer+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DataContainer+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A99AAE57225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetGroup+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE58225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetUpload+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A99AAE59225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetGroup+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A99AAE5A225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetUpload+CoreDataClass.swift"; sourceTree = "<group>"; };
+		A99AAE5B225F390D005B57DA /* UploadPart+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UploadPart+CoreDataProperties.swift"; sourceTree = "<group>"; };
+		A9B4A32B21E7575C00C650E8 /* TopicReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = TopicReader.swift; sourceTree = "<group>"; };
 		A9BB00E721F62BBB0012077F /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Carthage/Build/iOS/BlueSteel.framework; sourceTree = "<group>"; };
 		A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A9CC807121DE60C90067FA77 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -154,6 +154,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A99AAE84225F55AD005B57DA /* CoreLocation.framework in Frameworks */,
+				A99AAE88225F55B5005B57DA /* CoreData.framework in Frameworks */,
+				A99AAE86225F55B2005B57DA /* Foundation.framework in Frameworks */,
 				A9BB00E921F62BBB0012077F /* BlueSteel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -162,6 +165,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A99AAE85225F55AD005B57DA /* CoreLocation.framework in Frameworks */,
+				A99AAE89225F55B5005B57DA /* CoreData.framework in Frameworks */,
+				A99AAE87225F55B2005B57DA /* Foundation.framework in Frameworks */,
 				A9BB00EA21F62BBB0012077F /* BlueSteel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -172,7 +178,8 @@
 		A907214721C1A1E900C25849 /* data */ = {
 			isa = PBXGroup;
 			children = (
-				A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */,
+				A99AAE4F225F3840005B57DA /* generated */,
+				A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */,
 				A9B4A32B21E7575C00C650E8 /* TopicReader.swift */,
 				A997B2A421BEFFF70029B43B /* TopicWriter.swift */,
 				A9D9281421F8BFB9007BB030 /* DataController.swift */,
@@ -269,6 +276,25 @@
 				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
 			);
 			path = kafka;
+			sourceTree = "<group>";
+		};
+		A99AAE4F225F3840005B57DA /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				A99AAE55225F390D005B57DA /* DataContainer+CoreDataClass.swift */,
+				A99AAE56225F390D005B57DA /* DataContainer+CoreDataProperties.swift */,
+				A99AAE50225F390D005B57DA /* KafkaTopic+CoreDataClass.swift */,
+				A99AAE52225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift */,
+				A99AAE54225F390D005B57DA /* RecordSet+CoreDataClass.swift */,
+				A99AAE53225F390D005B57DA /* RecordSet+CoreDataProperties.swift */,
+				A99AAE57225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift */,
+				A99AAE59225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift */,
+				A99AAE5A225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift */,
+				A99AAE58225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift */,
+				A99AAE51225F390D005B57DA /* UploadPart+CoreDataClass.swift */,
+				A99AAE5B225F390D005B57DA /* UploadPart+CoreDataProperties.swift */,
+			);
+			path = generated;
 			sourceTree = "<group>";
 		};
 		A9CC806F21DE609D0067FA77 /* plugins */ = {
@@ -437,7 +463,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F9719421C0FDA60003FF5F /* radar-schemas.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,7 +470,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9F9719521C0FDA70003FF5F /* radar-schemas.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -457,23 +481,35 @@
 			buildActionMask = 2147483647;
 			files = (
 				A9D9280A21F87EE7007BB030 /* SpamManager.swift in Sources */,
+				A99AAE5E225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift in Sources */,
 				A9D9280D21F8A917007BB030 /* KafkaSender.swift in Sources */,
 				A9D9281921F8C1B2007BB030 /* SourceController.swift in Sources */,
+				A99AAE62225F390D005B57DA /* DataContainer+CoreDataProperties.swift in Sources */,
+				A99AAE65225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift in Sources */,
 				A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */,
 				A9D9281D21F8C4E0007BB030 /* KafkaController.swift in Sources */,
 				A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A99AAE61225F390D005B57DA /* DataContainer+CoreDataClass.swift in Sources */,
+				A99AAE63225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift in Sources */,
 				A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */,
+				A99AAE5C225F390D005B57DA /* KafkaTopic+CoreDataClass.swift in Sources */,
 				A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */,
+				A99AAE5F225F390D005B57DA /* RecordSet+CoreDataProperties.swift in Sources */,
+				A99AAE60225F390D005B57DA /* RecordSet+CoreDataClass.swift in Sources */,
 				A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */,
+				A99AAE66225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift in Sources */,
 				A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */,
-				A9B4A32C21E7575C00C650E8 /* TopicReader.swift in Sources */,
+				A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */,
 				A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */,
+				A98D39BA225F349B00385D2C /* TopicReader.swift in Sources */,
 				A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */,
 				A9D9281121F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
+				A99AAE64225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift in Sources */,
+				A99AAE5D225F390D005B57DA /* UploadPart+CoreDataClass.swift in Sources */,
 				A9D9281521F8BFB9007BB030 /* DataController.swift in Sources */,
-				A997B2B921BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
 				A9D9282221F9D539007BB030 /* CachedCollections.swift in Sources */,
+				A99AAE67225F390D005B57DA /* UploadPart+CoreDataProperties.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,20 +518,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */,
-				A9D9281621F8BFB9007BB030 /* DataController.swift in Sources */,
-				A9D9281A21F8C1B2007BB030 /* SourceController.swift in Sources */,
-				A9D9281221F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
-				A9BB00D121F5CBD30012077F /* AvroTopic.swift in Sources */,
-				A997B2BB21BFA8510029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
-				A920C3472203429F000F6337 /* KafkaSendContext.swift in Sources */,
-				A9D9280E21F8A917007BB030 /* KafkaSender.swift in Sources */,
-				A9F970B521C03C340003FF5F /* SourceManager.swift in Sources */,
-				A9350E5F21CC1DEF004BECCA /* OAuth.swift in Sources */,
-				A9D9282321F9D539007BB030 /* CachedCollections.swift in Sources */,
-				A920C3432202F3F8000F6337 /* NetworkReachability.swift in Sources */,
-				A997B2A621BEFFF70029B43B /* TopicWriter.swift in Sources */,
-				A9D9281E21F8C4E0007BB030 /* KafkaController.swift in Sources */,
-				A9B4A32E21E77D5000C650E8 /* TopicReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -504,20 +526,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B29321BEF1AC0029B43B /* radar_prmt_iosUITests.swift in Sources */,
-				A9D9281721F8BFB9007BB030 /* DataController.swift in Sources */,
-				A9D9281B21F8C1B2007BB030 /* SourceController.swift in Sources */,
-				A9D9281321F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
-				A9BB00D221F5CBD30012077F /* AvroTopic.swift in Sources */,
-				A997B2BA21BFA8500029B43B /* radar_prmt_ios.xcdatamodeld in Sources */,
-				A920C3482203429F000F6337 /* KafkaSendContext.swift in Sources */,
-				A9D9280F21F8A917007BB030 /* KafkaSender.swift in Sources */,
-				A9F970B621C03C340003FF5F /* SourceManager.swift in Sources */,
-				A9350E6021CC1DEF004BECCA /* OAuth.swift in Sources */,
-				A9D9282421F9D539007BB030 /* CachedCollections.swift in Sources */,
-				A920C3442202F3F8000F6337 /* NetworkReachability.swift in Sources */,
-				A997B2A721BEFFF70029B43B /* TopicWriter.swift in Sources */,
-				A9D9281F21F8C4E0007BB030 /* KafkaController.swift in Sources */,
-				A9B4A32D21E77D5000C650E8 /* TopicReader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,6 +685,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -700,6 +709,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -858,12 +868,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		A997B27621BEF1AB0029B43B /* radar_prmt_ios.xcdatamodeld */ = {
+		A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				A997B27721BEF1AB0029B43B /* radar_prmt_ios.xcdatamodel */,
+				A98D39BC225F34E700385D2C /* radar_prmt_ios.xcdatamodel */,
 			);
-			currentVersion = A997B27721BEF1AB0029B43B /* radar_prmt_ios.xcdatamodel */;
+			currentVersion = A98D39BC225F34E700385D2C /* radar_prmt_ios.xcdatamodel */;
 			path = radar_prmt_ios.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

@@ -123,7 +123,7 @@ class AvroTopicCacheContext {
             }
         }
     }
-    
+
     private func storeData() {
         topicWriter.store(records: data, in: dataGroup, for: topic)
         data = Data()

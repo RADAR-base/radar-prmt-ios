@@ -52,15 +52,14 @@ class KafkaController {
     }
 
     private func updateConnection(to mode: NetworkReachability.Mode) {
-        guard mode != .none else { return }
+        guard !mode.isEmpty else { return }
         self.queue.async { [weak self] in
             guard let self = self else { return }
 
-            if self.context.connectionFailedFor == .cellular
-                || (self.context.connectionFailedFor == .wifiOrEthernet && mode == .wifiOrEthernet) {
+            let newMode = self.context.couldConnect(to: mode)
+            if newMode == [.cellular, .wifiOrEthernet] {
                 os_log("Network connection is available again. Restarting data uploads.")
                 self.reachability.cancel()
-                self.context.connectionFailedFor = .none
                 self.start()
             }
         }
@@ -74,7 +73,9 @@ class KafkaController {
             return
         }
 
-        if context.connectionFailedFor == .cellular {
+        let availableModes = context.availableNetworkModes
+
+        if availableModes.isEmpty {
             isStarted = false
             reachability.listen()
         } else if let retryServer = self.context.retryServer, retryServer.at > Date() {
@@ -82,19 +83,17 @@ class KafkaController {
                 self?.sendNext()
             }
         } else {
-            let alreadyProcessing = context.processingTopics()
             let minimumPriority: Int?
-            if context.connectionFailedFor == .wifiOrEthernet {
+            if availableModes.contains(.wifiOrEthernet) {
+                minimumPriority = nil
+            } else {
                 reachability.listen()
                 minimumPriority = context.minimumPriorityForCellular
-            } else {
-                minimumPriority = nil
             }
-            context.reader.readNextRecords(excludingGroups: alreadyProcessing, minimumPriority: minimumPriority) { [weak self] data in
+            context.reader.readNextRecords(minimumPriority: minimumPriority) { [weak self] data in
                 guard let self = self else { return }
                 if let data = data {
-                    os_log("Sending data for topic %@", data.name)
-                    self.context.willProcess(metadata: data.metadata)
+                    os_log("Sending data for topic %@", data.topic)
                     self.sender.send(data: data)
                     self.queue.async {
                         self.sendNext()

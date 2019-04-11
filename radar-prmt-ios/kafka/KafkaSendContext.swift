@@ -13,36 +13,26 @@ import os.log
 class KafkaSendContext {
     let reader: TopicReader
     private let queue: DispatchQueue
-    private var failedTopics: SetCache<String>
     var retryServer: (at: Date, interval: TimeInterval)?
-    var connectionFailedFor: NetworkReachability.Mode
+    private var networkModes: NetworkReachability.Mode
     var minimumPriorityForCellular: Int
+    let retryFailInterval: TimeInterval = 600
 
     init(reader: TopicReader) {
-        failedTopics = SetCache()
         self.reader = reader
         queue = DispatchQueue(label: "Kafka send context", qos: .background)
         retryServer = nil
-        connectionFailedFor = .none
+        networkModes = [.cellular, .wifiOrEthernet]
         minimumPriorityForCellular = 1
     }
 
-    func processingTopics() -> [String] {
-        var retrieved: [String]?
-        queue.sync {
-            retrieved = [String](failedTopics)
-        }
-        return retrieved!
-    }
-
-    func didFail(for topic: String) {
+    func didFail(for topic: String, code: Int16, message: String, recoverable: Bool = true) {
         queue.async { [weak self] in
-            guard let self = self else { return }
-            let previousInterval = self.failedTopics.invalidationInterval(for: topic)
-            let nextInterval = KafkaSendContext.exponentialBackOff(from: previousInterval, startingAt: TopicReader.retryFailInterval, ranging: 100 ..< 86400)
-            os_log("Upload failure. Cancelling requests for topic %@ until %{time_t}d", topic, time_t(Date(timeIntervalSinceNow: nextInterval).timeIntervalSince1970))
-            self.failedTopics.update(with: topic, invalidateAfter: nextInterval)
-            self.reader.rollbackUpload(for: topic)
+            if recoverable {
+                self?.reader.registerUploadError(for: topic, code: code, message: message)
+            } else {
+                self?.reader.removeUpload(for: topic)
+            }
         }
     }
 
@@ -63,7 +53,7 @@ class KafkaSendContext {
 
         queue.async { [weak self] in
             guard let self = self else { return }
-            let nextInterval = KafkaSendContext.exponentialBackOff(from: self.retryServer?.interval, startingAt: TopicReader.retryFailInterval, ranging: 100 ..< 86400)
+            let nextInterval = KafkaSendContext.exponentialBackOff(from: self.retryServer?.interval, startingAt: self.retryFailInterval, ranging: 100 ..< 86400)
             os_log("Server failure. Cancelling requests until %{time_t}d", time_t(Date(timeIntervalSinceNow: nextInterval).timeIntervalSince1970))
             self.retryServer = (at: Date().addingTimeInterval(nextInterval), interval: nextInterval)
         }
@@ -79,25 +69,31 @@ class KafkaSendContext {
         return Double.random(in: range.lowerBound ..< min(nextInterval, range.upperBound))
     }
 
-    func couldNotConnect(with topic: String) {
+    var availableNetworkModes: NetworkReachability.Mode {
+        get {
+            var mode: NetworkReachability.Mode = []
+            queue.sync {
+                mode = self.networkModes
+            }
+            return mode
+        }
+    }
+
+    func couldConnect(to mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
+        var mode: NetworkReachability.Mode = []
+        queue.sync {
+            self.networkModes.formUnion(mode)
+            mode = self.networkModes
+        }
+        return mode
+    }
+
+    func couldNotConnect(with topic: String, to mode: NetworkReachability.Mode) {
         reader.rollbackUpload(for: topic)
         queue.async { [weak self] in
             guard let self = self else { return }
             os_log("Cannot make connection. Cancelling requests until connection is available.")
-            let failureMode: NetworkReachability.Mode = metadata.topic.priority < self.minimumPriorityForCellular
-                ? .wifiOrEthernet
-                : .cellular
-
-            if failureMode != self.connectionFailedFor && self.connectionFailedFor != .cellular {
-                self.connectionFailedFor = failureMode
-            }
-        }
-    }
-
-    func clean() {
-        queue.async { [weak self] in
-            guard let self = self else { return }
-            self.failedTopics.clean()
+            self.networkModes.subtract(mode)
         }
     }
 }

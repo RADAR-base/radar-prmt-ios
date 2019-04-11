@@ -22,7 +22,7 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     var highPrioritySessionCompletionHandler: (() -> Void)? = nil
     var lowPrioritySessionCompletionHandler: (() -> Void)? = nil
 
-    init?(baseUrl: URL, context: KafkaSendContext, auth: Authorizer) {
+    init(baseUrl: URL, context: KafkaSendContext, auth: Authorizer) {
         var kafkaUrl = baseUrl
         kafkaUrl.appendPathComponent("kafka", isDirectory: true)
         kafkaUrl.appendPathComponent("topics", isDirectory: true)
@@ -53,26 +53,26 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
         lowPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: operationQueue)
     }
 
-    func send(data cache: RecordSet) {
-        schemaRegistry.requestSchemas(for: cache.metadata.topic) { [weak self] pair in
+    func send(data cache: RecordSetValue) {
+        schemaRegistry.requestSchemas(for: cache.topic) { [weak self] pair in
             guard let self = self else { return }
 
             guard let pair = pair else {
-                self.context.didFail(for: cache.topic.name)
+                self.context.didFail(for: cache.topic, code: 1, message: "Schema retrieval failed")
                 return
             }
             guard let body = self.bodyEncoder.encode(data: cache, as: pair) else {
-                os_log("Failed to encode data for topic %@, discarding,", cache.name)
-                self.context.didSucceed(for: cache.topic.name)
+                os_log("Failed to encode data for topic %@, discarding,", cache.topic)
+                self.context.didSucceed(for: cache.topic)
                 return
             }
-            let url = self.baseUrl.appendingPathComponent(cache.name, isDirectory: false)
+            let url = self.baseUrl.appendingPathComponent(cache.topic, isDirectory: false)
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue(self.bodyEncoder.contentType, forHTTPHeaderField: "Content-Type")
             self.auth.addAuthorization(to: &request)
 
-            let session: URLSession! = cache.metadata.topic.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
+            let session: URLSession! = cache.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
 
             let uploadTask = session.uploadTask(with: request, from: body)
             uploadTask.resume()
@@ -82,38 +82,45 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
         guard let response = response as? HTTPURLResponse else { return }
+        guard let topic = KafkaSender.extractTopic(from: dataTask.originalRequest?.url) else {
+            os_log("Cannot extract log from request %@", dataTask.originalRequest?.url?.absoluteString ?? "")
+            return
+        }
 
         switch response.statusCode {
         case 200 ..< 300:
-            context.didSucceed(metadata: records.metadata)
+            context.didSucceed(for: topic)
         case 401, 403:
             os_log("Authentication with RADAR-base failed.")
             auth.invalidate()
-            context.mayRetry(cache: records)
+            context.mayRetry(topic: topic)
         case 400 ..< 500:
-            if let data = data, let responseBody = String(data: data, encoding: .utf8) {
-                os_log("Failed code %d: %@", type: .error, response.statusCode, responseBody)
-            } else {
-                os_log("Failed code %d", type: .error, response.statusCode)
-            }
-            context.didFail(metadata: records.metadata)
-            completionHandler(.cancel)
+            os_log("Failed code %d", type: .error, response.statusCode)
+            context.didFail(for: topic, code: Int16(response.statusCode), message: "Upload failed")
         default:
-            context.serverFailure()
+            context.serverFailure(for: topic)
         }
+        completionHandler(.cancel)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        guard let topic = KafkaSender.extractTopic(from: task.originalRequest?.url) else {
+            os_log("Cannot extract log from request %@", task.originalRequest?.url?.absoluteString ?? "")
+            return
+        }
+
         if let error = error {
             let nsError = error as NSError
             switch nsError.code {
             case NSURLErrorInternationalRoamingOff,
                  NSURLErrorCallIsActive,
                  NSURLErrorDataNotAllowed,
-                 NSURLErrorNotConnectedToInternet:
-                context.couldNotConnect(metadata: records.metadata)
+                 NSURLErrorNotConnectedToInternet,
+                 NSURLErrorNetworkConnectionLost:
+                let network: NetworkReachability.Mode = session == highPrioritySession ? [.cellular, .wifiOrEthernet] : .wifiOrEthernet
+                context.couldNotConnect(with: topic, to: network)
             default:
-                context.serverFailure()
+                context.serverFailure(for: topic)
             }
             return
         }
@@ -131,12 +138,16 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
             }
         }
     }
+
+    static func extractTopic(from url: URL?) -> String? {
+        return url?.lastPathComponent
+    }
 }
 
 protocol KafkaRequestEncoder {
     var contentType: String { get }
 
-    func encode(data cache: RecordSet, as pair: FetchedSchemaPair) -> Data?
+    func encode(data cache: RecordSetValue, as pair: FetchedSchemaPair) -> Data?
 }
 
 struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
@@ -153,7 +164,7 @@ struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
 
     let contentType = "application/vnd.kafka.avro.v2+json"
 
-    func encode(data cache: RecordSet, as pair: FetchedSchemaPair) -> Data? {
+    func encode(data cache: RecordSetValue, as pair: FetchedSchemaPair) -> Data? {
         guard let keySchema = pair.keySchema, let valueSchema = pair.valueSchema else {
             return nil
         }
@@ -161,9 +172,9 @@ struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
         let keyData: Data
         let encoder = GenericAvroEncoder(encoding: .json)
         do {
-            keyData = try encoder.encode(["projectId": auth.projectId, "userId": auth.userId, "sourceId": cache.metadata.sourceId], as: keySchema.schema)
+            keyData = try encoder.encode(["projectId": auth.projectId, "userId": auth.userId, "sourceId": cache.sourceId], as: keySchema.schema)
         } catch {
-            os_log("Cannot convert %@ key to schema %@", cache.name, keySchema.schema.description)
+            os_log("Cannot convert %@ key to schema %@", cache.topic, keySchema.schema.description)
             return nil
         }
 
@@ -177,7 +188,7 @@ struct JsonKafkaRequestEncoder: KafkaRequestEncoder {
         var first = true
         for value in cache.values {
             guard let encodedValue = try? encoder.encode(value, as: valueSchema.schema) else {
-                os_log("Cannot convert %@ value %@ to schema %@. Skipping", cache.name, value.description, valueSchema.schema.description)
+                os_log("Cannot convert %@ value %@ to schema %@. Skipping", cache.topic, value.description, valueSchema.schema.description)
                 continue
             }
             if first {

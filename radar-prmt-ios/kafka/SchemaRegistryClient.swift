@@ -26,11 +26,11 @@ class SchemaRegistryClient {
         self.queue = DispatchQueue(label: "Schema Registry", qos: .background)
     }
 
-    func requestSchemas(for topic: AvroTopic, executing block: @escaping (FetchedSchemaPair?) -> ()) {
+    func requestSchemas(for topic: String, executing block: @escaping (FetchedSchemaPair?) -> ()) {
         let queue = self.queue
         queue.async { [weak self] in
             guard let self = self else { block(nil); return }
-            let pair = self.cache[topic.name, default: FetchedSchemaPair()]
+            let pair = self.cache[topic, default: FetchedSchemaPair()]
 
             if pair.isComplete {
                 block(pair)
@@ -47,14 +47,14 @@ class SchemaRegistryClient {
         }
     }
 
-    private func makeRequest(for topic: AvroTopic, part: RecordPart, executing block: @escaping (FetchedSchemaPair?) -> ()) {
+    private func makeRequest(for topic: String, part: RecordPart, executing block: @escaping (FetchedSchemaPair?) -> ()) {
         var url = schemaUrl
-        url.appendPathComponent("\(topic.name)-\(part.rawValue)", isDirectory: true)
+        url.appendPathComponent("\(topic)-\(part.rawValue)", isDirectory: true)
         url.appendPathComponent("versions", isDirectory: true)
         url.appendPathComponent("latest", isDirectory: false)
         var request = URLRequest(url: url)
         request.addValue("application/vnd.schemaregistry.v1+json", forHTTPHeaderField: "Accept")
-        os_log("Requesting schema %@-%@", topic.name, part.rawValue)
+        os_log("Requesting schema %@-%@", topic, part.rawValue)
         URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, error) in
             guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
                 os_log("Failed to retrieve schema at %@", type: .error, url.absoluteString)
@@ -76,17 +76,17 @@ class SchemaRegistryClient {
         }).resume()
     }
 
-    private func updatePair(part: RecordPart, for topic: AvroTopic, with schemaMetadata: SchemaMetadata, reportCompleted block: @escaping (FetchedSchemaPair?) -> ()) {
+    private func updatePair(part: RecordPart, for topic: String, with schemaMetadata: SchemaMetadata, reportCompleted block: @escaping (FetchedSchemaPair?) -> ()) {
         self.queue.async { [weak self] in
             guard let self = self else { return }
-            var pair = self.cache[topic.name, default: FetchedSchemaPair()]
+            var pair = self.cache[topic, default: FetchedSchemaPair()]
             switch part {
             case .key:
                 pair.keySchema = schemaMetadata
             case .value:
                 pair.valueSchema = schemaMetadata
             }
-            self.cache[topic.name] = pair
+            self.cache[topic] = pair
             os_log("Requested schema: {key: %@, value: %@}", pair.keySchema?.schema.description ?? "??", pair.valueSchema?.schema.description ?? "??")
             if pair.isComplete {
                 block(pair)
