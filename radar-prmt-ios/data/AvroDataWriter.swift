@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import os.log
 
-class TopicWriter {
+class AvroDataWriter {
     let moc: NSManagedObjectContext
     
     init(container: NSPersistentContainer) {
@@ -51,6 +51,7 @@ class TopicWriter {
         moc.performAndWait {
             let topicRequest: NSFetchRequest<KafkaTopic> = KafkaTopic.fetchRequest()
             topicRequest.predicate = NSPredicate(format: "name == %@", topic.name)
+            topicRequest.relationshipKeyPathsForPrefetching = ["dataGroups"]
 
             do {
                 let topics = try self.moc.fetch(topicRequest)

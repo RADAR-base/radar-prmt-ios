@@ -29,7 +29,7 @@ struct AvroTopic {
 }
 
 extension AvroTopic: Equatable {
-    static func == (lhs: AvroTopic, rhs: AvroTopic) -> Bool {
+    static func ==(lhs: AvroTopic, rhs: AvroTopic) -> Bool {
         return lhs.name == rhs.name
             && lhs.valueSchema == rhs.valueSchema
     }

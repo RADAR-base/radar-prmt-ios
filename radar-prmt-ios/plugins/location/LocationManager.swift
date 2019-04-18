@@ -16,7 +16,7 @@ class LocationManager : SourceManager {
     let manager: CLLocationManager
     fileprivate var locationReceiver: LocationReceiver!
     
-    override init?(topicWriter: TopicWriter, sourceId: String) {
+    override init?(topicWriter: AvroDataWriter, sourceId: String) {
         manager = CLLocationManager()
         super.init(topicWriter: topicWriter, sourceId: sourceId)
         if let locTopic = define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") {

@@ -12,7 +12,7 @@ class SpamManager : SourceManager {
     let queue: DispatchQueue
     var spamTopic: AvroTopicCacheContext!
 
-    override init?(topicWriter: TopicWriter, sourceId: String) {
+    override init?(topicWriter: AvroDataWriter, sourceId: String) {
         queue = DispatchQueue(label: "spammer", qos: .userInitiated)
         super.init(topicWriter: topicWriter, sourceId: sourceId)
         if let locTopic = define(topic: "spam", valueSchemaPath: "passive/phone/phone_acceleration") {

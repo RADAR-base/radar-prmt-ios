@@ -17,6 +17,8 @@ extension RecordSetUpload {
         return NSFetchRequest<RecordSetUpload>(entityName: "RecordSetUpload")
     }
 
+    @NSManaged public var failureCount: Int16
+    @NSManaged public var file: URL?
     @NSManaged public var firstFailure: Date?
     @NSManaged public var modifiedAt: TimeInterval
     @NSManaged public var retryAt: TimeInterval

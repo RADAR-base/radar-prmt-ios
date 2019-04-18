@@ -12,8 +12,8 @@ import CoreData
 class DataController {
     // MARK: - Core Data stack
     private let persistentContainer: NSPersistentContainer
-    let writer: TopicWriter
-    let reader: TopicReader
+    let writer: AvroDataWriter
+    let reader: AvroDataExtractor
 
     init() {
         persistentContainer = NSPersistentContainer(name: "radar_prmt_ios")
@@ -33,8 +33,8 @@ class DataController {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }
         })
-        self.writer = TopicWriter(container: persistentContainer)
-        self.reader = TopicReader(container: persistentContainer)
+        self.writer = AvroDataWriter(container: persistentContainer)
+        self.reader = AvroDataExtractor(container: persistentContainer)
     }
 
     // MARK: - Core Data Saving support

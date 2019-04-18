@@ -9,8 +9,10 @@
 /* Begin PBXBuildFile section */
 		A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
 		A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
+		A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB32268568D003B6134 /* RequestMedium.swift */; };
+		A9296AB622685704003B6134 /* UploadContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB522685704003B6134 /* UploadContext.swift */; };
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
-		A98D39BA225F349B00385D2C /* TopicReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* TopicReader.swift */; };
+		A98D39BA225F349B00385D2C /* AvroDataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* AvroDataExtractor.swift */; };
 		A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */; };
 		A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B26F21BEF1AB0029B43B /* AppDelegate.swift */; };
 		A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B27121BEF1AB0029B43B /* ViewController.swift */; };
@@ -19,7 +21,7 @@
 		A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */; };
 		A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B28721BEF1AC0029B43B /* radar_prmt_iosTests.swift */; };
 		A997B29321BEF1AC0029B43B /* radar_prmt_iosUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B29221BEF1AC0029B43B /* radar_prmt_iosUITests.swift */; };
-		A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* TopicWriter.swift */; };
+		A997B2A521BEFFF70029B43B /* AvroDataWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B2A421BEFFF70029B43B /* AvroDataWriter.swift */; };
 		A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
 		A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
 		A99AAE5C225F390D005B57DA /* KafkaTopic+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAE50225F390D005B57DA /* KafkaTopic+CoreDataClass.swift */; };
@@ -40,10 +42,17 @@
 		A99AAE87225F55B2005B57DA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2AB21BF9FBD0029B43B /* Foundation.framework */; };
 		A99AAE88225F55B5005B57DA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
 		A99AAE89225F55B5005B57DA /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A997B2A921BF9FB60029B43B /* CoreData.framework */; };
-		A9BB00E821F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
-		A9BB00E921F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
-		A9BB00EA21F62BBB0012077F /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; };
-		A9BB00EB21F62BF60012077F /* BlueSteel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9BB00E721F62BBB0012077F /* BlueSteel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99AAEAF22646460005B57DA /* SchemaRegistryClientTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEAE22646460005B57DA /* SchemaRegistryClientTest.swift */; };
+		A99AAEB12264648B005B57DA /* KafkaSenderTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEB02264648B005B57DA /* KafkaSenderTest.swift */; };
+		A99AAEB32264652E005B57DA /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99AAEB22264652E005B57DA /* BlueSteel.framework */; };
+		A99AAEB42264654A005B57DA /* BlueSteel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99AAEB22264652E005B57DA /* BlueSteel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99AAEB522646565005B57DA /* BlueSteel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99AAEB22264652E005B57DA /* BlueSteel.framework */; };
+		A99AAEB922646BAB005B57DA /* MockDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEB822646BAB005B57DA /* MockDataController.swift */; };
+		A99AAEBB22646E81005B57DA /* MockSourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEBA22646E81005B57DA /* MockSourceManager.swift */; };
+		A99AAEBD2264741D005B57DA /* MockAuthorizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEBC2264741D005B57DA /* MockAuthorizer.swift */; };
+		A99AAEC12264C95B005B57DA /* Swifter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99AAEBF2264C93D005B57DA /* Swifter.framework */; };
+		A99AAEC22264C965005B57DA /* Swifter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A99AAEBF2264C93D005B57DA /* Swifter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99AAEC42264CF9B005B57DA /* MockKafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEC32264CF9B005B57DA /* MockKafkaSendContext.swift */; };
 		A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */; };
 		A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807121DE60C90067FA77 /* LocationManager.swift */; };
 		A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
@@ -76,13 +85,23 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		A99AAEB6226467B2005B57DA /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A99AAEC22264C965005B57DA /* Swifter.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A9F9716221C0F5DB0003FF5F /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A9BB00EB21F62BF60012077F /* BlueSteel.framework in Embed Frameworks */,
+				A99AAEB42264654A005B57DA /* BlueSteel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,6 +111,8 @@
 /* Begin PBXFileReference section */
 		A920C3412202F3F8000F6337 /* NetworkReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkReachability.swift; sourceTree = "<group>"; };
 		A920C3452203429F000F6337 /* KafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafkaSendContext.swift; sourceTree = "<group>"; };
+		A9296AB32268568D003B6134 /* RequestMedium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestMedium.swift; sourceTree = "<group>"; };
+		A9296AB522685704003B6134 /* UploadContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadContext.swift; sourceTree = "<group>"; };
 		A9350E5D21CC1DEF004BECCA /* OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth.swift; sourceTree = "<group>"; };
 		A98D39BC225F34E700385D2C /* radar_prmt_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = radar_prmt_ios.xcdatamodel; sourceTree = "<group>"; };
 		A997B26C21BEF1AB0029B43B /* radar-prmt-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "radar-prmt-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -107,7 +128,7 @@
 		A997B28E21BEF1AC0029B43B /* radar-prmt-iosUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "radar-prmt-iosUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B29221BEF1AC0029B43B /* radar_prmt_iosUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = radar_prmt_iosUITests.swift; sourceTree = "<group>"; };
 		A997B29421BEF1AC0029B43B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A997B2A421BEFFF70029B43B /* TopicWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopicWriter.swift; sourceTree = "<group>"; };
+		A997B2A421BEFFF70029B43B /* AvroDataWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvroDataWriter.swift; sourceTree = "<group>"; };
 		A997B2A921BF9FB60029B43B /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		A997B2AB21BF9FBD0029B43B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		A99AAE50225F390D005B57DA /* KafkaTopic+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "KafkaTopic+CoreDataClass.swift"; sourceTree = "<group>"; };
@@ -122,8 +143,15 @@
 		A99AAE59225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetGroup+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A99AAE5A225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RecordSetUpload+CoreDataClass.swift"; sourceTree = "<group>"; };
 		A99AAE5B225F390D005B57DA /* UploadPart+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UploadPart+CoreDataProperties.swift"; sourceTree = "<group>"; };
-		A9B4A32B21E7575C00C650E8 /* TopicReader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = TopicReader.swift; sourceTree = "<group>"; };
-		A9BB00E721F62BBB0012077F /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Carthage/Build/iOS/BlueSteel.framework; sourceTree = "<group>"; };
+		A99AAEAE22646460005B57DA /* SchemaRegistryClientTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SchemaRegistryClientTest.swift; sourceTree = "<group>"; };
+		A99AAEB02264648B005B57DA /* KafkaSenderTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KafkaSenderTest.swift; sourceTree = "<group>"; };
+		A99AAEB22264652E005B57DA /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Frameworks/BlueSteel.framework; sourceTree = "<group>"; };
+		A99AAEB822646BAB005B57DA /* MockDataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataController.swift; sourceTree = "<group>"; };
+		A99AAEBA22646E81005B57DA /* MockSourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSourceManager.swift; sourceTree = "<group>"; };
+		A99AAEBC2264741D005B57DA /* MockAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthorizer.swift; sourceTree = "<group>"; };
+		A99AAEBF2264C93D005B57DA /* Swifter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Swifter.framework; path = Frameworks/Swifter.framework; sourceTree = "<group>"; };
+		A99AAEC32264CF9B005B57DA /* MockKafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockKafkaSendContext.swift; sourceTree = "<group>"; };
+		A9B4A32B21E7575C00C650E8 /* AvroDataExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AvroDataExtractor.swift; sourceTree = "<group>"; };
 		A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A9CC807121DE60C90067FA77 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		A9CC807421DE63B40067FA77 /* AvroTopic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvroTopic.swift; sourceTree = "<group>"; };
@@ -143,7 +171,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A9BB00E821F62BBB0012077F /* BlueSteel.framework in Frameworks */,
+				A99AAEB522646565005B57DA /* BlueSteel.framework in Frameworks */,
 				A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */,
 				A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */,
 				A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */,
@@ -154,10 +182,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A99AAEC12264C95B005B57DA /* Swifter.framework in Frameworks */,
 				A99AAE84225F55AD005B57DA /* CoreLocation.framework in Frameworks */,
+				A99AAEB32264652E005B57DA /* BlueSteel.framework in Frameworks */,
 				A99AAE88225F55B5005B57DA /* CoreData.framework in Frameworks */,
 				A99AAE86225F55B2005B57DA /* Foundation.framework in Frameworks */,
-				A9BB00E921F62BBB0012077F /* BlueSteel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -168,7 +197,6 @@
 				A99AAE85225F55AD005B57DA /* CoreLocation.framework in Frameworks */,
 				A99AAE89225F55B5005B57DA /* CoreData.framework in Frameworks */,
 				A99AAE87225F55B2005B57DA /* Foundation.framework in Frameworks */,
-				A9BB00EA21F62BBB0012077F /* BlueSteel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -180,8 +208,8 @@
 			children = (
 				A99AAE4F225F3840005B57DA /* generated */,
 				A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */,
-				A9B4A32B21E7575C00C650E8 /* TopicReader.swift */,
-				A997B2A421BEFFF70029B43B /* TopicWriter.swift */,
+				A9B4A32B21E7575C00C650E8 /* AvroDataExtractor.swift */,
+				A997B2A421BEFFF70029B43B /* AvroDataWriter.swift */,
 				A9D9281421F8BFB9007BB030 /* DataController.swift */,
 			);
 			path = data;
@@ -239,7 +267,10 @@
 		A997B28621BEF1AC0029B43B /* radar-prmt-iosTests */ = {
 			isa = PBXGroup;
 			children = (
+				A99AAEBE22647424005B57DA /* mock */,
+				A99AAEB02264648B005B57DA /* KafkaSenderTest.swift */,
 				A997B28721BEF1AC0029B43B /* radar_prmt_iosTests.swift */,
+				A99AAEAE22646460005B57DA /* SchemaRegistryClientTest.swift */,
 				A997B28921BEF1AC0029B43B /* Info.plist */,
 			);
 			path = "radar-prmt-iosTests";
@@ -257,7 +288,8 @@
 		A997B2A821BF9FB60029B43B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A9BB00E721F62BBB0012077F /* BlueSteel.framework */,
+				A99AAEBF2264C93D005B57DA /* Swifter.framework */,
+				A99AAEB22264652E005B57DA /* BlueSteel.framework */,
 				A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */,
 				A997B2AB21BF9FBD0029B43B /* Foundation.framework */,
 				A997B2A921BF9FB60029B43B /* CoreData.framework */,
@@ -274,6 +306,8 @@
 				A9D9281C21F8C4E0007BB030 /* KafkaController.swift */,
 				A920C3412202F3F8000F6337 /* NetworkReachability.swift */,
 				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
+				A9296AB32268568D003B6134 /* RequestMedium.swift */,
+				A9296AB522685704003B6134 /* UploadContext.swift */,
 			);
 			path = kafka;
 			sourceTree = "<group>";
@@ -295,6 +329,17 @@
 				A99AAE5B225F390D005B57DA /* UploadPart+CoreDataProperties.swift */,
 			);
 			path = generated;
+			sourceTree = "<group>";
+		};
+		A99AAEBE22647424005B57DA /* mock */ = {
+			isa = PBXGroup;
+			children = (
+				A99AAEB822646BAB005B57DA /* MockDataController.swift */,
+				A99AAEBA22646E81005B57DA /* MockSourceManager.swift */,
+				A99AAEBC2264741D005B57DA /* MockAuthorizer.swift */,
+				A99AAEC32264CF9B005B57DA /* MockKafkaSendContext.swift */,
+			);
+			path = mock;
 			sourceTree = "<group>";
 		};
 		A9CC806F21DE609D0067FA77 /* plugins */ = {
@@ -350,6 +395,8 @@
 				A997B26921BEF1AB0029B43B /* Frameworks */,
 				A997B26A21BEF1AB0029B43B /* Resources */,
 				A9F9716221C0F5DB0003FF5F /* Embed Frameworks */,
+				A99AAE96226462BA005B57DA /* ShellScript */,
+				A99AAE9722646303005B57DA /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -367,6 +414,7 @@
 				A997B27F21BEF1AC0029B43B /* Sources */,
 				A997B28021BEF1AC0029B43B /* Frameworks */,
 				A997B28121BEF1AC0029B43B /* Resources */,
+				A99AAEB6226467B2005B57DA /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -475,6 +523,45 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		A99AAE96226462BA005B57DA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Frameworks/BlueSteel.framework",
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/BlueSteel.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
+		};
+		A99AAE9722646303005B57DA /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage outdated --xcode-warnings\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		A997B26821BEF1AB0029B43B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -488,7 +575,7 @@
 				A99AAE65225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift in Sources */,
 				A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */,
 				A9D9281D21F8C4E0007BB030 /* KafkaController.swift in Sources */,
-				A997B2A521BEFFF70029B43B /* TopicWriter.swift in Sources */,
+				A997B2A521BEFFF70029B43B /* AvroDataWriter.swift in Sources */,
 				A99AAE61225F390D005B57DA /* DataContainer+CoreDataClass.swift in Sources */,
 				A99AAE63225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift in Sources */,
 				A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */,
@@ -501,8 +588,10 @@
 				A99AAE66225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift in Sources */,
 				A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */,
 				A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */,
 				A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */,
-				A98D39BA225F349B00385D2C /* TopicReader.swift in Sources */,
+				A98D39BA225F349B00385D2C /* AvroDataExtractor.swift in Sources */,
+				A9296AB622685704003B6134 /* UploadContext.swift in Sources */,
 				A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */,
 				A9D9281121F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
 				A99AAE64225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift in Sources */,
@@ -518,6 +607,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */,
+				A99AAEB922646BAB005B57DA /* MockDataController.swift in Sources */,
+				A99AAEBD2264741D005B57DA /* MockAuthorizer.swift in Sources */,
+				A99AAEB12264648B005B57DA /* KafkaSenderTest.swift in Sources */,
+				A99AAEAF22646460005B57DA /* SchemaRegistryClientTest.swift in Sources */,
+				A99AAEC42264CF9B005B57DA /* MockKafkaSendContext.swift in Sources */,
+				A99AAEBB22646E81005B57DA /* MockSourceManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -690,6 +785,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/lib",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -714,6 +811,8 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/lib",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -738,6 +837,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "radar-prmt-iosTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -763,6 +863,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 					"$(PROJECT_DIR)",
+					"$(PROJECT_DIR)/Frameworks",
 				);
 				INFOPLIST_FILE = "radar-prmt-iosTests/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = (

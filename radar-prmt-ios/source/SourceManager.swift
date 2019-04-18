@@ -12,13 +12,13 @@ import CoreData
 import os.log
 
 class SourceManager {
-    let topicWriter: TopicWriter
+    let topicWriter: AvroDataWriter
     var sourceId: String
     let encoder: AvroEncoder
     private let writeQueue: DispatchQueue
     private var dataCaches: [AvroTopicCacheContext]
     
-    init?(topicWriter: TopicWriter, sourceId: String) {
+    init?(topicWriter: AvroDataWriter, sourceId: String) {
         self.topicWriter = topicWriter
         self.sourceId = sourceId
         writeQueue = DispatchQueue(label: "prmt_core_data", qos: .background)
@@ -81,11 +81,11 @@ class AvroTopicCacheContext {
     let dataGroup: NSManagedObjectID
     private let writeQueue: DispatchQueue
     private let encoder: AvroEncoder
-    private let topicWriter: TopicWriter
+    private let topicWriter: AvroDataWriter
     private var data: Data
     private var storeFuture: DispatchWorkItem?
 
-    init(topic: AvroTopic, dataGroup: NSManagedObjectID, queue: DispatchQueue, encoder: AvroEncoder, topicWriter: TopicWriter) {
+    init(topic: AvroTopic, dataGroup: NSManagedObjectID, queue: DispatchQueue, encoder: AvroEncoder, topicWriter: AvroDataWriter) {
         self.topic = topic
         self.encoder = encoder
         self.data = Data()
