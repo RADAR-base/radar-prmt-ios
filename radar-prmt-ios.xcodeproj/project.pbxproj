@@ -7,15 +7,49 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A90EDF982276E5EA00DC8517 /* Gzip.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A90EDF972276E5EA00DC8517 /* Gzip.framework */; };
+		A90EDF992276E5F100DC8517 /* Gzip.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A90EDF972276E5EA00DC8517 /* Gzip.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A90EDF9B2276E6B200DC8517 /* DeflateRequestMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90EDF9A2276E6B200DC8517 /* DeflateRequestMedium.swift */; };
+		A90EDF9D2276EBC300DC8517 /* DeflateMediumTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90EDF9C2276EBC300DC8517 /* DeflateMediumTest.swift */; };
 		A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3412202F3F8000F6337 /* NetworkReachability.swift */; };
 		A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A920C3452203429F000F6337 /* KafkaSendContext.swift */; };
+		A9245B32228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png in Resources */ = {isa = PBXBuildFile; fileRef = A9245B31228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png */; };
+		A9245B34228582CC0089B069 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9245B33228582CC0089B069 /* LoginViewController.swift */; };
+		A9245B362285855C0089B069 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9245B352285855C0089B069 /* QRCodeViewController.swift */; };
+		A9245B3822859E100089B069 /* Valet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3722859E100089B069 /* Valet.framework */; };
+		A9245B3A22859E600089B069 /* MPOAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9245B3922859E600089B069 /* MPOAuth.swift */; };
+		A9245B3C2285A71C0089B069 /* JWTDecode.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3B2285A71B0089B069 /* JWTDecode.framework */; };
+		A9245B3D2285CCAF0089B069 /* JWTDecode.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3B2285A71B0089B069 /* JWTDecode.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A9245B3E2285CCAF0089B069 /* Valet.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3722859E100089B069 /* Valet.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A9245B402285CD1D0089B069 /* RxRelay.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3F2285CD1D0089B069 /* RxRelay.framework */; };
+		A9245B412285CD260089B069 /* RxRelay.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9245B3F2285CD1D0089B069 /* RxRelay.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB32268568D003B6134 /* RequestMedium.swift */; };
 		A9296AB622685704003B6134 /* UploadContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB522685704003B6134 /* UploadContext.swift */; };
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
+		A94E062522A521CE009E0692 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E062422A521CE009E0692 /* config.plist */; };
+		A94E063222A52814009E0692 /* FirebaseRemoteConfig.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062622A52814009E0692 /* FirebaseRemoteConfig.framework */; };
+		A94E063322A52814009E0692 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062722A52814009E0692 /* nanopb.framework */; };
+		A94E063422A52814009E0692 /* FirebaseABTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062822A52814009E0692 /* FirebaseABTesting.framework */; };
+		A94E063522A52814009E0692 /* FirebaseInstanceID.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062922A52814009E0692 /* FirebaseInstanceID.framework */; };
+		A94E063622A52814009E0692 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062A22A52814009E0692 /* GoogleUtilities.framework */; };
+		A94E063722A52814009E0692 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062B22A52814009E0692 /* Protobuf.framework */; };
+		A94E063822A52814009E0692 /* FIRAnalyticsConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062C22A52814009E0692 /* FIRAnalyticsConnector.framework */; };
+		A94E063A22A52814009E0692 /* FirebaseCoreDiagnostics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062E22A52814009E0692 /* FirebaseCoreDiagnostics.framework */; };
+		A94E063B22A52814009E0692 /* FirebaseCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062F22A52814009E0692 /* FirebaseCore.framework */; };
+		A94E063C22A52814009E0692 /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E063022A52814009E0692 /* GoogleAppMeasurement.framework */; };
+		A94E063D22A52814009E0692 /* FirebaseAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E063122A52814009E0692 /* FirebaseAnalytics.framework */; };
+		A94E064C22A530C6009E0692 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E064B22A530C6009E0692 /* GoogleService-Info.plist */; };
+		A94E064D22A530FE009E0692 /* Firebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E062D22A52814009E0692 /* Firebase.framework */; };
+		A94E064F22A55CE3009E0692 /* Valet+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94E064E22A55CE3009E0692 /* Valet+Codable.swift */; };
+		A974A8632296ECD000795ED8 /* RadarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974A8622296ECD000795ED8 /* RadarConfiguration.swift */; };
+		A974A8652296EDD400795ED8 /* FirebaseRadarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974A8642296EDD400795ED8 /* FirebaseRadarConfiguration.swift */; };
+		A97DE02E228975250069DFE3 /* QRPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DE02D228975250069DFE3 /* QRPreviewView.swift */; };
+		A97DE03022899D050069DFE3 /* MPTokenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DE02F22899D050069DFE3 /* MPTokenViewController.swift */; };
+		A97DE0322289BA3D0069DFE3 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A97DE0312289BA3D0069DFE3 /* MainViewController.swift */; };
 		A98D39BA225F349B00385D2C /* AvroDataExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4A32B21E7575C00C650E8 /* AvroDataExtractor.swift */; };
 		A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */; };
 		A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B26F21BEF1AB0029B43B /* AppDelegate.swift */; };
-		A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B27121BEF1AB0029B43B /* ViewController.swift */; };
+		A997B27221BEF1AB0029B43B /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A997B27121BEF1AB0029B43B /* LoadingViewController.swift */; };
 		A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27321BEF1AB0029B43B /* Main.storyboard */; };
 		A997B27A21BEF1AC0029B43B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A997B27921BEF1AC0029B43B /* Assets.xcassets */; };
 		A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */; };
@@ -53,6 +87,21 @@
 		A99AAEC12264C95B005B57DA /* Swifter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99AAEBF2264C93D005B57DA /* Swifter.framework */; };
 		A99AAEC22264C965005B57DA /* Swifter.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A99AAEBF2264C93D005B57DA /* Swifter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99AAEC42264CF9B005B57DA /* MockKafkaSendContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99AAEC32264CF9B005B57DA /* MockKafkaSendContext.swift */; };
+		A99C1240226F0E320042DF60 /* RxSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99C123F226F0E320042DF60 /* RxSwift.framework */; };
+		A99C1242226F136E0042DF60 /* RxCocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99C1241226F136E0042DF60 /* RxCocoa.framework */; };
+		A99C124422719D400042DF60 /* RxSwiftExt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99C124322719D400042DF60 /* RxSwiftExt.framework */; };
+		A99C12452271BEC00042DF60 /* RxSwiftExt.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99C124322719D400042DF60 /* RxSwiftExt.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99C12462271BEC00042DF60 /* RxCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99C1241226F136E0042DF60 /* RxCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99C12472271BEC00042DF60 /* RxSwift.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99C123F226F0E320042DF60 /* RxSwift.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A99C124B2271F6EC0042DF60 /* GzipRequestMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99C124A2271F6EC0042DF60 /* GzipRequestMedium.swift */; };
+		A99C12512271F8B20042DF60 /* GzipMediumTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99C12502271F8B20042DF60 /* GzipMediumTest.swift */; };
+		A9B4363D22B131A300BC3C2C /* PrivacyPolicyViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4363C22B131A300BC3C2C /* PrivacyPolicyViewController.swift */; };
+		A9B4363F22B1389900BC3C2C /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9B4363E22B1389800BC3C2C /* SafariServices.framework */; };
+		A9B4364122B13D7200BC3C2C /* AuthController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4364022B13D7200BC3C2C /* AuthController.swift */; };
+		A9B4364322B14B3200BC3C2C /* RxAppState.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9B4364222B14B3200BC3C2C /* RxAppState.framework */; };
+		A9B4364422B14B4800BC3C2C /* RxAppState.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9B4364222B14B3200BC3C2C /* RxAppState.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A9B4364822B27E6300BC3C2C /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4364722B27E6300BC3C2C /* LocationProvider.swift */; };
+		A9B4364A22B2833100BC3C2C /* SpamProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9B4364922B2833100BC3C2C /* SpamProvider.swift */; };
 		A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */; };
 		A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807121DE60C90067FA77 /* LocationManager.swift */; };
 		A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CC807421DE63B40067FA77 /* AvroTopic.swift */; };
@@ -101,6 +150,14 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A9B4364422B14B4800BC3C2C /* RxAppState.framework in Embed Frameworks */,
+				A9245B412285CD260089B069 /* RxRelay.framework in Embed Frameworks */,
+				A9245B3D2285CCAF0089B069 /* JWTDecode.framework in Embed Frameworks */,
+				A9245B3E2285CCAF0089B069 /* Valet.framework in Embed Frameworks */,
+				A90EDF992276E5F100DC8517 /* Gzip.framework in Embed Frameworks */,
+				A99C12452271BEC00042DF60 /* RxSwiftExt.framework in Embed Frameworks */,
+				A99C12462271BEC00042DF60 /* RxCocoa.framework in Embed Frameworks */,
+				A99C12472271BEC00042DF60 /* RxSwift.framework in Embed Frameworks */,
 				A99AAEB42264654A005B57DA /* BlueSteel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -109,15 +166,45 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		A90EDF972276E5EA00DC8517 /* Gzip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Gzip.framework; path = Frameworks/Gzip.framework; sourceTree = "<group>"; };
+		A90EDF9A2276E6B200DC8517 /* DeflateRequestMedium.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeflateRequestMedium.swift; sourceTree = "<group>"; };
+		A90EDF9C2276EBC300DC8517 /* DeflateMediumTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeflateMediumTest.swift; sourceTree = "<group>"; };
 		A920C3412202F3F8000F6337 /* NetworkReachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkReachability.swift; sourceTree = "<group>"; };
 		A920C3452203429F000F6337 /* KafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KafkaSendContext.swift; sourceTree = "<group>"; };
+		A9245B31228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = QR_code_for_mobile_English_Wikipedia.svg.png; sourceTree = "<group>"; };
+		A9245B33228582CC0089B069 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		A9245B352285855C0089B069 /* QRCodeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeViewController.swift; sourceTree = "<group>"; };
+		A9245B3722859E100089B069 /* Valet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Valet.framework; path = Frameworks/Valet.framework; sourceTree = "<group>"; };
+		A9245B3922859E600089B069 /* MPOAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPOAuth.swift; sourceTree = "<group>"; };
+		A9245B3B2285A71B0089B069 /* JWTDecode.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JWTDecode.framework; path = Frameworks/JWTDecode.framework; sourceTree = "<group>"; };
+		A9245B3F2285CD1D0089B069 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Frameworks/RxRelay.framework; sourceTree = "<group>"; };
 		A9296AB32268568D003B6134 /* RequestMedium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestMedium.swift; sourceTree = "<group>"; };
 		A9296AB522685704003B6134 /* UploadContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadContext.swift; sourceTree = "<group>"; };
 		A9350E5D21CC1DEF004BECCA /* OAuth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OAuth.swift; sourceTree = "<group>"; };
+		A94E062422A521CE009E0692 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
+		A94E062622A52814009E0692 /* FirebaseRemoteConfig.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseRemoteConfig.framework; path = Frameworks/FirebaseRemoteConfig.framework; sourceTree = "<group>"; };
+		A94E062722A52814009E0692 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nanopb.framework; path = Frameworks/nanopb.framework; sourceTree = "<group>"; };
+		A94E062822A52814009E0692 /* FirebaseABTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseABTesting.framework; path = Frameworks/FirebaseABTesting.framework; sourceTree = "<group>"; };
+		A94E062922A52814009E0692 /* FirebaseInstanceID.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseInstanceID.framework; path = Frameworks/FirebaseInstanceID.framework; sourceTree = "<group>"; };
+		A94E062A22A52814009E0692 /* GoogleUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleUtilities.framework; path = Frameworks/GoogleUtilities.framework; sourceTree = "<group>"; };
+		A94E062B22A52814009E0692 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Protobuf.framework; path = Frameworks/Protobuf.framework; sourceTree = "<group>"; };
+		A94E062C22A52814009E0692 /* FIRAnalyticsConnector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FIRAnalyticsConnector.framework; path = Frameworks/FIRAnalyticsConnector.framework; sourceTree = "<group>"; };
+		A94E062D22A52814009E0692 /* Firebase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Firebase.framework; path = Frameworks/Firebase.framework; sourceTree = "<group>"; };
+		A94E062E22A52814009E0692 /* FirebaseCoreDiagnostics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCoreDiagnostics.framework; path = Frameworks/FirebaseCoreDiagnostics.framework; sourceTree = "<group>"; };
+		A94E062F22A52814009E0692 /* FirebaseCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCore.framework; path = Frameworks/FirebaseCore.framework; sourceTree = "<group>"; };
+		A94E063022A52814009E0692 /* GoogleAppMeasurement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleAppMeasurement.framework; path = Frameworks/GoogleAppMeasurement.framework; sourceTree = "<group>"; };
+		A94E063122A52814009E0692 /* FirebaseAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseAnalytics.framework; path = Frameworks/FirebaseAnalytics.framework; sourceTree = "<group>"; };
+		A94E064B22A530C6009E0692 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		A94E064E22A55CE3009E0692 /* Valet+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Valet+Codable.swift"; sourceTree = "<group>"; };
+		A974A8622296ECD000795ED8 /* RadarConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarConfiguration.swift; sourceTree = "<group>"; };
+		A974A8642296EDD400795ED8 /* FirebaseRadarConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseRadarConfiguration.swift; sourceTree = "<group>"; };
+		A97DE02D228975250069DFE3 /* QRPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRPreviewView.swift; sourceTree = "<group>"; };
+		A97DE02F22899D050069DFE3 /* MPTokenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MPTokenViewController.swift; sourceTree = "<group>"; };
+		A97DE0312289BA3D0069DFE3 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		A98D39BC225F34E700385D2C /* radar_prmt_ios.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = radar_prmt_ios.xcdatamodel; sourceTree = "<group>"; };
 		A997B26C21BEF1AB0029B43B /* radar-prmt-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "radar-prmt-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A997B26F21BEF1AB0029B43B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		A997B27121BEF1AB0029B43B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A997B27121BEF1AB0029B43B /* LoadingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingViewController.swift; sourceTree = "<group>"; };
 		A997B27421BEF1AB0029B43B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		A997B27921BEF1AC0029B43B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A997B27C21BEF1AC0029B43B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -151,6 +238,17 @@
 		A99AAEBC2264741D005B57DA /* MockAuthorizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAuthorizer.swift; sourceTree = "<group>"; };
 		A99AAEBF2264C93D005B57DA /* Swifter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Swifter.framework; path = Frameworks/Swifter.framework; sourceTree = "<group>"; };
 		A99AAEC32264CF9B005B57DA /* MockKafkaSendContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockKafkaSendContext.swift; sourceTree = "<group>"; };
+		A99C123F226F0E320042DF60 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Frameworks/RxSwift.framework; sourceTree = "<group>"; };
+		A99C1241226F136E0042DF60 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Frameworks/RxCocoa.framework; sourceTree = "<group>"; };
+		A99C124322719D400042DF60 /* RxSwiftExt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwiftExt.framework; path = Frameworks/RxSwiftExt.framework; sourceTree = "<group>"; };
+		A99C124A2271F6EC0042DF60 /* GzipRequestMedium.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GzipRequestMedium.swift; sourceTree = "<group>"; };
+		A99C12502271F8B20042DF60 /* GzipMediumTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GzipMediumTest.swift; sourceTree = "<group>"; };
+		A9B4363C22B131A300BC3C2C /* PrivacyPolicyViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyViewController.swift; sourceTree = "<group>"; };
+		A9B4363E22B1389800BC3C2C /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
+		A9B4364022B13D7200BC3C2C /* AuthController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthController.swift; sourceTree = "<group>"; };
+		A9B4364222B14B3200BC3C2C /* RxAppState.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAppState.framework; path = Frameworks/RxAppState.framework; sourceTree = "<group>"; };
+		A9B4364722B27E6300BC3C2C /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		A9B4364922B2833100BC3C2C /* SpamProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpamProvider.swift; sourceTree = "<group>"; };
 		A9B4A32B21E7575C00C650E8 /* AvroDataExtractor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = AvroDataExtractor.swift; sourceTree = "<group>"; };
 		A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		A9CC807121DE60C90067FA77 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
@@ -171,10 +269,31 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A9B4363F22B1389900BC3C2C /* SafariServices.framework in Frameworks */,
+				A9B4364322B14B3200BC3C2C /* RxAppState.framework in Frameworks */,
+				A94E064D22A530FE009E0692 /* Firebase.framework in Frameworks */,
+				A90EDF982276E5EA00DC8517 /* Gzip.framework in Frameworks */,
+				A99C1242226F136E0042DF60 /* RxCocoa.framework in Frameworks */,
+				A94E063C22A52814009E0692 /* GoogleAppMeasurement.framework in Frameworks */,
+				A9245B3C2285A71C0089B069 /* JWTDecode.framework in Frameworks */,
+				A99C1240226F0E320042DF60 /* RxSwift.framework in Frameworks */,
+				A94E063322A52814009E0692 /* nanopb.framework in Frameworks */,
 				A99AAEB522646565005B57DA /* BlueSteel.framework in Frameworks */,
+				A99C124422719D400042DF60 /* RxSwiftExt.framework in Frameworks */,
+				A94E063722A52814009E0692 /* Protobuf.framework in Frameworks */,
+				A94E063522A52814009E0692 /* FirebaseInstanceID.framework in Frameworks */,
 				A9CC806E21DE5F6B0067FA77 /* CoreLocation.framework in Frameworks */,
 				A997B2AC21BF9FBD0029B43B /* Foundation.framework in Frameworks */,
+				A94E063B22A52814009E0692 /* FirebaseCore.framework in Frameworks */,
+				A94E063422A52814009E0692 /* FirebaseABTesting.framework in Frameworks */,
+				A94E063D22A52814009E0692 /* FirebaseAnalytics.framework in Frameworks */,
 				A997B2AA21BF9FB60029B43B /* CoreData.framework in Frameworks */,
+				A94E063822A52814009E0692 /* FIRAnalyticsConnector.framework in Frameworks */,
+				A94E063222A52814009E0692 /* FirebaseRemoteConfig.framework in Frameworks */,
+				A9245B3822859E100089B069 /* Valet.framework in Frameworks */,
+				A94E063A22A52814009E0692 /* FirebaseCoreDiagnostics.framework in Frameworks */,
+				A94E063622A52814009E0692 /* GoogleUtilities.framework in Frameworks */,
+				A9245B402285CD1D0089B069 /* RxRelay.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -219,8 +338,25 @@
 			isa = PBXGroup;
 			children = (
 				A9350E5D21CC1DEF004BECCA /* OAuth.swift */,
+				A9245B33228582CC0089B069 /* LoginViewController.swift */,
+				A9245B352285855C0089B069 /* QRCodeViewController.swift */,
+				A9245B3922859E600089B069 /* MPOAuth.swift */,
+				A97DE02D228975250069DFE3 /* QRPreviewView.swift */,
+				A97DE02F22899D050069DFE3 /* MPTokenViewController.swift */,
+				A9B4363C22B131A300BC3C2C /* PrivacyPolicyViewController.swift */,
+				A9B4364022B13D7200BC3C2C /* AuthController.swift */,
 			);
 			path = auth;
+			sourceTree = "<group>";
+		};
+		A974A8612296ECC200795ED8 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				A974A8622296ECD000795ED8 /* RadarConfiguration.swift */,
+				A974A8642296EDD400795ED8 /* FirebaseRadarConfiguration.swift */,
+				A94E064E22A55CE3009E0692 /* Valet+Codable.swift */,
+			);
+			path = config;
 			sourceTree = "<group>";
 		};
 		A997B26321BEF1AB0029B43B = {
@@ -247,6 +383,7 @@
 		A997B26E21BEF1AB0029B43B /* radar-prmt-ios */ = {
 			isa = PBXGroup;
 			children = (
+				A974A8612296ECC200795ED8 /* config */,
 				A9CC806F21DE609D0067FA77 /* plugins */,
 				A9350E5C21CC1DDC004BECCA /* auth */,
 				A907214721C1A1E900C25849 /* data */,
@@ -254,12 +391,16 @@
 				A997B2B021BFA57D0029B43B /* kafka */,
 				A9D9282021F9D4F9007BB030 /* util */,
 				A997B26F21BEF1AB0029B43B /* AppDelegate.swift */,
-				A997B27121BEF1AB0029B43B /* ViewController.swift */,
+				A997B27121BEF1AB0029B43B /* LoadingViewController.swift */,
 				A997B27321BEF1AB0029B43B /* Main.storyboard */,
 				A997B27921BEF1AC0029B43B /* Assets.xcassets */,
+				A9245B31228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png */,
 				A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */,
 				A997B27E21BEF1AC0029B43B /* Info.plist */,
+				A94E064B22A530C6009E0692 /* GoogleService-Info.plist */,
 				A9F9715D21C040370003FF5F /* radar-schemas.bundle */,
+				A97DE0312289BA3D0069DFE3 /* MainViewController.swift */,
+				A94E062422A521CE009E0692 /* config.plist */,
 			);
 			path = "radar-prmt-ios";
 			sourceTree = "<group>";
@@ -267,6 +408,7 @@
 		A997B28621BEF1AC0029B43B /* radar-prmt-iosTests */ = {
 			isa = PBXGroup;
 			children = (
+				A99C124F2271F8A00042DF60 /* kafka */,
 				A99AAEBE22647424005B57DA /* mock */,
 				A99AAEB02264648B005B57DA /* KafkaSenderTest.swift */,
 				A997B28721BEF1AC0029B43B /* radar_prmt_iosTests.swift */,
@@ -288,6 +430,27 @@
 		A997B2A821BF9FB60029B43B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				A9B4364222B14B3200BC3C2C /* RxAppState.framework */,
+				A9B4363E22B1389800BC3C2C /* SafariServices.framework */,
+				A94E062C22A52814009E0692 /* FIRAnalyticsConnector.framework */,
+				A94E062D22A52814009E0692 /* Firebase.framework */,
+				A94E062822A52814009E0692 /* FirebaseABTesting.framework */,
+				A94E063122A52814009E0692 /* FirebaseAnalytics.framework */,
+				A94E062F22A52814009E0692 /* FirebaseCore.framework */,
+				A94E062E22A52814009E0692 /* FirebaseCoreDiagnostics.framework */,
+				A94E062922A52814009E0692 /* FirebaseInstanceID.framework */,
+				A94E062622A52814009E0692 /* FirebaseRemoteConfig.framework */,
+				A94E063022A52814009E0692 /* GoogleAppMeasurement.framework */,
+				A94E062A22A52814009E0692 /* GoogleUtilities.framework */,
+				A94E062722A52814009E0692 /* nanopb.framework */,
+				A94E062B22A52814009E0692 /* Protobuf.framework */,
+				A9245B3F2285CD1D0089B069 /* RxRelay.framework */,
+				A9245B3B2285A71B0089B069 /* JWTDecode.framework */,
+				A9245B3722859E100089B069 /* Valet.framework */,
+				A90EDF972276E5EA00DC8517 /* Gzip.framework */,
+				A99C124322719D400042DF60 /* RxSwiftExt.framework */,
+				A99C1241226F136E0042DF60 /* RxCocoa.framework */,
+				A99C123F226F0E320042DF60 /* RxSwift.framework */,
 				A99AAEBF2264C93D005B57DA /* Swifter.framework */,
 				A99AAEB22264652E005B57DA /* BlueSteel.framework */,
 				A9CC806D21DE5F6B0067FA77 /* CoreLocation.framework */,
@@ -308,6 +471,8 @@
 				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
 				A9296AB32268568D003B6134 /* RequestMedium.swift */,
 				A9296AB522685704003B6134 /* UploadContext.swift */,
+				A99C124A2271F6EC0042DF60 /* GzipRequestMedium.swift */,
+				A90EDF9A2276E6B200DC8517 /* DeflateRequestMedium.swift */,
 			);
 			path = kafka;
 			sourceTree = "<group>";
@@ -342,6 +507,15 @@
 			path = mock;
 			sourceTree = "<group>";
 		};
+		A99C124F2271F8A00042DF60 /* kafka */ = {
+			isa = PBXGroup;
+			children = (
+				A99C12502271F8B20042DF60 /* GzipMediumTest.swift */,
+				A90EDF9C2276EBC300DC8517 /* DeflateMediumTest.swift */,
+			);
+			path = kafka;
+			sourceTree = "<group>";
+		};
 		A9CC806F21DE609D0067FA77 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
@@ -355,6 +529,7 @@
 			isa = PBXGroup;
 			children = (
 				A9CC807121DE60C90067FA77 /* LocationManager.swift */,
+				A9B4364722B27E6300BC3C2C /* LocationProvider.swift */,
 			);
 			path = location;
 			sourceTree = "<group>";
@@ -363,6 +538,7 @@
 			isa = PBXGroup;
 			children = (
 				A9D9280921F87EE7007BB030 /* SpamManager.swift */,
+				A9B4364922B2833100BC3C2C /* SpamProvider.swift */,
 			);
 			path = spammer;
 			sourceTree = "<group>";
@@ -502,8 +678,11 @@
 			files = (
 				A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */,
 				A997B27A21BEF1AC0029B43B /* Assets.xcassets in Resources */,
+				A94E062522A521CE009E0692 /* config.plist in Resources */,
+				A9245B32228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png in Resources */,
 				A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */,
 				A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */,
+				A94E064C22A530C6009E0692 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -533,11 +712,27 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Frameworks/BlueSteel.framework",
+				"$(SRCROOT)/Frameworks/RxSwift.framework",
+				"$(SRCROOT)/Frameworks/RxCocoa.framework",
+				"$(SRCROOT)/Frameworks/RxSwiftExt.framework",
+				"$(SRCROOT)/Frameworks/Gzip.framework",
+				"$(SRCROOT)/Frameworks/JWTDecode.framework",
+				"$(SRCROOT)/Frameworks/Valet.framework",
+				"$(SRCROOT)/Frameworks/RxRelay.framework",
+				"$(SRCROOT)/Frameworks/RxAppState.framework",
 			);
 			outputFileListPaths = (
 			);
 			outputPaths = (
 				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/BlueSteel.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwiftExt.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JWTDecode.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Valet.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
+				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -558,7 +753,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage outdated --xcode-warnings\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#/usr/local/bin/carthage outdated --xcode-warnings\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -567,38 +762,53 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A974A8632296ECD000795ED8 /* RadarConfiguration.swift in Sources */,
+				A97DE03022899D050069DFE3 /* MPTokenViewController.swift in Sources */,
 				A9D9280A21F87EE7007BB030 /* SpamManager.swift in Sources */,
 				A99AAE5E225F390D005B57DA /* KafkaTopic+CoreDataProperties.swift in Sources */,
 				A9D9280D21F8A917007BB030 /* KafkaSender.swift in Sources */,
 				A9D9281921F8C1B2007BB030 /* SourceController.swift in Sources */,
+				A90EDF9B2276E6B200DC8517 /* DeflateRequestMedium.swift in Sources */,
 				A99AAE62225F390D005B57DA /* DataContainer+CoreDataProperties.swift in Sources */,
 				A99AAE65225F390D005B57DA /* RecordSetGroup+CoreDataProperties.swift in Sources */,
-				A997B27221BEF1AB0029B43B /* ViewController.swift in Sources */,
+				A997B27221BEF1AB0029B43B /* LoadingViewController.swift in Sources */,
 				A9D9281D21F8C4E0007BB030 /* KafkaController.swift in Sources */,
 				A997B2A521BEFFF70029B43B /* AvroDataWriter.swift in Sources */,
+				A974A8652296EDD400795ED8 /* FirebaseRadarConfiguration.swift in Sources */,
 				A99AAE61225F390D005B57DA /* DataContainer+CoreDataClass.swift in Sources */,
 				A99AAE63225F390D005B57DA /* RecordSetGroup+CoreDataClass.swift in Sources */,
 				A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */,
 				A99AAE5C225F390D005B57DA /* KafkaTopic+CoreDataClass.swift in Sources */,
+				A99C124B2271F6EC0042DF60 /* GzipRequestMedium.swift in Sources */,
 				A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */,
 				A99AAE5F225F390D005B57DA /* RecordSet+CoreDataProperties.swift in Sources */,
 				A99AAE60225F390D005B57DA /* RecordSet+CoreDataClass.swift in Sources */,
+				A9B4364122B13D7200BC3C2C /* AuthController.swift in Sources */,
 				A9CC807221DE60C90067FA77 /* LocationManager.swift in Sources */,
+				A9B4363D22B131A300BC3C2C /* PrivacyPolicyViewController.swift in Sources */,
+				A9245B3A22859E600089B069 /* MPOAuth.swift in Sources */,
 				A99AAE66225F390D005B57DA /* RecordSetUpload+CoreDataClass.swift in Sources */,
 				A997B27021BEF1AB0029B43B /* AppDelegate.swift in Sources */,
 				A98D39BD225F34E700385D2C /* radar_prmt_ios.xcdatamodeld in Sources */,
+				A9B4364822B27E6300BC3C2C /* LocationProvider.swift in Sources */,
 				A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */,
 				A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */,
+				A97DE02E228975250069DFE3 /* QRPreviewView.swift in Sources */,
+				A9245B362285855C0089B069 /* QRCodeViewController.swift in Sources */,
 				A98D39BA225F349B00385D2C /* AvroDataExtractor.swift in Sources */,
 				A9296AB622685704003B6134 /* UploadContext.swift in Sources */,
 				A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */,
+				A9245B34228582CC0089B069 /* LoginViewController.swift in Sources */,
 				A9D9281121F8AA62007BB030 /* SchemaRegistryClient.swift in Sources */,
 				A99AAE64225F390D005B57DA /* RecordSetUpload+CoreDataProperties.swift in Sources */,
 				A99AAE5D225F390D005B57DA /* UploadPart+CoreDataClass.swift in Sources */,
 				A9D9281521F8BFB9007BB030 /* DataController.swift in Sources */,
 				A9D9282221F9D539007BB030 /* CachedCollections.swift in Sources */,
+				A94E064F22A55CE3009E0692 /* Valet+Codable.swift in Sources */,
 				A99AAE67225F390D005B57DA /* UploadPart+CoreDataProperties.swift in Sources */,
+				A97DE0322289BA3D0069DFE3 /* MainViewController.swift in Sources */,
+				A9B4364A22B2833100BC3C2C /* SpamProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -606,8 +816,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A90EDF9D2276EBC300DC8517 /* DeflateMediumTest.swift in Sources */,
 				A997B28821BEF1AC0029B43B /* radar_prmt_iosTests.swift in Sources */,
 				A99AAEB922646BAB005B57DA /* MockDataController.swift in Sources */,
+				A99C12512271F8B20042DF60 /* GzipMediumTest.swift in Sources */,
 				A99AAEBD2264741D005B57DA /* MockAuthorizer.swift in Sources */,
 				A99AAEB12264648B005B57DA /* KafkaSenderTest.swift in Sources */,
 				A99AAEAF22646460005B57DA /* SchemaRegistryClientTest.swift in Sources */,
@@ -794,7 +1006,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-ios";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.radarbase.prmt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -820,7 +1036,11 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.radar-prmt-ios";
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = org.radarbase.prmt;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

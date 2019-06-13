@@ -11,22 +11,106 @@ import BlueSteel
 import CoreData
 import os.log
 
-class SourceManager {
+protocol SourceManager {
+    var provider: DelegatedSourceProvider { get }
+    var name: String { get }
+    var sourceId: String? { get set }
+    func start()
+    func flush()
+    func close()
+    func closeForeground()
+}
+
+protocol SourceProvider {
+    var sourceDefinition: SourceDefinition { get }
+
+    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager?
+    func matches(sourceType: SourceType) -> Bool
+}
+
+struct DelegatedSourceProvider: SourceProvider, Equatable, Hashable {
+    let delegate: SourceProvider
+
+    var sourceDefinition: SourceDefinition { return delegate.sourceDefinition }
+
+    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager? {
+        return delegate.provide(writer: writer, authConfig: authConfig)
+    }
+    func matches(sourceType: SourceType) -> Bool {
+        return delegate.matches(sourceType: sourceType)
+    }
+
+    init(_ provider: SourceProvider) {
+        self.delegate = provider
+    }
+
+    static func ==(lhs: DelegatedSourceProvider, rhs: DelegatedSourceProvider) -> Bool {
+        return lhs.delegate.sourceDefinition.pluginName == rhs.delegate.sourceDefinition.pluginName
+    }
+
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(delegate.sourceDefinition.pluginName)
+    }
+}
+
+struct SourceDefinition {
+    let pluginName: String
+    let pluginNames: [String]
+    let supportsBackground: Bool
+
+    init(pluginNames: [String], supportsBackground: Bool = false) {
+        self.pluginName = pluginNames[0]
+        self.pluginNames = pluginNames
+        self.supportsBackground = supportsBackground
+    }
+}
+
+extension SourceDefinition: Equatable {
+    static func == (lhs: SourceDefinition, rhs: SourceDefinition) -> Bool {
+        return lhs.pluginName == rhs.pluginName
+    }
+}
+
+typealias SourceManagerType = DataSourceManager & SourceManager
+
+class DataSourceManager {
     let topicWriter: AvroDataWriter
-    var sourceId: String
+
+    private var localSourceId: String?
+
+    var sourceId: String? {
+        get {
+            return localSourceId
+        }
+        set(value) {
+            localSourceId = value
+        }
+    }
+
     let encoder: AvroEncoder
     private let writeQueue: DispatchQueue
     private var dataCaches: [AvroTopicCacheContext]
-    
-    init?(topicWriter: AvroDataWriter, sourceId: String) {
+    private let localProvider: DelegatedSourceProvider
+    var provider: DelegatedSourceProvider {
+        get {
+            return localProvider
+        }
+    }
+
+    init?(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceId: String?) {
+        self.localProvider = provider
         self.topicWriter = topicWriter
-        self.sourceId = sourceId
+        self.localSourceId = sourceId
         writeQueue = DispatchQueue(label: "prmt_core_data", qos: .background)
         encoder = GenericAvroEncoder(encoding: .binary)
         dataCaches = []
     }
     
     func define(topic name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
+        guard let sourceId = sourceId else {
+            os_log("Cannot define topic %@ without a source ID", type: .error, name)
+            return nil
+        }
         guard let path = Bundle.main.path(forResource: "radar-schemas.bundle/" + valueSchemaPath, ofType: "avsc") else {
             os_log("Schema in location radar-schemas.bundle/%@.avsc for topic %@ is not found", type: .error,
                    valueSchemaPath, name)
@@ -56,14 +140,31 @@ class SourceManager {
     }
 
     func start() {
-        os_log("Source %@ does not need to be started", sourceId)
+        os_log("Plugin %@ does not need to be started", String(describing: self))
     }
 
     func flush() {
         dataCaches.forEach { $0.flush() }
     }
-}
 
+    final func close() {
+        willClose()
+        flush()
+    }
+
+    func willClose() {
+
+    }
+
+    final func closeForeground() {
+        willCloseForeground()
+        flush()
+    }
+
+    func willCloseForeground() {
+        willClose()
+    }
+}
 
 extension Data {
     init<T>(from value: T) {

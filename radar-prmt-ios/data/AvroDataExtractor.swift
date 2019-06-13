@@ -10,6 +10,7 @@ import Foundation
 import CoreData
 import BlueSteel
 import os.log
+import RxSwift
 
 class AvroDataExtractor {
     let moc: NSManagedObjectContext
@@ -18,6 +19,7 @@ class AvroDataExtractor {
 
     init(container: NSPersistentContainer) {
         self.moc = container.newBackgroundContext()
+        self.moc.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
         self.config = AvroDataExtractionConfiguration()
         self.decoder = BinaryAvroDecoder()
     }
@@ -25,53 +27,78 @@ class AvroDataExtractor {
     /**
      Read a set of next records from the data store. Data will only be read from a single Kafka topic.
      */
-    func readRecords(from dataGroupId: NSManagedObjectID, with context: UploadContext, schemas: FetchedSchemaPair, to resultCallback: @escaping (UploadHandle?, Int16?) -> Void) {
-        moc.perform { [weak self] in
-            guard let self = self else { return }
+    func readRecords(from dataGroupId: NSManagedObjectID, with context: UploadContext, schemas: (SchemaMetadata, SchemaMetadata)) -> Observable<(UploadHandle, Bool)> {
+        return Single.create { [weak self] observable in
+            self?.moc.perform { [weak self] in
+                guard let self = self else { return }
 
-            do {
-                guard let dataGroup = try self.moc.existingObject(with: dataGroupId) as? RecordSetGroup else {
-                    os_log("No stored data", type: .info)
-                    resultCallback(nil, nil)
-                    return
-                }  // no groups registered
-                os_log("Parsing next data group for topic %@", dataGroup.topic!.name!)
-                guard let avroTopic = try? AvroTopic(name: dataGroup.topic!.name!, valueSchema: dataGroup.valueSchema!) else {
-                    os_log("Schema for topic %@ cannot be parsed: %@", type: .error, dataGroup.topic!.name!, dataGroup.valueSchema!)
-                    self.moc.delete(dataGroup)
-                    try? self.moc.save()
-                    return
+                do {
+                    guard let dataGroup = try self.moc.existingObject(with: dataGroupId) as? RecordSetGroup else {
+                        os_log("No stored data", type: .info)
+                        observable(.error(AvroDataExtractionError.noData))
+                        return
+                    }  // no groups registered
+                    os_log("Parsing next data group for topic %@", dataGroup.topic!.name!)
+                    guard let topic = dataGroup.topic,
+                        let topicName = topic.name,
+                        let valueSchema = dataGroup.valueSchema else {
+                            os_log("Invalid data group")
+                            self.moc.delete(dataGroup)
+                            try? self.moc.save()
+                            observable(.error(AvroDataExtractionError.decodingError))
+                            return
+                    }
+
+                    guard let avroTopic = try? AvroTopic(name: topicName, valueSchema: valueSchema) else {
+                        os_log("Schema for topic %@ cannot be parsed: %@", type: .error, topicName, valueSchema)
+                        self.moc.delete(dataGroup)
+                        try? self.moc.save()
+                        observable(.error(AvroDataExtractionError.decodingError))
+                        return
+                    }
+
+                    let (handle, hasMore) = try self.prepareUpload(fromGroup: dataGroup, topic: avroTopic, with: context, schemas: schemas)
+
+                    observable(.success((handle, hasMore)))
+                } catch {
+                    os_log("Failed to get or update record data: %@", type: .error, error.localizedDescription)
+                    observable(.error(error))
                 }
-                let handle = try self.prepareUpload(fromGroup: dataGroup, topic: avroTopic, with: context, schemas: schemas)
-                resultCallback(handle, dataGroup.topic?.priority)
-            } catch {
-                os_log("Failed to get or update record data: %@", type: .error, error.localizedDescription)
             }
-        }
+            return Disposables.create()
+        }.asObservable()
     }
 
-    func nextInQueue(minimumPriority: Int?, to resultCallback: @escaping (String?, NSManagedObjectID?) throws -> Void) {
-        moc.perform { [weak self] in
-            guard let self = self else { return }
-            do {
-                let request: NSFetchRequest<RecordSet> = RecordSet.fetchRequest()
-                var predicates: [NSPredicate] = []
-                predicates.append(NSPredicate(format: "topic.upload == NULL"))
-                if let minimumPriority = minimumPriority {
-                    predicates.append(NSPredicate(format: "topic.priority >= %d", minimumPriority))
+    func nextInQueue(minimumPriority: Int?) -> Observable<UploadQueueElement> {
+        return Observable.create { [weak self] observable in
+            self?.moc.perform { [weak self] in
+                guard let self = self else { return }
+                do {
+                    let request: NSFetchRequest<RecordSetGroup> = RecordSetGroup.fetchRequest()
+                    var predicates: [NSPredicate] = []
+                    predicates.append(NSPredicate(format: "topic.upload == NULL"))
+                    if let minimumPriority = minimumPriority {
+                        predicates.append(NSPredicate(format: "topic.priority >= %d", minimumPriority))
+                    }
+                    predicates.append(NSPredicate(format: "dataset.@count > 0"))
+                    request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+                    request.sortDescriptors = [NSSortDescriptor(key: "topic.priority", ascending: false)]
+                    request.relationshipKeyPathsForPrefetching = ["topic"]
+
+                    var topics = Set<String>()
+                    for group in try self.moc.fetch(request) {
+                        if let topic = group.topic, let topicName = topic.name, !topics.contains(topicName) {
+                            observable.onNext(.fresh(topic: topicName, dataGroupId: group.objectID))
+                            topics.insert(topicName)
+                        }
+                    }
+                    observable.onCompleted()
+                } catch {
+                    os_log("Failed to get record data: %@", type: .error, error.localizedDescription)
+                    observable.onError(error)
                 }
-                request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-                request.sortDescriptors = [NSSortDescriptor(key: "topic.priority", ascending: false),
-                                           NSSortDescriptor(key: "time", ascending: true)]
-                request.relationshipKeyPathsForPrefetching = ["topic"]
-                request.fetchLimit = 1
-
-                let group = try self.moc.fetch(request).first?.group
-
-                try resultCallback(group?.topic?.name, group?.objectID)
-            } catch {
-                os_log("Failed to get record data: %@", type: .error, error.localizedDescription)
             }
+            return Disposables.create()
         }
     }
 
@@ -125,85 +152,103 @@ class AvroDataExtractor {
         }
     }
 
-    func nextRetry(minimumPriority: Int?, to resultCallback: @escaping (String?, NSManagedObjectID?) -> Void) {
-        moc.perform { [weak self] in
-            guard let self = self else { return }
-            let request: NSFetchRequest<RecordSetUpload> = RecordSetUpload.fetchRequest()
-            var predicates: [NSPredicate] = []
-            predicates.append(NSPredicate(format: "retryAt <= %@", Date() as NSDate))
-            if let minimumPriority = minimumPriority {
-                predicates.append(NSPredicate(format: "topic.priority >= %d", minimumPriority))
-            }
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-            request.sortDescriptors = [NSSortDescriptor(key: "retryAt", ascending: true)]
-            request.relationshipKeyPathsForPrefetching = ["topic"]
-            request.fetchLimit = 1
-
-            do {
-                let uploads = try self.moc.fetch(request)
-                if let upload = uploads.first {
-                    resultCallback(upload.topic!.name!, upload.objectID)
-                } else {
-                    resultCallback(nil, nil)
+    func nextRetry(minimumPriority: Int?) -> Observable<UploadQueueElement> {
+        return Observable.create { [weak self] observable in
+            self?.moc.perform { [weak self] in
+                guard let self = self else { return }
+                let request: NSFetchRequest<RecordSetUpload> = RecordSetUpload.fetchRequest()
+                var predicates: [NSPredicate] = []
+                predicates.append(NSPredicate(format: "retryAt <= %@", Date() as NSDate))
+                if let minimumPriority = minimumPriority {
+                    predicates.append(NSPredicate(format: "topic.priority >= %d", minimumPriority))
                 }
-            } catch {
-                os_log("Failed to retrieve failed records: %@", type: .error, error.localizedDescription)
-            }
+                request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+                request.sortDescriptors = [NSSortDescriptor(key: "retryAt", ascending: true)]
+                request.relationshipKeyPathsForPrefetching = ["topic"]
+
+                do {
+                    let uploads = try self.moc.fetch(request)
+                    for upload in uploads {
+                        if let topic = upload.topic, let topicName = topic.name {
+                            observable.onNext(.retry(topic: topicName, uploadId: upload.objectID))
+                        } else {
+                            os_log("Incomplete upload stored", type: .error)
+                        }
+                    }
+                    observable.onCompleted()
+                } catch {
+                    os_log("Failed to retrieve failed records: %@", type: .error, error.localizedDescription)
+                    observable.onError(error)
+                }
+            } ?? observable.onCompleted()
+            return Disposables.create()
         }
     }
 
-    func retryUpload(for uploadId: NSManagedObjectID, with context: UploadContext, schemas: FetchedSchemaPair, to resultCallback: @escaping (UploadHandle?, Int16?) -> Void) {
-        moc.perform { [weak self] in
-            guard let self = self else { return }
-
-            do {
-                guard let upload = try self.moc.existingObject(with: uploadId) as? RecordSetUpload else {
-                    os_log("Failed to retrieve upload")
-                    resultCallback(nil, nil)
-                    return
-                }
-
-                guard let topic = try? AvroTopic(name: upload.topic!.name!, valueSchema: upload.dataGroup!.valueSchema!) else { return }
-
-                let uploadContext = try context.start(upload: upload, schemas: schemas)
-
-                if uploadContext.isComplete {
-                    resultCallback(uploadContext, upload.topic!.priority)
-                    return
-                }
-
-                upload.retryAt = Date(timeIntervalSinceNow: self.config.assumeFailedInterval).timeIntervalSinceReferenceDate
-                try self.moc.save()
-
-                let partRequest: NSFetchRequest<UploadPart> = UploadPart.fetchRequest()
-                partRequest.predicate = NSPredicate(format: "upload == %@", upload)
-                partRequest.sortDescriptors = [NSSortDescriptor(key: "data.time", ascending: true)]
-                let uploadParts = try self.moc.fetch(partRequest)
-
-                for uploadPart in uploadParts {
-                    guard let recordSet = uploadPart.data else { return }
-                    var offset = Int(recordSet.offset)
-                    let data = recordSet.dataContainer!.data!
-                    let upToOffset = uploadPart.upToOffset == 0 ? data.count : Int(uploadPart.upToOffset)
-                    while offset < upToOffset {
-                        let nextSize = data.advanced(by: offset).load(as: Int.self)
-                        offset += MemoryLayout<Int>.size
-                        do {
-                            let avroValue = try self.decoder.decode(data.subdata(in: offset ..< offset + nextSize), as: topic.valueSchema)
-                            try uploadContext.add(value: avroValue)
-                        } catch {
-                            os_log("Failed to decode AvroValue for topic %@", type: .error, topic.name)
-                        }
-                        offset += nextSize
-                    }
-                }
-
-                try uploadContext.finalize()
-                resultCallback(uploadContext, upload.topic!.priority)
-            } catch {
-                os_log("Failed to reset failed topics: %@", type: .error, error.localizedDescription)
-            }
+    func prepareUpload(for element: UploadQueueElement, with context: UploadContext, schemas: (SchemaMetadata, SchemaMetadata)) -> Observable<(UploadHandle, Bool)> {
+        switch element {
+        case let .fresh(topic: _, dataGroupId: dataGroupId):
+            return readRecords(from: dataGroupId, with: context, schemas: schemas)
+        case let .retry(topic: _, uploadId: uploadId):
+            return retryUpload(for: uploadId, with: context, schemas: schemas)
         }
+    }
+
+    func retryUpload(for uploadId: NSManagedObjectID, with context: UploadContext, schemas: (SchemaMetadata, SchemaMetadata)) -> Observable<(UploadHandle, Bool)> {
+        return Single.create { [weak self] observable in
+            self?.moc.perform { [weak self] in
+                guard let self = self else { return }
+
+                do {
+                    guard let upload = try self.moc.existingObject(with: uploadId) as? RecordSetUpload else {
+                        os_log("Failed to retrieve upload")
+                        observable(.error(AvroDataExtractionError.noData))
+                        return
+                    }
+
+                    guard let topic = try? AvroTopic(name: upload.topic!.name!, valueSchema: upload.dataGroup!.valueSchema!) else { return }
+
+                    let uploadHandle = try context.start(element: .retry(topic: topic.name, uploadId: uploadId), upload: upload, schemas: schemas)
+
+                    if uploadHandle.isComplete {
+                        observable(.success((uploadHandle, false)))
+                        return
+                    }
+
+                    upload.retryAt = Date(timeIntervalSinceNow: self.config.assumeFailedInterval).timeIntervalSinceReferenceDate
+                    try self.moc.save()
+
+                    let partRequest: NSFetchRequest<UploadPart> = UploadPart.fetchRequest()
+                    partRequest.predicate = NSPredicate(format: "upload == %@", upload)
+                    partRequest.sortDescriptors = [NSSortDescriptor(key: "data.time", ascending: true)]
+                    let uploadParts = try self.moc.fetch(partRequest)
+
+                    for uploadPart in uploadParts {
+                        guard let recordSet = uploadPart.data else { return }
+                        var offset = Int(recordSet.offset)
+                        let data = recordSet.dataContainer!.data!
+                        let upToOffset = uploadPart.upToOffset == 0 ? data.count : Int(uploadPart.upToOffset)
+                        while offset < upToOffset {
+                            let nextSize = data.advanced(by: offset).load(as: Int.self)
+                            offset += MemoryLayout<Int>.size
+                            do {
+                                let avroValue = try self.decoder.decode(data.subdata(in: offset ..< offset + nextSize), as: topic.valueSchema)
+                                try uploadHandle.add(value: avroValue)
+                            } catch {
+                                os_log("Failed to decode AvroValue for topic %@", type: .error, topic.name)
+                            }
+                            offset += nextSize
+                        }
+                    }
+
+                    try uploadHandle.finalize()
+                    observable(.success((uploadHandle, false)))
+                } catch {
+                    os_log("Failed to reset failed topics: %@", type: .error, error.localizedDescription)
+                }
+            }
+            return Disposables.create()
+        }.asObservable()
     }
 
     func removeUpload(for topic: String, storedOn medium: RequestMedium) {
@@ -241,7 +286,7 @@ class AvroDataExtractor {
         }
     }
 
-    private func prepareUpload(fromGroup dataGroup: RecordSetGroup, topic: AvroTopic, with context: UploadContext, schemas: FetchedSchemaPair) throws -> UploadHandle {
+    private func prepareUpload(fromGroup dataGroup: RecordSetGroup, topic: AvroTopic, with context: UploadContext, schemas: (SchemaMetadata, SchemaMetadata)) throws -> (UploadHandle, Bool) {
         let request: NSFetchRequest<RecordSet> = RecordSet.fetchRequest()
         request.predicate = NSPredicate(format: "group == %@", dataGroup)
         request.sortDescriptors = [NSSortDescriptor(key: "time", ascending: true)]
@@ -256,25 +301,28 @@ class AvroDataExtractor {
         uploadSet.dataGroup = dataGroup
         uploadSet.topic = dataGroup.topic
 
-        let uploadContext = try context.start(upload: uploadSet, schemas: schemas)
-        assert(!uploadContext.isComplete)
+        let uploadHandle = try context.start(element: .fresh(topic: topic.name, dataGroupId: dataGroup.objectID), upload: uploadSet, schemas: schemas)
+        assert(!uploadHandle.isComplete)
 
         moc.insert(uploadSet)
 
         var currentSize = 0
         let records = try moc.fetch(request)
         os_log("Parsing %d record sets for topic %@", type: .debug, records.count, topic.name)
+        var hasMore = false
         for recordData in records {
-            if currentSize >= config.sizeMargin() || uploadContext.count >= config.countMargin() {
-                os_log("Current size %d or count %d limit is reached.", type: .debug, currentSize, uploadContext.count)
+            if currentSize >= config.sizeMargin() || uploadHandle.count >= config.countMargin() {
+                os_log("Current size %d or count %d limit is reached.", type: .debug, currentSize, uploadHandle.count)
+                hasMore = true
                 break
             }
-            currentSize = try prepareUploadPart(fromSet: recordData, with: uploadContext, as: topic.valueSchema, uploadSet: uploadSet, currentSize: currentSize)
+            currentSize = try prepareUploadPart(fromSet: recordData, with: uploadHandle, as: topic.valueSchema, uploadSet: uploadSet, currentSize: currentSize)
         }
 
         try moc.save()
 
-        return uploadContext
+        try uploadHandle.finalize()
+        return (uploadHandle, hasMore)
     }
 
     private func prepareUploadPart(fromSet recordData: RecordSet, with context: UploadHandle, as schema: Schema, uploadSet: RecordSetUpload, currentSize: Int) throws -> Int {
@@ -317,6 +365,11 @@ class AvroDataExtractor {
     }
 }
 
+enum AvroDataExtractionError: Error {
+    case noData
+    case decodingError
+}
+
 extension Range where Bound == TimeInterval {
     func exponentialBackOff(from interval: TimeInterval?, startingAt defaultInterval: TimeInterval) -> (interval: TimeInterval, backOff: TimeInterval) {
         let nextInterval: TimeInterval
@@ -329,7 +382,23 @@ extension Range where Bound == TimeInterval {
     }
 }
 
-struct AvroDataExtractionConfiguration {
+enum UploadQueueElement {
+    case fresh(topic: String, dataGroupId: NSManagedObjectID)
+    case retry(topic: String, uploadId: NSManagedObjectID)
+
+    var topic: String {
+        get {
+            switch self {
+            case let .fresh(topic: topic, dataGroupId: _):
+                return topic
+            case let .retry(topic: topic, uploadId: _):
+                return topic
+            }
+        }
+    }
+}
+
+struct AvroDataExtractionConfiguration: Equatable {
     var maxSize: Int64 = 1_000_000
     var maxCount: Int = 1000
     var margin: Double = 0.5

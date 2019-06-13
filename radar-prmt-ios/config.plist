@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>kafka_upload_rate</key>
+	<string>30</string>
+	<key>topics_high_priority</key>
+	<string>application_record_counts</string>
+	<key>kafka_upload_minimum_battery_level</key>
+	<string>0.1</string>
+	<key>database_commit_rate</key>
+	<string>10</string>
+	<key>kafka_records_size_limit</key>
+	<string>5000000</string>
+	<key>kafka_records_send_limit</key>
+	<string>1000</string>
+	<key>plugins</key>
+	<string>location</string>
+	<key>location_in_background</key>
+	<string>true</string>
+</dict>
+</plist>

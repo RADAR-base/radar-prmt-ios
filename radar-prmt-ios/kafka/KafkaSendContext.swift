@@ -9,18 +9,20 @@
 import Foundation
 import CoreData
 import os.log
+import RxSwift
 
 protocol KafkaSendContext {
     func didFail(for topic: String, code: Int16, message: String, recoverable: Bool)
     func mayRetry(topic: String)
     func didSucceed(for topic: String)
-    func serverFailure(for topic: String)
+    func serverFailure(for topic: String, message: String?)
     func couldNotConnect(with topic: String, over mode: NetworkReachability.Mode)
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode
 
     var availableNetworkModes: NetworkReachability.Mode { get }
     var retryServer: (at: Date, interval: TimeInterval)? { get }
     var minimumPriorityForCellular: Int { get }
+    var lastEvent: BehaviorSubject<KafkaEvent> { get }
 }
 
 class DataKafkaSendContext: KafkaSendContext {
@@ -31,6 +33,7 @@ class DataKafkaSendContext: KafkaSendContext {
     var minimumPriorityForCellular: Int
     let retryFailInterval: TimeInterval = 600
     let medium: RequestMedium
+    let lastEvent = BehaviorSubject<KafkaEvent>(value: .none)
 
     init(reader: AvroDataExtractor, medium: RequestMedium) {
         self.reader = reader
@@ -42,6 +45,8 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didFail(for topic: String, code: Int16, message: String, recoverable: Bool = true) {
+        os_log("Kafka request failure for topic %@: %@", type: .error, topic, message)
+        self.lastEvent.onNext(.appFailure(Date(), message))
         queue.async { [weak self] in
             guard let self = self else { return }
             if recoverable {
@@ -57,6 +62,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didSucceed(for topic: String) {
+        self.lastEvent.onNext(.success(Date()))
         queue.async { [weak self] in
             guard let self = self else { return }
             self.retryServer = nil
@@ -64,7 +70,13 @@ class DataKafkaSendContext: KafkaSendContext {
         }
     }
 
-    func serverFailure(for topic: String) {
+    func serverFailure(for topic: String, message: String?) {
+        if let message = message {
+            os_log("Kafka server failure: %@", type: .error, message)
+        } else {
+            os_log("Kafka server failure")
+        }
+        self.lastEvent.onNext(.serverFailure(Date(), message))
         self.reader.rollbackUpload(for: topic)
 
         queue.async { [weak self] in
@@ -86,6 +98,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
+        lastEvent.onNext(.connected(Date()))
         var mode: NetworkReachability.Mode = []
         queue.sync {
             self.networkModes.formUnion(mode)
@@ -95,6 +108,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func couldNotConnect(with topic: String, over mode: NetworkReachability.Mode) {
+        lastEvent.onNext(.disconnected(Date()))
         reader.rollbackUpload(for: topic)
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -102,4 +116,13 @@ class DataKafkaSendContext: KafkaSendContext {
             self.networkModes.subtract(mode)
         }
     }
+}
+
+enum KafkaEvent {
+    case none
+    case connected(Date)
+    case disconnected(Date)
+    case success(Date)
+    case serverFailure(Date, String?)
+    case appFailure(Date, String)
 }

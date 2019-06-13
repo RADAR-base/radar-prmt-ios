@@ -8,6 +8,7 @@
 
 import Foundation
 import SystemConfiguration
+import RxSwift
 
 class NetworkReachability {
     struct Mode: OptionSet {
@@ -27,24 +28,22 @@ class NetworkReachability {
 
     // Flag used to avoid starting listening if we are already listening
     private var isListening = false
+    let subject: BehaviorSubject<Mode>
 
-    private let changeListener: (Mode) -> Void
-
-    init?(baseUrl: URL, queue: DispatchQueue? = nil, onChange listener: @escaping (Mode) -> Void) {
+    init?(baseUrl: URL) {
         guard let host = baseUrl.host, let reachability = SCNetworkReachabilityCreateWithName(nil, host) else {
             return nil
         }
+
+        queue = DispatchQueue.global(qos: .background)
+
+        self.subject = BehaviorSubject<Mode>(value: [])
         self.reachability = reachability
-        if let queue = queue {
-            self.queue = queue
-        } else {
-            self.queue = DispatchQueue(label: "reachability", qos: .background)
-        }
-        changeListener = listener
     }
 
     func listen() {
-        // Checks if we are already listening
+        // Skips if we are already listening
+        // Optional binding since `SCNetworkReachabilityCreateWithName` returns an optional object
         guard !isListening else { return }
 
         // Creates a context
@@ -58,10 +57,7 @@ class NetworkReachability {
 
             // Gets the `Handler` object from the context info
             let handler = Unmanaged<NetworkReachability>.fromOpaque(info).takeUnretainedValue()
-
-            handler.queue.async {
-                handler.updateReachability(flags: flags)
-            }
+            handler.updateReachability(flags: flags)
         }
 
         // Registers the callback. `callbackClosure` is the closure where we manage the callback implementation
@@ -108,7 +104,7 @@ class NetworkReachability {
             } else {
                 status = .wifiOrEthernet
             }
-            changeListener(status)
+            subject.on(.next(status))
         }
     }
 

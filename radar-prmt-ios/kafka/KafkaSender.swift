@@ -12,16 +12,17 @@ import os.log
 
 class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     let context: KafkaSendContext
-    let auth: Authorizer
+    let auth: Authorization
     var queue: DispatchQueue!
     let baseUrl: URL
     var highPrioritySession: URLSession!
     var lowPrioritySession: URLSession!
     var highPrioritySessionCompletionHandler: (() -> Void)? = nil
     var lowPrioritySessionCompletionHandler: (() -> Void)? = nil
+    var receivedData = [URLSessionTask: Data]()
 
-    init(baseUrl: URL, context: KafkaSendContext, auth: Authorizer) {
-        var kafkaUrl = baseUrl
+    init(auth: Authorization, context: KafkaSendContext) {
+        var kafkaUrl = auth.baseUrl
         kafkaUrl.appendPathComponent("kafka", isDirectory: true)
         kafkaUrl.appendPathComponent("topics", isDirectory: true)
         self.baseUrl = kafkaUrl
@@ -48,13 +49,14 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
         lowPrioritySession = URLSession(configuration: sessionConfig, delegate: self, delegateQueue: operationQueue)
     }
 
-    func send(handle: UploadHandle, priority: Int16) {
+    func send(handle: UploadHandle) {
         assert(queue != nil, "Cannot send data without starting KafkaSender")
-        let session: URLSession! = priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
+        let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
 
         var request = URLRequest(url: baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
         self.auth.addAuthorization(to: &request)
         let uploadTask = session.uploadTask(with: request, from: handle)
+        receivedData[uploadTask] = Data()
         uploadTask.resume()
     }
 
@@ -72,20 +74,24 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
                  NSURLErrorDataNotAllowed,
                  NSURLErrorNotConnectedToInternet,
                  NSURLErrorNetworkConnectionLost:
+                os_log("Network unavailable for request to Kafka: %@", type: .error, error.localizedDescription)
                 let network: NetworkReachability.Mode = session == highPrioritySession ? [.cellular, .wifiOrEthernet] : .wifiOrEthernet
                 context.couldNotConnect(with: topic, over: network)
             default:
-                context.serverFailure(for: topic)
+                context.serverFailure(for: topic, message: error.localizedDescription)
             }
             return
         }
 
         guard let urlResponse = task.response, let response = urlResponse as? HTTPURLResponse else {
-            os_log("No response present")
-            context.serverFailure(for: topic)
+            context.serverFailure(for: topic, message: "No response present")
             return
         }
 
+        if let responseBody = receivedData[task] {
+            os_log("Response: %@", String(data: responseBody, encoding: .utf8) ?? "??")
+            receivedData.removeValue(forKey: task)
+        }
         switch response.statusCode {
         case 200 ..< 300:
             context.didSucceed(for: topic)
@@ -94,12 +100,10 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
             auth.invalidate()
             context.mayRetry(topic: topic)
         case 400 ..< 500:
-            os_log("Failed code %d", type: .error, response.statusCode)
-            context.didFail(for: topic, code: Int16(response.statusCode), message: "Upload failed", recoverable: true)
+            context.didFail(for: topic, code: Int16(response.statusCode), message: "Upload failed with code \(response.statusCode)", recoverable: true)
         default:
-            context.serverFailure(for: topic)
+            context.serverFailure(for: topic, message: "Failed to make request to Kafka with HTTP status code \(response.statusCode)")
         }
-
     }
 
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
@@ -117,6 +121,10 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
                 completionHandler()
             }
         }
+    }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        receivedData[dataTask]?.append(data)
     }
 }
 

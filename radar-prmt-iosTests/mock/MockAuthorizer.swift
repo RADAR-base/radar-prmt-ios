@@ -7,9 +7,16 @@
 //
 
 import Foundation
+import RxSwift
 @testable import radar_prmt_ios
 
-class MockAuthorizer : Authorizer {
+class MockAuthorizer : Authorization {
+    func ensureValid() -> Bool {
+        return true
+    }
+
+    var isAuthorized: BehaviorSubject<Bool> = BehaviorSubject(value: true)
+
     func addAuthorization(to: inout URLRequest) {
         // no auth needed
     }

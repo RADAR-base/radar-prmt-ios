@@ -9,13 +9,17 @@
 import Foundation
 import BlueSteel
 import os.log
+import RxSwift
+import RxCocoa
+import RxSwiftExt
 
 class SchemaRegistryClient {
     static let CACHE_TIMEOUT = 3600 as TimeInterval
 
     let schemaUrl: URL
-    private var cache: DictionaryCache<String, FetchedSchemaPair>
+    private var cache: DictionaryCache<String, SchemaMetadata>
     private let queue: DispatchQueue
+    private let decoder = JSONDecoder()
 
     init(baseUrl: URL) {
         var url = baseUrl
@@ -26,86 +30,57 @@ class SchemaRegistryClient {
         self.queue = DispatchQueue(label: "Schema Registry", qos: .background)
     }
 
-    func requestSchemas(for topic: String, executing block: @escaping (FetchedSchemaPair) -> ()) {
-        let queue = self.queue
-        queue.async { [weak self] in
-            guard let self = self else {
-                var pair = FetchedSchemaPair()
-                pair.isUpToDate = true
-                block(pair)
-                return
-            }
-            var pair = self.cache[topic, default: FetchedSchemaPair()]
-
-            if pair.isComplete {
-                block(pair)
-                return
-            }
-
-            pair.reset()
-            self.cache[topic] = pair
-
-            if !pair.didUpdateKeySchema {
-                self.makeRequest(for: topic, part: .key, executing: block)
-            }
-
-            if !pair.didUpdateValueSchema {
-                self.makeRequest(for: topic, part: .value, executing: block)
-            }
-        }
+    func requestSchemas(for topic: String) -> Observable<Result<(SchemaMetadata, SchemaMetadata), Error>> {
+        return Observable
+            .zip(self.makeRequest(for: topic, part: .key), self.makeRequest(for: topic, part: .value))
+            .map { .success($0) }
+            .catchError { Observable.just(.failure($0)) }
     }
 
-    private func makeRequest(for topic: String, part: RecordPart, executing block: @escaping (FetchedSchemaPair) -> ()) {
-        var url = schemaUrl
-        url.appendPathComponent("\(topic)-\(part.rawValue)", isDirectory: true)
-        url.appendPathComponent("versions", isDirectory: true)
-        url.appendPathComponent("latest", isDirectory: false)
-        var request = URLRequest(url: url)
-        request.addValue("application/vnd.schemaregistry.v1+json", forHTTPHeaderField: "Accept")
-        os_log("Requesting schema %@-%@", topic, part.rawValue)
-        URLSession.shared.dataTask(with: request, completionHandler: { [weak self] (data, response, error) in
-            guard let response = response as? HTTPURLResponse, response.statusCode == 200, let data = data else {
-                os_log("Failed to retrieve schema at %@", type: .error, url.absoluteString)
-                self?.updatePair(part: part, for: topic, with: nil, reportCompleted: block)
-                return
+    private func makeRequest(for topic: String, part: RecordPart) -> Observable<SchemaMetadata> {
+        let decoder = self.decoder
+        return Observable.deferred {
+            let subject = "\(topic)-\(part.rawValue)"
+            if let cached = self.cache[subject] {
+                return .just(cached)
             }
 
-            let schemaMetadata: SchemaMetadata?
-
-            if let jsonObject = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-                    let schemaId = jsonObject["id"] as? Int,
-                    let schemaVersion = jsonObject["version"] as? Int,
-                    let schemaString = jsonObject["schema"] as? String,
-                    let schema = try? Schema(json: schemaString) {
-                schemaMetadata = SchemaMetadata(id: schemaId, version: schemaVersion, schema: schema)
-            } else {
-                os_log("Failed to parse schema at %@", type: .error, url.absoluteString)
-                schemaMetadata = nil
-            }
-
-            self?.updatePair(part: part, for: topic, with: schemaMetadata, reportCompleted: block)
-        }).resume()
-    }
-
-    private func updatePair(part: RecordPart, for topic: String, with schemaMetadata: SchemaMetadata?, reportCompleted block: @escaping (FetchedSchemaPair) -> ()) {
-        self.queue.async { [weak self] in
-            guard let self = self else { return }
-            var pair: FetchedSchemaPair = self.cache[topic, default: FetchedSchemaPair()]
-
-            switch part {
-            case .key:
-                pair.keySchema = schemaMetadata
-                pair.didUpdateKeySchema = true
-            case .value:
-                pair.valueSchema = schemaMetadata
-                pair.didUpdateValueSchema = true
-            }
-            self.cache[topic] = pair
-
-            os_log("Requested schema: {key: %@, value: %@}", pair.keySchema?.schema.description ?? "??", pair.valueSchema?.schema.description ?? "??")
-            if pair.isUpToDate {
-                block(pair)
-            }
+            var url = self.schemaUrl
+            url.appendPathComponent(subject, isDirectory: true)
+            url.appendPathComponent("versions", isDirectory: true)
+            url.appendPathComponent("latest", isDirectory: false)
+            var request = URLRequest(url: url)
+            request.addValue("application/vnd.schemaregistry.v1+json", forHTTPHeaderField: "Accept")
+            os_log("Requesting schema %@-%@", topic, part.rawValue)
+            return URLSession.shared.rx.data(request: request)
+                .retry(.exponentialDelayed(maxCount: 5, initial: 1.0, multiplier: 10.0), shouldRetry: { error in
+                    if case let RxCocoaURLError.httpRequestFailed(response: response, data: data) = error {
+                        let bodyString: String
+                        if let data = data {
+                            bodyString = String(data: data.subdata(in: 0 ..< Swift.min(data.count, 255)), encoding: .utf8) ?? "??"
+                        } else {
+                            bodyString = "<empty>"
+                        }
+                        if (response.statusCode >= 500) {
+                            os_log("Retriable server error %d: %@", response.statusCode, bodyString)
+                            return true
+                        } else {
+                            os_log("Unrecoverable server error %d: %@", response.statusCode, bodyString)
+                            return false
+                        }
+                    } else {
+                        return true
+                    }
+                })
+                .map { data in
+                    do {
+                        return try decoder.decode(SchemaMetadata.self, from: data)
+                    } catch {
+                        os_log("Failed to parse schema at %@", type: .error, url.absoluteString)
+                        throw RxCocoaURLError.deserializationError(error: error)
+                    }
+                }
+                .do(onNext: { [weak self] schema in self?.cache[subject] = schema })
         }
     }
 
@@ -115,33 +90,13 @@ class SchemaRegistryClient {
     }
 }
 
-struct FetchedSchemaPair {
-    var didUpdateKeySchema: Bool = false
-    var didUpdateValueSchema: Bool = false
-    var keySchema: SchemaMetadata? = nil
-    var valueSchema: SchemaMetadata? = nil
-
-    var isUpToDate: Bool {
-        get {
-            return didUpdateKeySchema && didUpdateValueSchema
-        }
-        mutating set(value) {
-            didUpdateKeySchema = value
-            didUpdateValueSchema = value
-        }
-    }
-
-    mutating func reset() {
-        didUpdateKeySchema = keySchema != nil
-        didUpdateValueSchema = valueSchema != nil
-    }
-
-    var isComplete: Bool {
-        return keySchema != nil && valueSchema != nil
+extension Schema: Decodable {
+    public init(from decoder: Decoder) throws {
+        try self.init(json: try decoder.singleValueContainer().decode(String.self))
     }
 }
 
-struct SchemaMetadata {
+struct SchemaMetadata: Decodable {
     let id: Int
     let version: Int
     let schema: Schema

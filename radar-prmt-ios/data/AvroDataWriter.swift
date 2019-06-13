@@ -15,7 +15,7 @@ class AvroDataWriter {
     
     init(container: NSPersistentContainer) {
         self.moc = container.newBackgroundContext()
-//        self.moc.mergePolicy = NSMergePolicy(merge: .mergeByPropertyStoreTrumpMergePolicyType)
+        self.moc.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
     }
 
     func store(records data: Data, in dataGroupId: NSManagedObjectID, for topic: AvroTopic) {

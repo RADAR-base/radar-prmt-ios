@@ -9,6 +9,7 @@
 import XCTest
 import CoreData
 import BlueSteel
+import RxSwift
 import os.log
 @testable import radar_prmt_ios
 
@@ -81,18 +82,59 @@ class radar_prmt_iosTests: XCTestCase {
         let expectCallback = expectation(description: "should read next topic")
         let reader = dataController.reader
 
-        reader.nextInQueue(minimumPriority: 0) { topic, dataGroupId in
-            XCTAssert(topic != nil)
-            XCTAssert(dataGroupId != nil)
-            if let topic = topic {
-                XCTAssertEqual("test", topic)
-            }
-            expectCallback.fulfill()
-        }
+        let disposeBag = DisposeBag()
+
+        reader.nextInQueue(minimumPriority: 0)
+            .subscribe(onNext: { element in
+                switch element {
+                case .fresh(topic: "test", dataGroupId: _):
+                    expectCallback.fulfill()
+                default:
+                    XCTFail()
+                }
+            }, onError: { _ in XCTFail() })
+            .disposed(by: disposeBag)
 
         waitForExpectations(timeout: 1, handler: nil)
     }
-//
+
+
+
+    func testDataInQueue() {
+        insertData()
+
+        let expectCallback = expectation(description: "should read next topic")
+        let reader = dataController.reader
+
+        let disposeBag = DisposeBag()
+
+        let schemaPair = (
+            SchemaMetadata(id: 1, version: 1, schema: try! Schema.init(json: #"{"name": "ObservationKey", "namespace": "org.radarcns.kafka", "type": "record", "fields": [{"name": "projectId", "type": ["null", "string"]}, {"name": "userId", "type": "string"}, {"name": "sourceId", "type": "string"}]}"#)),
+            SchemaMetadata(id: 2, version: 1, schema: topic.valueSchema)
+        )
+
+        let auth = MockAuthorizer()
+        let medium = DataRequestMedium()
+        let context = JsonUploadContext(auth: auth, medium: medium)
+
+        reader.nextInQueue(minimumPriority: 0)
+            .flatMap { element in
+                reader.prepareUpload(for: element, with: context, schemas: schemaPair)
+            }
+            .subscribe(onNext: { handleAndMore in
+                let (handle, hasMore) = handleAndMore
+                XCTAssertFalse(hasMore)
+                XCTAssertTrue(handle.mediumHandle.isComplete)
+                guard let mediumHandle = handle.mediumHandle as? DataMediumHandle else { XCTFail(); return }
+                XCTAssertEqual(83, mediumHandle.data.count)
+                expectCallback.fulfill()
+            }, onError: { _ in XCTFail() })
+            .disposed(by: disposeBag)
+
+        waitForExpectations(timeout: 1, handler: nil)
+    }
+
+    //
 //    func testRead() {
 //
 //        let expectCallback = expectation(description: "should read records")
@@ -110,12 +152,4 @@ class radar_prmt_iosTests: XCTestCase {
 //        }
 //
 //    }
-
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

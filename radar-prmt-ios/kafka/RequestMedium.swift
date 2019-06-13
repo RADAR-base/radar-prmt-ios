@@ -21,10 +21,19 @@ protocol RequestMedium {
 }
 
 protocol MediumHandle {
+    var headers: [String: String] { get }
     var isComplete: Bool { get }
-    func append(string: String) throws
     func append(data: Data) throws
     func finalize() throws
+}
+
+extension MediumHandle {
+    func append(string: String) throws {
+        guard let data = string.data(using: .utf8) else {
+            throw RequestMediumError.encodingError
+        }
+        try append(data: data)
+    }
 }
 
 class FileRequestMedium: RequestMedium {
@@ -64,6 +73,7 @@ class FileRequestMedium: RequestMedium {
 }
 
 class FileMediumHandle: MediumHandle {
+    let headers: [String : String] = [:]
     let fileHandle: FileHandle?
     let file: URL
     var isComplete: Bool
@@ -72,13 +82,6 @@ class FileMediumHandle: MediumHandle {
         self.file = file
         self.fileHandle = fileHandle
         isComplete = fileHandle == nil
-    }
-
-    func append(string: String) throws {
-        guard let data = string.data(using: .utf8) else {
-            throw RequestMediumError.encodingError
-        }
-        try append(data: data)
     }
 
     func append(data: Data) throws {
@@ -101,15 +104,9 @@ struct DataRequestMedium: RequestMedium {
 }
 
 class DataMediumHandle: MediumHandle {
+    let headers: [String : String] = [:]
     var isComplete: Bool = false
     var data: Data = Data()
-
-    func append(string: String) throws {
-        guard let data = string.data(using: .utf8) else {
-            throw RequestMediumError.encodingError
-        }
-        try append(data: data)
-    }
 
     func append(data: Data) throws {
         assert(!isComplete)

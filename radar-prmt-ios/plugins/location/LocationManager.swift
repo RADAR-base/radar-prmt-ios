@@ -11,14 +11,20 @@ import CoreLocation
 import BlueSteel
 import os.log
 
-class LocationManager : SourceManager {
+class LocationManager : DataSourceManager, SourceManager {
     var locationTopic: AvroTopicCacheContext!
     let manager: CLLocationManager
+    var name: String {
+        get {
+            return "location"
+        }
+    }
+
     fileprivate var locationReceiver: LocationReceiver!
     
-    override init?(topicWriter: AvroDataWriter, sourceId: String) {
+    override init?(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceId: String?) {
         manager = CLLocationManager()
-        super.init(topicWriter: topicWriter, sourceId: sourceId)
+        super.init(provider: provider, topicWriter: topicWriter, sourceId: sourceId)
         if let locTopic = define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") {
             locationTopic = locTopic
         } else {
@@ -64,7 +70,15 @@ class LocationManager : SourceManager {
         }
         
         manager.startMonitoringSignificantLocationChanges()
+    }
+
+    override func willCloseForeground() {
         manager.stopUpdatingLocation()
+    }
+
+    override func willClose() {
+        manager.stopUpdatingLocation()
+        manager.stopMonitoringSignificantLocationChanges()
     }
 }
 

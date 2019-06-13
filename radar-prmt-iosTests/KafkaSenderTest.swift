@@ -10,6 +10,7 @@ import Swifter
 @testable import radar_prmt_ios
 import os.log
 import BlueSteel
+import CoreData
 
 extension HttpServer {
     var url: URL {
@@ -24,7 +25,7 @@ class KafkaSenderTest: XCTestCase {
     var dataController: MockDataController!
     var source: MockSourceManager!
     var sender: KafkaSender!
-    var auth: Authorizer!
+    var auth: Authorization!
     var topic: AvroTopic!
 
     override func setUp() {
@@ -66,21 +67,22 @@ class KafkaSenderTest: XCTestCase {
         }
 
         let encoder = GenericAvroEncoder(encoding: .json)
-        var pair = FetchedSchemaPair()
-        pair.keySchema = SchemaMetadata(id: 1, version: 1, schema: try Schema.init(json: #"{"name": "ObservationKey", "namespace": "org.radarcns.kafka", "type": "record", "fields": [{"name": "projectId", "type": ["null", "string"]}, {"name": "userId", "type": "string"}, {"name": "sourceId", "type": "string"}]}"#))
-        pair.valueSchema = SchemaMetadata(id: 2, version: 1, schema: try Schema.init(json: #"{"name": "ApplicationUptime", "namespace": "org.radarcns.monitor.application", "type": "record", "fields": [{"name": "time", "type": "double"}, {"name": "uptime", "type": "float"}]}"#))
-        pair.reset()
+        let pair = (
+            SchemaMetadata(id: 1, version: 1, schema: try Schema.init(json: #"{"name": "ObservationKey", "namespace": "org.radarcns.kafka", "type": "record", "fields": [{"name": "projectId", "type": ["null", "string"]}, {"name": "userId", "type": "string"}, {"name": "sourceId", "type": "string"}]}"#)),
+            SchemaMetadata(id: 2, version: 1, schema: try Schema.init(json: #"{"name": "ApplicationUptime", "namespace": "org.radarcns.monitor.application", "type": "record", "fields": [{"name": "time", "type": "double"}, {"name": "uptime", "type": "float"}]}"#)))
+
         let key = ["projectId": "p", "userId": "u", "sourceId": "s"].toAvro()
         let testFile = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("test")
         FileManager.default.createFile(atPath: testFile.path, contents: nil, attributes: nil)
         let fileHandle = try FileHandle(forWritingTo: testFile)
-        let uploadHandle = try JsonUploadHandle(topic: "application_uptime", mediumHandle: FileMediumHandle(file: testFile, fileHandle: fileHandle), schemas: pair, encoder: encoder, key: key)
+        let element = UploadQueueElement.fresh(topic: "application_uptime", dataGroupId: NSManagedObjectID())
+        let uploadHandle = try JsonUploadHandle(upload: element, priority: 1, mediumHandle: FileMediumHandle(file: testFile, fileHandle: fileHandle), schemas: pair, encoder: encoder, key: key)
         try uploadHandle.add(value: ["time": 0.0, "uptime": 1.0])
         try uploadHandle.finalize()
 
-        sender = KafkaSender(baseUrl: server.url, context: context, auth: auth)
+        sender = KafkaSender(auth: auth, context: context)
         sender.start()
-        sender.send(handle: uploadHandle, priority: 1)
+        sender.send(handle: uploadHandle)
 
         waitForExpectations(timeout: 60, handler: nil)
     }

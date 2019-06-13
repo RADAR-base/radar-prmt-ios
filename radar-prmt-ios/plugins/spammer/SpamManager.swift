@@ -8,13 +8,15 @@
 
 import Foundation
 
-class SpamManager : SourceManager {
+class SpamManager : SourceManagerType {
     let queue: DispatchQueue
+    private var queueIsSuspended = false
     var spamTopic: AvroTopicCacheContext!
+    var name: String { return "spam" }
 
-    override init?(topicWriter: AvroDataWriter, sourceId: String) {
+    override init?(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceId: String?) {
         queue = DispatchQueue(label: "spammer", qos: .userInitiated)
-        super.init(topicWriter: topicWriter, sourceId: sourceId)
+        super.init(provider: provider, topicWriter: topicWriter, sourceId: sourceId)
         if let locTopic = define(topic: "spam", valueSchemaPath: "passive/phone/phone_acceleration") {
             spamTopic = locTopic
         } else {
@@ -23,6 +25,10 @@ class SpamManager : SourceManager {
     }
 
     override func start() {
+        if (queueIsSuspended) {
+            queue.resume()
+            queueIsSuspended = false
+        }
         createSpam()
     }
 
@@ -37,6 +43,13 @@ class SpamManager : SourceManager {
                 "z": 0.0
                 ])
             self.createSpam()
+        }
+    }
+
+    override func willClose() {
+        if (!queueIsSuspended) {
+            queue.suspend()
+            queueIsSuspended = true
         }
     }
 }
