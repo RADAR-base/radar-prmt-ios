@@ -9,14 +9,14 @@
 import Foundation
 
 class LocationProvider : SourceProvider {
-    var sourceDefinition = SourceDefinition(pluginNames: ["location", "ios_location", "LocationProvider"], supportsBackground: true)
+    var pluginDefinition = PluginDefinition(pluginNames: ["location", "ios_location", "LocationProvider"], supportsBackground: true)
+    let defaultSourceType = SourceType(id: 1, producer: "Apple", model: "iOS", version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.1", canRegisterDynamically: false)
 
-    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager? {
-        return LocationManager(provider: DelegatedSourceProvider(self), topicWriter: writer, sourceId: "041220d6-dc14-47b3-acf2-670d25dcdb93")
+    func update(state: RadarState) {
+        pluginDefinition.supportsBackground = Bool(state.config["ios_location_background_enabled",  default: "true"]) ?? true
     }
 
-    func matches(sourceType: SourceType) -> Bool {
-        return sourceType.producer.caseInsensitiveCompare("Apple") == .orderedSame
-            && sourceType.model.caseInsensitiveCompare("iOS") == .orderedSame
+    func provide(sourceManager: SourceManager) -> SourceProtocol? {
+        return LocationProtocol(manager: sourceManager)
     }
 }

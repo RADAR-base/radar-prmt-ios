@@ -29,7 +29,7 @@ class KafkaController {
     private var tmpOldConfig: KafkaControllerConfig? = KafkaControllerConfig(config: [:])
 
     var maxProcessing: Int = 10
-    let auth: Authorization
+    let authController: AuthController
     var reachability: NetworkReachability!
     var isStarted: Bool = false
     let reader: AvroDataExtractor
@@ -37,15 +37,17 @@ class KafkaController {
     let readContext: UploadContext
     let disposeBag = DisposeBag()
     var sendFlow: Disposable? = nil
+    let user: User
     let resendSubject: BehaviorSubject<UploadQueueElement?> = BehaviorSubject(value: nil)
 
-    init(config: [String: String], auth: Authorization, reader: AvroDataExtractor) {
+    init(config: [String: String], authController: AuthController, user: User, reader: AvroDataExtractor) {
         self.reader = reader
-        schemaRegistry = SchemaRegistryClient(baseUrl: auth.baseUrl)
-        self.auth = auth
-        readContext = JsonUploadContext(auth: auth, medium: medium)
+        self.user = user
+        schemaRegistry = SchemaRegistryClient(baseUrl: user.baseUrl)
+        self.authController = authController
+        readContext = JsonUploadContext(user: user, medium: medium)
         context = DataKafkaSendContext(reader: reader, medium: medium)
-        sender = KafkaSender(auth: auth, context: context)
+        sender = KafkaSender(authController: authController, user: user, context: context)
         self.config = KafkaControllerConfig(config: config)
     }
 
@@ -58,7 +60,7 @@ class KafkaController {
         }
 
         if self.reachability == nil {
-            self.reachability = NetworkReachability(baseUrl: self.auth.baseUrl)
+            self.reachability = NetworkReachability(baseUrl: self.user.baseUrl)
         }
         self.isStarted = true
 
@@ -73,8 +75,7 @@ class KafkaController {
                 return ()
             }
 
-        let isAuthorized = auth.isAuthorized
-            .filter { valid in valid }
+        let isAuthorized = authController.validAuthentication()
             .map { _ in () }
             .debounce(.seconds(15), scheduler: queue)
 
@@ -99,8 +100,9 @@ class KafkaController {
 
         sendFlow = Observable.merge(uploadQueue, retryQueue, resendQueue)
             .flatMap { [weak self] element in self?.prepareUpload(for: element) ?? Observable.empty() }
+            .withLatestFrom(authController.validAuthentication()) { (handle, auth) in (handle, auth) }
             .subscribeOn(queue)
-            .subscribe(onNext: { [weak self] uploadHandle in
+            .subscribe(onNext: { [weak self] (uploadHandle, auth) in
                 guard let self = self else { return }
                 let (handle, hasMore) = uploadHandle
                 self.sender.send(handle: handle)
@@ -115,7 +117,6 @@ class KafkaController {
     }
 
     var isConnectionValid: Bool {
-        guard auth.ensureValid() else { return false }
         if context.availableNetworkModes.isEmpty {
             reachability.listen()
             return false

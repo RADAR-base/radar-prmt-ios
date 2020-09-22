@@ -11,6 +11,7 @@ import CoreData
 import os.log
 import RxSwift
 import Valet
+import RxCocoa
 import RxAppState
 
 @UIApplicationMain
@@ -20,7 +21,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     lazy var dataController = { DataController() }()
     let latestConfig = BehaviorSubject<RadarState>(value: RadarState(
-        lifecycle: .inactive, privacyPolicyAccepted: false, auth: nil, userMetadata: nil, config: [:]))
+        lifecycle: .inactive, user: nil, auth: nil, isAuthLoaded: false, config: [:]))
     var sourceController: SourceController!
     var kafkaController: KafkaController?
     private let disposeBag = DisposeBag()
@@ -38,18 +39,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         authController.load()
         Observable.combineLatest(
                 UIApplication.shared.rx.appState.distinctUntilChanged(),
-                authController.privacyPolicyAccepted.distinctUntilChanged(),
-                authController.auth,
-                authController.userMetadata.distinctUntilChanged(),
+                authController.user.distinctUntilChanged(),
+                authController.auth.distinctUntilChanged(),
+                authController.isLoaded.distinctUntilChanged(),
                 config.config.distinctUntilChanged())
-            .map { RadarState(lifecycle: $0.0, privacyPolicyAccepted: $0.1, auth: $0.2, userMetadata: $0.3, config: $0.4) }
+            .map { RadarState(lifecycle: $0.0, user: $0.1, auth: $0.2, isAuthLoaded: $0.3, config: $0.4) }
+            .do(onNext: { state in
+                os_log("Next app state: cycle: %@, user: %@, policy %d, authValid: %d, isLoaded: %d, sources: %d, config #: %d",
+                       state.lifecycle.description,
+                       state.user?.userId ?? "<none>",
+                       state.user?.privacyPolicyAccepted == true ? 1 : 0,
+                       state.auth?.isValid == true ? 1 : 0,
+                       state.isAuthLoaded ? 1 : 0,
+                       Int(state.user?.sources?.count ?? -1),
+                       state.config.count)
+            })
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 self?.latestConfig.onNext(state)
+            }, onError: {
+                os_log("Failed to update state: %@", $0.localizedDescription)
             })
             .disposed(by: disposeBag)
 
-        sourceController = SourceController(config: latestConfig, dataController: dataController)
+        sourceController = SourceController(config: latestConfig, dataController: dataController, authController: authController)
         manageKafkaController()
         return true
     }
@@ -94,19 +107,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     self.stopKafkaController()
                 } else if state.lifecycle == .background {
                     self.stopKafkaController()
-                } else if state.lifecycle == .active, let auth = state.auth {
-                    self.ensureKafkaController(auth: auth, config: state.config)
+                } else if state.lifecycle == .active, let user = state.user {
+                    self.ensureKafkaController(user: user, config: state.config)
                 }
         }).disposed(by: disposeBag)
     }
 
-    func ensureKafkaController(auth: Authorization, config: [String: String]) {
+    func ensureKafkaController(user: User, config: [String: String]) {
         if let controller = kafkaController {
             os_log("Updating Kafka controller configuration")
             controller.config = KafkaControllerConfig(config: config)
         } else {
             os_log("Starting Kafka controller")
-            let controller = KafkaController(config: config, auth: auth, reader: self.dataController.reader)
+            let controller = KafkaController(config: config, authController: authController, user: user, reader: self.dataController.reader)
             controller.start()
             self.kafkaController = controller
             controller.context.lastEvent
@@ -119,30 +132,48 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func stopKafkaController() {
-        os_log("Disposing Kafka controller")
-        kafkaController = nil
-        let value = try? lastServerStatus.value()
-        if let value = value, case .disconnected(_) = value {
-            // already disconnected
-        } else {
-            lastServerStatus.onNext(.disconnected(Date()))
+        if kafkaController != nil {
+            os_log("Disposing Kafka controller")
+            kafkaController = nil
+            let value = try? lastServerStatus.value()
+            if let value = value, case .disconnected(_) = value {
+                // already disconnected
+            } else {
+                lastServerStatus.onNext(.disconnected(Date()))
+            }
         }
     }
 }
 
 struct RadarState {
     let lifecycle: AppState
-    let privacyPolicyAccepted: Bool
-    let auth: Authorization?
-    let userMetadata: UserMetadata?
+    let user: User?
+    let auth: OAuthToken?
+    let isAuthLoaded: Bool
     let config: [String: String]
 
-    var isReadyToSend: Bool {
-        get {
-            guard let auth = auth else { return false }
+    var isReadyToRegister: Bool {
+        guard let user = user else { return false }
+        return auth != nil && user.privacyPolicyAccepted && !config.isEmpty
+    }
 
-            return privacyPolicyAccepted && !config.isEmpty
-                && (!auth.requiresUserMetadata || (userMetadata != nil && userMetadata?.sourceTypes.isEmpty == false))
+    var isReadyToSend: Bool {
+        guard let user = user else { return false }
+        return isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false)
+    }
+}
+
+extension AppState: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .active:
+            return "active"
+        case .background:
+            return "background"
+        case .inactive:
+            return "inactive"
+        case .terminated:
+            return "terminated"
         }
     }
 }

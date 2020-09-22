@@ -7,29 +7,41 @@
 //
 
 import Foundation
+import RxSwift
 
-class SpamManager : SourceManagerType {
-    let queue: DispatchQueue
+class SpamProtocol : SourceProtocol {
+    let queue = DispatchQueue(label: "spammer", qos: .userInitiated)
     private var queueIsSuspended = false
     var spamTopic: AvroTopicCacheContext!
-    var name: String { return "spam" }
+    let manager: SourceManager
 
-    override init?(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceId: String?) {
-        queue = DispatchQueue(label: "spammer", qos: .userInitiated)
-        super.init(provider: provider, topicWriter: topicWriter, sourceId: sourceId)
-        if let locTopic = define(topic: "spam", valueSchemaPath: "passive/phone/phone_acceleration") {
-            spamTopic = locTopic
+    init(sourceManager: SourceManager) {
+        self.manager = sourceManager
+    }
+
+    func startScanning() -> Single<Source> {
+        if let source = (manager.findSource { _ in true}) {
+            return manager.use(source: source)
         } else {
-            return nil
+            return manager.use(source: Source(type: manager.sourceType, id: nil, name: "spam", expectedName: nil, attributes: nil))
         }
     }
 
-    override func start() {
+    func startCollecting() {
         if (queueIsSuspended) {
             queue.resume()
             queueIsSuspended = false
         }
         createSpam()
+    }
+
+    func registerTopics() -> Bool {
+        if let topic = manager.define(topic: "spam", valueSchemaPath: "passive/phone/phone_acceleration") {
+            spamTopic = topic
+            return true
+        } else {
+            return false
+        }
     }
 
     func createSpam() {
@@ -46,10 +58,12 @@ class SpamManager : SourceManagerType {
         }
     }
 
-    override func willClose() {
+    func closeForeground() {
         if (!queueIsSuspended) {
             queue.suspend()
             queueIsSuspended = true
         }
     }
+
+    func close() {}
 }

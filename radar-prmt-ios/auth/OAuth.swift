@@ -9,58 +9,80 @@
 import Foundation
 import Security
 import RxSwift
+import JWTDecode
 
-protocol Authorization {
-    func addAuthorization(to: inout URLRequest)
-    func invalidate()
-    func ensureValid() -> Bool
-    var baseUrl: URL { get }
-    var privacyPolicyUrl: URL { get }
-    var projectId: String { get }
-    var userId: String { get }
-    var isAuthorized: BehaviorSubject<Bool> { get }
-    var isUpdatedSinceCoded: Bool { get }
-    var requiresUserMetadata: Bool { get }
+struct User: Codable, Equatable {
+    let baseUrl: URL
+    let privacyPolicyUrl: URL
+    let projectId: String
+    let userId: String
+    let requiresUserMetadata: Bool
+    var privacyPolicyAccepted: Bool = false
+    var sources: [Source]? = nil
+    var sourceTypes: [SourceType]? = nil
 }
 
-class OAuth : Authorization {
-    var token: String? = nil
-    let isAuthorized: BehaviorSubject<Bool> = BehaviorSubject(value: false)
-    var baseUrl = URL(string: "https://radar-test.thehyve.net")!
-    var privacyPolicyUrl = URL(string: "http://info.thehyve.nl/radar-cns-privacy-policy")!
-    let requiresUserMetadata: Bool = false
-
-    init() {
-    }
-
-    required init(from decoder: Decoder) throws {
-    }
-
-    func addAuthorization(to request: inout URLRequest) {
-        request.addValue("Bearer \(token ?? "")", forHTTPHeaderField: "Authorization")
-    }
-
-    func ensureValid() -> Bool {
-        if token == nil {
-            token = "aa"
-            DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                self?.isAuthorized.onNext(true)
-            }
-            return false
+extension User: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(userId)
+        if let sources = self.sources {
+            hasher.combine(sources)
         } else {
-            return true
+            hasher.combine(0)
+        }
+    }
+}
+
+struct OAuthToken: Codable {
+    let userId: String
+    let accessToken: String?
+    let refreshToken: String
+    let expiresAt: Date
+    let sourceIds: [String]
+
+    init(refreshToken: String, accessToken: String? = nil) throws {
+        self.refreshToken = refreshToken
+        self.accessToken = accessToken
+        let jwt = try decode(jwt: refreshToken)
+        if let subject = jwt.subject {
+            userId = subject
+        } else {
+            throw MPAuthError.invalidJwt
+        }
+        self.sourceIds = jwt.claim(name: "sources").array ?? []
+        if let expiresAt = jwt.expiresAt {
+            self.expiresAt = expiresAt
+        } else {
+            throw MPAuthError.invalidJwt
         }
     }
 
-    var userId = "u"
-    var projectId = "p"
-    func invalidate() {
-        token = nil
-        isAuthorized.onNext(false)
+    var isValid: Bool {
+        return accessToken != nil || expiresAt > Date()
     }
-
-    var isUpdatedSinceCoded: Bool = false
-
-    func encode(to encoder: Encoder) throws {
+    func addAuthorization(to request: inout URLRequest) throws {
+        guard let accessToken = self.accessToken else {
+            throw MPAuthError.unauthorized
+        }
+        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
     }
+}
+
+extension OAuthToken : Equatable {
+    static func ==(lhs: OAuthToken, rhs: OAuthToken) -> Bool {
+        return lhs.refreshToken == rhs.refreshToken
+    }
+}
+
+extension OAuthToken : Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(refreshToken)
+    }
+}
+
+protocol Authorizer {
+    func login(to url: URL) -> Observable<(User, OAuthToken)>
+    func refresh(auth: OAuthToken) -> Observable<OAuthToken>
+    func ensureRegistration(of source: Source, authorizedBy auth: OAuthToken) -> Observable<Source>
+    func requestMetadata(for user: User, authorizedBy auth: OAuthToken) -> Observable<User>
 }

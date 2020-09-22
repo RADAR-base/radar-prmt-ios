@@ -6,15 +6,9 @@
 //  Copyright © 2019 Joris Borgdorff. All rights reserved.
 //
 
-import Foundation
 import RxSwift
 import RxSwiftExt
 import os.log
-
-protocol ControlledQueue: class {
-    var controlQueue: SchedulerType { get }
-    var disposeBag: DisposeBag { get set }
-}
 
 class SourceController: ControlledQueue {
     let dataController: DataController
@@ -25,9 +19,11 @@ class SourceController: ControlledQueue {
     var disposeBag = DisposeBag()
     var flusher: Disposable? = nil
     var hasFlusher: Bool = false
+    let authController: AuthController
 
-    init(config: BehaviorSubject<RadarState>, dataController: DataController) {
+    init(config: BehaviorSubject<RadarState>, dataController: DataController, authController: AuthController) {
         self.dataController = dataController
+        self.authController = authController
         self.sources = []
         let providers: [SourceProvider] = [LocationProvider(), SpamProvider()]
         self.sourceProviders = providers.map { DelegatedSourceProvider($0) }
@@ -54,13 +50,17 @@ class SourceController: ControlledQueue {
         var newProviders = Set(plugins.split(separator: " ")
             .filter { !$0.isEmpty }
             .map { String($0) }
-            .compactMap { pluginName in self.sourceProviders.first { $0.sourceDefinition.pluginName == pluginName }})
+            .compactMap { pluginName in self.sourceProviders.first { $0.pluginDefinition.pluginNames.contains(pluginName) }})
+
+        newProviders.forEach { $0.update(state: state) }
 
         if state.lifecycle == .background {
-            newProviders = newProviders.filter { $0.sourceDefinition.supportsBackground }
-        } else if state.lifecycle == .terminated || !state.isReadyToSend {
+            newProviders = newProviders.filter { $0.pluginDefinition.supportsBackground }
+        } else if state.lifecycle == .terminated || !state.isReadyToRegister {
             newProviders = []
         }
+
+        os_log("Trying to load providers %@", newProviders.map { $0.pluginDefinition.pluginName }.joined(separator: ", "))
 
         let existingProviders = Set(sources.map { $0.provider })
         let defunctProviders = existingProviders.subtracting(newProviders)
@@ -70,7 +70,25 @@ class SourceController: ControlledQueue {
         defunctSources.forEach { $0.close() }
 
         let newSources = newProviders.subtracting(existingProviders)
-            .compactMap { $0.provide(writer: dataController.writer, authConfig: state) }
+            .compactMap { (provider: DelegatedSourceProvider) -> SourceManager? in
+                let matchingSourceType: SourceType?
+
+                if let sourceTypes = state.user?.sourceTypes {
+                    matchingSourceType = sourceTypes.first { provider.matches(sourceType: $0) }
+                } else {
+                    matchingSourceType = provider.defaultSourceType
+                }
+
+                guard let sourceType = matchingSourceType else { return nil }
+
+                let manager = SourceManager(provider: provider, topicWriter: dataController.writer, sourceType: sourceType, authControl: authController, state: state)
+                if let sourceProtocol = provider.provide(sourceManager: manager) {
+                    manager.delegate = sourceProtocol
+                    return manager
+                } else {
+                    return nil
+                }
+            }
 
         newSources.forEach { $0.start() }
         sources += newSources
@@ -114,8 +132,15 @@ class SourceController: ControlledQueue {
     }
 }
 
+
+protocol ControlledQueue: class {
+    var controlQueue: SchedulerType { get }
+    var disposeBag: DisposeBag { get set }
+}
+
 extension ControlledQueue {
     func schedule(action: @escaping () -> Void) {
+        let disposeBag = self.disposeBag
         controlQueue.schedule(Void()) { _ in
             action()
             return Disposables.create()

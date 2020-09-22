@@ -24,81 +24,104 @@ class MPTokenViewController : UIViewController {
             }
             baseUrlField.text = urlString
         }
+
+        baseUrlField.delegate = self
+        tokenField.delegate = self
     }
 
+    @IBOutlet weak var statusLabel: UILabel!
     @IBOutlet weak var baseUrlField: UITextField!
     @IBOutlet weak var tokenField: UITextField!
     @IBAction func didEnterToken(_ sender: Any) {
-        guard let url = validateUrl(),
-                let authorizer = appDelegate.authController.authorizer else {
+        statusLabel.isHidden = true
+        guard let url = validateUrl() else {
+            os_log("Not proceeding, invalid data")
             return
         }
-        authorizer.metaTokenLogin(url: url)
+        appDelegate.authController.login(to: url)
             .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .background))
             .observeOn(MainScheduler.instance)
             .subscribe(weak: self, onNext: { weakSelf in { mpauth in
                     os_log("Retrieved MetaToken")
-                    weakSelf.appDelegate.authController.auth.onNext(mpauth)
                     weakSelf.performSegue(withIdentifier: "mainFromToken", sender: self)
                 }
-            }, onError: { _ in { error in
-                    os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
+            }, onError: { weakSelf in { error in
+                os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
+                if let mpError = error as? MPAuthError {
+                    switch (mpError) {
+                    case .unauthorized:
+                        weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
+                    case .tokenAlreadyUsed:
+                        weakSelf.showError(message: "This token has been used. Please generate a new one.")
+                    default:
+                        weakSelf.showError(message: "Cannot log in: \(mpError.errorDescription!)")
+                    }
+                } else {
+                    weakSelf.showError(message: "Cannot log in.")
                 }
-            })
+            }})
             .disposed(by: disposeBag)
     }
 
     private func validateUrl() -> URL? {
-        var validationErrors = MPTokenValidationError()
-        var baseUrl: String? = nil
-        if var literalBaseUrl = baseUrlField.text, !literalBaseUrl.isEmpty {
-            while literalBaseUrl.last == "/" {
-                literalBaseUrl.removeLast()
-            }
-            if literalBaseUrl.hasSuffix("/managementportal") {
-                literalBaseUrl.removeLast("/managementportal".count)
-                while literalBaseUrl.last == "/" {
-                    literalBaseUrl.removeLast()
-                }
-            }
-            baseUrl = literalBaseUrl
-        } else {
-            validationErrors.insert(.baseUrlMissing)
-        }
-
-        var token: String? = nil
-        if let literalToken = tokenField.text, !literalToken.isEmpty {
-            if literalToken.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) != nil {
-                validationErrors.insert(.tokenInvalid)
-            } else {
-                token = literalToken
-            }
-        } else {
-            validationErrors.insert(.tokenMissing)
-        }
-
-        guard let validBaseUrl = baseUrl, let validToken = token else {
-            // TODO: UI changes based on URL validation
+        guard let token = tokenField.text, !token.isEmpty else {
+            showError(message: "Token is missing", fields: [tokenField])
             return nil
         }
 
-        guard let url = URL(string: "https://\(validBaseUrl)/managementportal/api/meta-token/\(validToken)") else {
-            validationErrors.insert(.baseUrlInvalid)
-            // TODO: UI changes based on URL validation
+        guard token.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil else {
+            showError(message: "Token text is not valid", fields: [tokenField])
+            return nil
+        }
+
+        guard var baseUrl = baseUrlField.text, !baseUrl.isEmpty else {
+            showError(message: "Base URL is missing", fields: [baseUrlField])
+            return nil
+        }
+
+        while baseUrl.last == "/" {
+            baseUrl.removeLast()
+        }
+        if baseUrl.hasSuffix("/managementportal") {
+            baseUrl.removeLast("/managementportal".count)
+            while baseUrl.last == "/" {
+                baseUrl.removeLast()
+            }
+        }
+
+        guard let url = URL(string: "https://\(baseUrl)/managementportal/api/meta-token/\(token)") else {
+            showError(message: "Base URL is not a valid URL", fields: [tokenField])
             return nil
         }
 
         return url
     }
 
+    private func showError(message: String, fields: [UITextField] = []) {
+        fields.forEach {
+            $0.backgroundColor = UIColor(hue: 0.0, saturation: 0.1, brightness: 1.0, alpha: 1.0)
+        }
+        os_log("Error registering token: %@", message)
+        statusLabel.text = message
+        statusLabel.isHidden = false
+    }
 
+    @IBAction
+    private func resetValid(_ sender: Any) {
+        if let field = sender as? UITextField {
+            field.backgroundColor = UIColor.white
+        }
+    }
 }
 
-struct MPTokenValidationError: OptionSet {
-    let rawValue: Int
+extension MPTokenViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        if textField == baseUrlField {
+            self.view.endEditing(true)
+        } else {
+            baseUrlField.becomeFirstResponder()
+        }
+        return true
+    }
 
-    static let baseUrlMissing = MPTokenValidationError(rawValue: 1)
-    static let tokenMissing = MPTokenValidationError(rawValue: 2)
-    static let baseUrlInvalid = MPTokenValidationError(rawValue: 4)
-    static let tokenInvalid = MPTokenValidationError(rawValue: 8)
 }

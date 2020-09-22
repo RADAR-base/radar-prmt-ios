@@ -23,12 +23,13 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        appDelegate.authController.auth
+        appDelegate.authController.user
+            .compactMap { $0 }
             .subscribeOn(MainScheduler.instance)
-            .subscribe(onNext: { [weak self] auth in
+            .subscribe(onNext: { [weak self] user in
                 guard let self = self else { return }
-                self.projectIdLabel.text = auth?.projectId
-                self.userIdLabel.text = auth?.userId
+                self.projectIdLabel.text = user.projectId
+                self.userIdLabel.text = user.userId
             })
             .disposed(by: disposeBag)
 

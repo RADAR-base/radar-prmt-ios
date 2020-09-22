@@ -96,11 +96,10 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             return
         }
         captureSession.stopRunning()
-        appDelegate.authController.authorizer?.metaTokenLogin(url: url)
+        appDelegate.authController.login(to: url)
             .subscribeOn(MainScheduler.instance)
             .subscribe(weak: self, onNext: { weakSelf in { mpauth in
                 os_log("Retrieved MetaToken")
-                weakSelf.appDelegate.authController.auth.onNext(mpauth)
                 weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
             }}, onError: { _ in { error in
                 os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)

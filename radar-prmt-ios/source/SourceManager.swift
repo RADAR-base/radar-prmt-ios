@@ -8,106 +8,42 @@
 
 import Foundation
 import BlueSteel
-import CoreData
 import os.log
+import RxSwift
 
-protocol SourceManager {
-    var provider: DelegatedSourceProvider { get }
-    var name: String { get }
-    var sourceId: String? { get set }
-    func start()
-    func flush()
-    func close()
-    func closeForeground()
-}
+class SourceManager {
+    var status = BehaviorSubject<SourceStatus>(value: .initializing)
 
-protocol SourceProvider {
-    var sourceDefinition: SourceDefinition { get }
-
-    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager?
-    func matches(sourceType: SourceType) -> Bool
-}
-
-struct DelegatedSourceProvider: SourceProvider, Equatable, Hashable {
-    let delegate: SourceProvider
-
-    var sourceDefinition: SourceDefinition { return delegate.sourceDefinition }
-
-    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager? {
-        return delegate.provide(writer: writer, authConfig: authConfig)
-    }
-    func matches(sourceType: SourceType) -> Bool {
-        return delegate.matches(sourceType: sourceType)
+    var name: String {
+        get {
+            return "\(provider.pluginDefinition.pluginName)<\(activeSource?.id ?? "??")>"
+        }
     }
 
-    init(_ provider: SourceProvider) {
-        self.delegate = provider
-    }
-
-    static func ==(lhs: DelegatedSourceProvider, rhs: DelegatedSourceProvider) -> Bool {
-        return lhs.delegate.sourceDefinition.pluginName == rhs.delegate.sourceDefinition.pluginName
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(delegate.sourceDefinition.pluginName)
-    }
-}
-
-struct SourceDefinition {
-    let pluginName: String
-    let pluginNames: [String]
-    let supportsBackground: Bool
-
-    init(pluginNames: [String], supportsBackground: Bool = false) {
-        self.pluginName = pluginNames[0]
-        self.pluginNames = pluginNames
-        self.supportsBackground = supportsBackground
-    }
-}
-
-extension SourceDefinition: Equatable {
-    static func == (lhs: SourceDefinition, rhs: SourceDefinition) -> Bool {
-        return lhs.pluginName == rhs.pluginName
-    }
-}
-
-typealias SourceManagerType = DataSourceManager & SourceManager
-
-class DataSourceManager {
     let topicWriter: AvroDataWriter
 
-    private var localSourceId: String?
+    var delegate: SourceProtocol!
+    let encoder: AvroEncoder = GenericAvroEncoder(encoding: .binary)
+    private let writeQueue: DispatchQueue = DispatchQueue(label: "prmt_core_data", qos: .background)
+    private var dataCaches: [AvroTopicCacheContext] = []
+    let provider: DelegatedSourceProvider
+    let sourceType: SourceType
+    var sources: [Source] = []
+    var activeSource: Source? = nil
+    let authControl: AuthController
+    let state: RadarState
+    let disposeBag = DisposeBag()
 
-    var sourceId: String? {
-        get {
-            return localSourceId
-        }
-        set(value) {
-            localSourceId = value
-        }
-    }
-
-    let encoder: AvroEncoder
-    private let writeQueue: DispatchQueue
-    private var dataCaches: [AvroTopicCacheContext]
-    private let localProvider: DelegatedSourceProvider
-    var provider: DelegatedSourceProvider {
-        get {
-            return localProvider
-        }
-    }
-
-    init?(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceId: String?) {
-        self.localProvider = provider
+    init(provider: DelegatedSourceProvider, topicWriter: AvroDataWriter, sourceType: SourceType, authControl: AuthController, state: RadarState) {
+        self.provider = provider
         self.topicWriter = topicWriter
-        self.localSourceId = sourceId
-        writeQueue = DispatchQueue(label: "prmt_core_data", qos: .background)
-        encoder = GenericAvroEncoder(encoding: .binary)
-        dataCaches = []
+        self.sourceType = sourceType
+        self.authControl = authControl
+        self.state = state
     }
-    
+
     func define(topic name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
-        guard let sourceId = sourceId else {
+        guard let sourceId = activeSource?.id else {
             os_log("Cannot define topic %@ without a source ID", type: .error, name)
             return nil
         }
@@ -139,8 +75,38 @@ class DataSourceManager {
         }
     }
 
+    func findSource(where predicate: (Source) -> Bool) -> Source? {
+        return self.sources.first(where: predicate)
+    }
+
+    func use(source: Source, afterRegistration: Bool = false) -> Single<Source> {
+        self.activeSource = source
+        if source.id == nil || afterRegistration {
+            return self.authControl.ensureRegistration(of: source)
+                .asSingle()
+        } else {
+            return Single.just(source)
+        }
+    }
+
     func start() {
-        os_log("Plugin %@ does not need to be started", String(describing: self))
+        self.status.onNext(.scanning)
+        delegate.startScanning()
+            .subscribe(onSuccess: { [weak self] source in
+                guard let self = self else { return }
+                self.activeSource = source
+                if self.delegate.registerTopics() {
+                    self.status.onNext(.collecting)
+                    self.delegate.startCollecting()
+                } else {
+                    os_log("Cannot register topics for %@", type: .error, self.name)
+                    self.status.onNext(.invalid)
+                }
+            }, onError: { error in
+                os_log("Failed to scan for source: %@", type: .error, error.localizedDescription)
+                self.status.onNext(.disconnected)
+            })
+            .disposed(by: disposeBag)
     }
 
     func flush() {
@@ -148,95 +114,17 @@ class DataSourceManager {
     }
 
     final func close() {
-        willClose()
+        self.status.onNext(.disconnecting)
+        delegate.closeForeground()
+        delegate.close()
         flush()
-    }
-
-    func willClose() {
-
+        self.status.onNext(.disconnected)
     }
 
     final func closeForeground() {
-        willCloseForeground()
+        self.status.onNext(.disconnecting)
+        delegate.closeForeground()
         flush()
-    }
-
-    func willCloseForeground() {
-        willClose()
-    }
-}
-
-extension Data {
-    init<T>(from value: T) {
-        self = Swift.withUnsafeBytes(of: value) { Data($0) }
-    }
-    
-    func load<T>(as type: T.Type) -> T {
-        return withUnsafeBytes { $0.load(as: type) }
-    }
-}
-
-
-class AvroTopicCacheContext {
-    let topic: AvroTopic
-    let dataGroup: NSManagedObjectID
-    private let writeQueue: DispatchQueue
-    private let encoder: AvroEncoder
-    private let topicWriter: AvroDataWriter
-    private var data: Data
-    private var storeFuture: DispatchWorkItem?
-
-    init(topic: AvroTopic, dataGroup: NSManagedObjectID, queue: DispatchQueue, encoder: AvroEncoder, topicWriter: AvroDataWriter) {
-        self.topic = topic
-        self.encoder = encoder
-        self.data = Data()
-        self.writeQueue = queue
-        self.dataGroup = dataGroup
-        self.topicWriter = topicWriter
-        self.storeFuture = nil
-    }
-    
-    func add(record value: AvroValueConvertible) {
-        writeQueue.async { [weak self] in
-            guard let self = self else { return }
-            self.encode(record: value)
-            self.storeDataEventually()
-        }
-    }
-
-    private func storeDataEventually() {
-        if storeFuture == nil {
-            storeFuture = DispatchWorkItem { [weak self] in
-                guard let self = self else { return }
-                self.storeData()
-                self.storeFuture = nil
-            }
-            writeQueue.asyncAfter(deadline: .now() + 10, execute: storeFuture!)
-        }
-    }
-    
-    func flush() {
-        writeQueue.sync {
-            if let storeFuture = self.storeFuture {
-                storeFuture.cancel()
-                self.storeFuture = nil
-                self.storeData()
-            }
-        }
-    }
-
-    private func storeData() {
-        topicWriter.store(records: data, in: dataGroup, for: topic)
-        data = Data()
-    }
-
-    private func encode(record value: AvroValueConvertible) {
-        do {
-            let encodedBytes = try encoder.encode(value, as: topic.valueSchema)
-            data.append(Data(from: encodedBytes.count.littleEndian))
-            data.append(contentsOf: encodedBytes)
-        } catch {
-            os_log("Cannot encode Avro value for topic %@", type: .error, topic.name)
-        }
+        self.status.onNext(.disconnected)
     }
 }

@@ -9,10 +9,13 @@
 import Foundation
 
 class SpamProvider : SourceProvider {
-    let sourceDefinition = SourceDefinition(pluginNames: ["spam", "ios_spam", "SpamProvider"])
+    let defaultSourceType: SourceType = SourceType(id: 2, producer: "Apple_ios", model: "spam", version: "1.0.0", canRegisterDynamically: false)
+    let pluginDefinition = PluginDefinition(pluginNames: ["spam", "ios_spam", "SpamProvider"])
 
-    func provide(writer: AvroDataWriter, authConfig: RadarState) -> SourceManager? {
-        return SpamManager(provider: DelegatedSourceProvider(self), topicWriter: writer, sourceId: "phonesource")
+    func update(state: RadarState) {}
+
+    func provide(sourceManager: SourceManager) -> SourceProtocol? {
+        return SpamProtocol(sourceManager: sourceManager)
     }
 
     func matches(sourceType: SourceType) -> Bool {

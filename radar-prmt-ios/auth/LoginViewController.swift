@@ -19,6 +19,7 @@ class LoginViewController: UIViewController {
 
     @IBAction func onScanQrCode(_ sender: Any) {
         QRCodeViewController.requestAuthorization()
+            .subscribeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] granted in
                 guard let self = self else { return }
                 if granted {

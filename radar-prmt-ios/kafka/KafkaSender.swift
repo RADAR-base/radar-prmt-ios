@@ -8,12 +8,15 @@
 
 import Foundation
 import BlueSteel
+import RxSwift
 import os.log
 
 class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     let context: KafkaSendContext
-    let auth: Authorization
+    let disposeBag = DisposeBag()
+    let authController: AuthController
     var queue: DispatchQueue!
+    var rxQueue: SchedulerType!
     let baseUrl: URL
     var highPrioritySession: URLSession!
     var lowPrioritySession: URLSession!
@@ -21,13 +24,13 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     var lowPrioritySessionCompletionHandler: (() -> Void)? = nil
     var receivedData = [URLSessionTask: Data]()
 
-    init(auth: Authorization, context: KafkaSendContext) {
-        var kafkaUrl = auth.baseUrl
+    init(authController: AuthController, user: User, context: KafkaSendContext) {
+        var kafkaUrl = user.baseUrl
         kafkaUrl.appendPathComponent("kafka", isDirectory: true)
         kafkaUrl.appendPathComponent("topics", isDirectory: true)
         self.baseUrl = kafkaUrl
         self.context = context
-        self.auth = auth
+        self.authController = authController
         super.init()
     }
 
@@ -37,6 +40,7 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
         queue = DispatchQueue(label: "KafkaSender", qos: .background)
         let operationQueue = OperationQueue()
         operationQueue.underlyingQueue = queue
+        rxQueue = SerialDispatchQueueScheduler(queue: queue, internalSerialQueueName: "RxKakfaSender")
 
         var sessionConfig = URLSessionConfiguration.background(withIdentifier: "kafkaSenderHighPriority")
         sessionConfig.waitsForConnectivity = true
@@ -51,13 +55,25 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
 
     func send(handle: UploadHandle) {
         assert(queue != nil, "Cannot send data without starting KafkaSender")
-        let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
+        self.authController.validAuthentication()
+            .take(1)
+            .subscribeOn(rxQueue)
+            .map { [weak self] auth -> URLSessionUploadTask in
+                guard let self = self else {
+                    throw MPAuthError.unreferenced
+                }
+                let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
 
-        var request = URLRequest(url: baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
-        self.auth.addAuthorization(to: &request)
-        let uploadTask = session.uploadTask(with: request, from: handle)
-        receivedData[uploadTask] = Data()
-        uploadTask.resume()
+                var request = URLRequest(url: self.baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
+                try auth.addAuthorization(to: &request)
+                return session.uploadTask(with: request, from: handle)
+            }
+            .subscribe(onNext: { [weak self] uploadTask in
+                guard let self = self else { return }
+                self.receivedData[uploadTask] = Data()
+                uploadTask.resume()
+            })
+            .disposed(by: disposeBag)
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
@@ -97,7 +113,7 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
             context.didSucceed(for: topic)
         case 401, 403:
             os_log("Authentication with RADAR-base failed.")
-            auth.invalidate()
+            self.authController.invalidate(accessToken: task.originalRequest?.value(forHTTPHeaderField: "Authorization") ?? "")
             context.mayRetry(topic: topic)
         case 400 ..< 500:
             context.didFail(for: topic, code: Int16(response.statusCode), message: "Upload failed with code \(response.statusCode)", recoverable: true)

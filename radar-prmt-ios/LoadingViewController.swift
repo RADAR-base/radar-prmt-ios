@@ -20,13 +20,16 @@ class LoadingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         appDelegate.latestConfig
-            .filter { !$0.config.isEmpty }
+            .filter { !$0.config.isEmpty && $0.isAuthLoaded }
             .take(1)
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] authConfig in
-                if authConfig.auth == nil {
+                guard let user = authConfig.user, authConfig.auth != nil else {
                     os_log("Loaded without authentication")
                     self?.performSegue(withIdentifier: "login", sender: self)
-                } else if authConfig.privacyPolicyAccepted != true {
+                    return
+                }
+                if !user.privacyPolicyAccepted {
                     os_log("Still need to accept privacy policy")
                     self?.performSegue(withIdentifier: "loadPrivacyPolicy", sender: self)
                 } else {

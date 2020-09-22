@@ -27,18 +27,18 @@ protocol UploadHandle {
 }
 
 class JsonUploadContext: UploadContext {
-    let auth: Authorization
+    let user: User
     let medium: RequestMedium
     let encoder: AvroEncoder = GenericAvroEncoder(encoding: .json)
 
-    init(auth: Authorization, medium: RequestMedium) {
-        self.auth = auth
+    init(user: User, medium: RequestMedium) {
+        self.user = user
         self.medium = medium
     }
 
     func start(element: UploadQueueElement, upload: RecordSetUpload, schemas: (SchemaMetadata, SchemaMetadata)) throws -> UploadHandle {
         let handle = try medium.start(upload: upload)
-        let key = ["projectId": auth.projectId, "userId": auth.userId, "sourceId": upload.dataGroup!.sourceId!].toAvro()
+        let key = ["projectId": user.projectId, "userId": user.userId, "sourceId": upload.dataGroup!.sourceId!].toAvro()
         return try JsonUploadHandle(upload: element, priority: upload.topic!.priority, mediumHandle: handle, schemas: schemas, encoder: encoder, key: key)
     }
 }

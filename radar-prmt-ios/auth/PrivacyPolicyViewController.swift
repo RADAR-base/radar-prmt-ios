@@ -20,20 +20,30 @@ class PrivacyPolicyViewController : UIViewController, SFSafariViewControllerDele
 
     override func viewDidLoad() {
         self.navigationItem.hidesBackButton = true
-        appDelegate.authController.auth
-            .subscribe(onNext: { [weak self] auth in
-                guard let self = self, let auth = auth else { return }
-                self.baseUrlLabel?.text = auth.baseUrl.absoluteString
-                self.projectIdLabel?.text = auth.projectId
-                self.userIdLabel?.text = auth.userId
-                self.privacyPolicyUrl = auth.privacyPolicyUrl
+        appDelegate.authController.user
+            .compactMap { $0 }
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [weak self] user in
+                guard let self = self else { return }
+                self.baseUrlLabel?.text = user.baseUrl.absoluteString
+                self.projectIdLabel?.text = user.projectId
+                self.userIdLabel?.text = user.userId
+                self.privacyPolicyUrl = user.privacyPolicyUrl
             })
             .disposed(by: disposeBag)
     }
 
     @IBAction func acceptPrivacyPolicy(_ sender: Any) {
-        UserDefaults.standard.set(true, forKey: "privacyPolicyAccepted")
-        performSegue(withIdentifier: "acceptedPrivacyPolicy", sender: self)
+        if let userId = self.userIdLabel?.text {
+            appDelegate.authController.acceptPrivacyPolicy(for: userId)
+                .subscribeOn(MainScheduler.instance)
+                .subscribe(onNext: { [weak self] user in
+                    if user.privacyPolicyAccepted {
+                        self?.performSegue(withIdentifier: "acceptedPrivacyPolicy", sender: self)
+                    }
+                })
+                .disposed(by: disposeBag)
+        }
     }
 
     @IBAction func showDataSources(_ sender: Any) {

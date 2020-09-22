@@ -156,14 +156,21 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="next"/>
+                                <connections>
+                                    <action selector="resetValid:" destination="BAx-F4-N55" eventType="editingDidBegin" id="cDA-gk-zYL"/>
+                                </connections>
                             </textField>
                             <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="O1s-iR-SK4">
                                 <rect key="frame" x="77" y="467" width="317" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
+                                <textInputTraits key="textInputTraits" returnKeyType="done"/>
+                                <connections>
+                                    <action selector="didEnterToken:" destination="BAx-F4-N55" eventType="primaryActionTriggered" id="aZD-Gm-nlm"/>
+                                    <action selector="resetValid:" destination="BAx-F4-N55" eventType="editingDidBegin" id="zSx-qH-FUH"/>
+                                </connections>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Token" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="SEU-Z6-MIP">
                                 <rect key="frame" x="20" y="352" width="46" height="21"/>
@@ -195,6 +202,14 @@
                                 <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="" textAlignment="center" lineBreakMode="wordWrap" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dvf-ra-Rh4">
+                                <rect key="frame" x="20" y="264" width="374" height="43"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <color key="backgroundColor" red="0.98023194074630737" green="0.92677170038223267" blue="0.92597430944442749" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="0.47750663757324219" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <viewLayoutGuide key="safeArea" id="amy-3p-nRF"/>
@@ -202,13 +217,14 @@
                     <navigationItem key="navigationItem" title="Enter token" id="oMf-jj-aM1"/>
                     <connections>
                         <outlet property="baseUrlField" destination="O1s-iR-SK4" id="WwN-HM-ZxI"/>
+                        <outlet property="statusLabel" destination="dvf-ra-Rh4" id="2pS-5Z-PgM"/>
                         <outlet property="tokenField" destination="pFD-wW-QbC" id="e55-VQ-uzk"/>
                         <segue destination="BYZ-38-t0r" kind="show" identifier="mainFromToken" id="NsX-7R-PRB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="asa-PZ-qrf" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-2087" y="68"/>
+            <point key="canvasLocation" x="-2088.4057971014495" y="67.633928571428569"/>
         </scene>
         <!--Privacy policy-->
         <scene sceneID="KJI-qe-N5J">
@@ -413,6 +429,6 @@
         <segue reference="QIZ-Cn-9sE"/>
         <segue reference="96y-Vv-UaW"/>
         <segue reference="fH7-Rl-7f0"/>
-        <segue reference="pq3-1m-GvI"/>
+        <segue reference="NsX-7R-PRB"/>
     </inferredMetricsTieBreakers>
 </document>

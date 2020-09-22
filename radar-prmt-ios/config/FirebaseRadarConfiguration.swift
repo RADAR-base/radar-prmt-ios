@@ -9,29 +9,35 @@
 import Foundation
 import Firebase
 import RxSwift
+import os.log
 
 class FirebaseRadarConfiguration : RadarConfiguration {
     let localConfiguration = UserDefaults.standard
     let remoteConfig: RemoteConfig
     private var combinedNames = Set<String>()
-    private let subject: BehaviorSubject<[String: String]>
-    var config: BehaviorSubject<[String: String]> {
-        return subject
-    }
+    let config: BehaviorSubject<[String: String]>
+    let disposeBag = DisposeBag()
 
     init() {
-        self.subject = BehaviorSubject(value: [:])
+        self.config = BehaviorSubject(value: [:])
         FirebaseApp.configure()
         self.remoteConfig = RemoteConfig.remoteConfig()
         self.remoteConfig.setDefaults(fromPlist: "config")
         update()
+        self.config
+            .skip(1)
+            .distinctUntilChanged()
+            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .background))
+            .subscribe(onNext: {
+                os_log("RadarConfiguration: %@", "\($0 as AnyObject)")
+            })
+            .disposed(by: disposeBag)
     }
 
     func fetch(withDelay: TimeInterval = 0.0) {
         remoteConfig.fetch(withExpirationDuration: withDelay, completionHandler: Optional.some({[weak self] status, err in
             guard let self = self else { return }
-            self.remoteConfig.activateFetched()
-            self.update()
+            self.remoteConfig.activate(completion: { (_, _) in self.update() })
         }))
     }
 
@@ -41,7 +47,7 @@ class FirebaseRadarConfiguration : RadarConfiguration {
         for name in names {
             newConfig[name] = self[name]
         }
-        subject.onNext(newConfig)
+        config.onNext(newConfig)
     }
 
     var names: Set<String> {

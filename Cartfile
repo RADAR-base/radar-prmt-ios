@@ -9,6 +9,7 @@ github "pixeldock/RxAppState" ~> 1.5.1
 
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAnalyticsBinary.json"
 binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseRemoteConfigBinary.json"
+binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseProtobufBinary.json"
 
 # binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAdMobBinary.json"
 # binary "https://dl.google.com/dl/firebase/ios/carthage/FirebaseAuthBinary.json"
