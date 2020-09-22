@@ -44,7 +44,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 authController.isLoaded.distinctUntilChanged(),
                 config.config.distinctUntilChanged())
             .map { RadarState(lifecycle: $0.0, user: $0.1, auth: $0.2, isAuthLoaded: $0.3, config: $0.4) }
-            .do(onNext: { state in
+            .do(onNext: { (state: RadarState) in
                 os_log("Next app state: cycle: %@, user: %@, policy %d, authValid: %d, isLoaded: %d, sources: %d, config #: %d",
                        state.lifecycle.description,
                        state.user?.userId ?? "<none>",

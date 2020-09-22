@@ -7,7 +7,11 @@ RADAR-base pRMT app for iOS 11.0 or higher. The code is completely written in Sw
 Use XCode to modify the code. Install dependencies with [Carthage](https://github.com/Carthage/Carthage):
 
 ```shell
-carthage update
+export XCODE_XCCONFIG_FILE="$(pwd)/carthage-fix.xcconfig"
+carthage update --platform iOS --no-use-binaries --cache-builds
+rm -rf Frameworks
+mkdir Frameworks
+cp -r Carthage/Build/iOS/*.framework* Frameworks
 ```
 
 # Contributing

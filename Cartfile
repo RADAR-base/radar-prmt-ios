@@ -1,5 +1,5 @@
 github "thehyve/BlueSteel" ~> 4.0.0-alpha.1
-github "httpswift/swifter" ~> 1.4.6
+github "httpswift/swifter" "3a03ccab4e4a0cee17198a84f55348b5dcacc6bf"
 github "ReactiveX/RxSwift" ~> 5.0.0
 github "RxSwiftCommunity/RxSwiftExt" ~> 5.0.0
 github "1024jp/GzipSwift" ~> 5.0.0

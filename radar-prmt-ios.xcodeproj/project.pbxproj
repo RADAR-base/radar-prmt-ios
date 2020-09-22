@@ -19,7 +19,6 @@
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
 		A937D1FB24FD307000C59AA3 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D1FA24FD307000C59AA3 /* libc++.tbd */; };
 		A937D1FD24FD307900C59AA3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D1FC24FD307900C59AA3 /* libsqlite3.tbd */; };
-		A937D1FF24FD308100C59AA3 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D1FE24FD308100C59AA3 /* AddressBook.framework */; };
 		A937D22324FD344700C59AA3 /* PromisesObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20924FD344600C59AA3 /* PromisesObjC.framework */; };
 		A937D22524FD344700C59AA3 /* FirebaseRemoteConfig.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20B24FD344600C59AA3 /* FirebaseRemoteConfig.framework */; };
 		A937D22924FD344700C59AA3 /* FIRAnalyticsConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20F24FD344600C59AA3 /* FIRAnalyticsConnector.framework */; };
@@ -178,7 +177,6 @@
 		A937D21C24FD344700C59AA3 /* Firebase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Firebase.framework; path = Frameworks/Firebase.framework; sourceTree = "<group>"; };
 		A937D21D24FD344700C59AA3 /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Frameworks/BlueSteel.framework; sourceTree = "<group>"; };
 		A937D21E24FD344700C59AA3 /* GoogleDataTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleDataTransport.framework; path = Frameworks/GoogleDataTransport.framework; sourceTree = "<group>"; };
-		A937D21F24FD344700C59AA3 /* Gzip.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Gzip.framework; path = Frameworks/Gzip.framework; sourceTree = "<group>"; };
 		A937D22024FD344700C59AA3 /* FirebaseABTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseABTesting.framework; path = Frameworks/FirebaseABTesting.framework; sourceTree = "<group>"; };
 		A937D22124FD344700C59AA3 /* FirebaseCoreDiagnostics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCoreDiagnostics.framework; path = Frameworks/FirebaseCoreDiagnostics.framework; sourceTree = "<group>"; };
 		A93A58E922BA8715000A542E /* SourceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceStatus.swift; sourceTree = "<group>"; };
@@ -264,7 +262,6 @@
 				A937D23324FD344800C59AA3 /* nanopb.framework in Frameworks */,
 				A937D22324FD344700C59AA3 /* PromisesObjC.framework in Frameworks */,
 				A937D23024FD344800C59AA3 /* GoogleUtilities.framework in Frameworks */,
-				A937D1FF24FD308100C59AA3 /* AddressBook.framework in Frameworks */,
 				A937D23624FD344800C59AA3 /* Firebase.framework in Frameworks */,
 				A937D22924FD344700C59AA3 /* FIRAnalyticsConnector.framework in Frameworks */,
 				A937D22E24FD344800C59AA3 /* FirebaseInstallations.framework in Frameworks */,
@@ -422,7 +419,6 @@
 				A937D21324FD344700C59AA3 /* GoogleAppMeasurement.framework */,
 				A937D21E24FD344700C59AA3 /* GoogleDataTransport.framework */,
 				A937D21624FD344700C59AA3 /* GoogleUtilities.framework */,
-				A937D21F24FD344700C59AA3 /* Gzip.framework */,
 				A937D20C24FD344600C59AA3 /* JWTDecode.framework */,
 				A937D21924FD344700C59AA3 /* nanopb.framework */,
 				A937D20924FD344600C59AA3 /* PromisesObjC.framework */,
@@ -936,7 +932,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -993,7 +989,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
