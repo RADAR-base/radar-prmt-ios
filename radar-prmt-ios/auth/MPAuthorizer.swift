@@ -28,6 +28,7 @@ class MPClient {
     func metaTokenLogin(url tokenUrl: URL) -> Observable<(User, OAuthToken)> {
         var request = URLRequest(url: tokenUrl)
         request.addBasicAuthentication(identifiedBy: clientId, authenticatedWith: clientSecret)
+        os_log("Making request to %s using credentials %s:%s", tokenUrl.absoluteString, clientId, clientSecret)
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
             .map { data in

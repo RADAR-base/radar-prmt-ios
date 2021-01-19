@@ -12,10 +12,10 @@ import Valet
 extension Valet {
     func store<T : Codable>(codable value: T, forKey key: String) throws {
         let data = try JSONEncoder().encode(value)
-        set(object: data, forKey: key)
+        try setObject(data, forKey: key)
     }
     func load<T : Codable>(type: T.Type, forKey key: String) throws -> T? {
-        guard let data = object(forKey: key) else {
+        guard let data = try? object(forKey: key) else {
             return nil
         }
         return try JSONDecoder().decode(type, from: data)

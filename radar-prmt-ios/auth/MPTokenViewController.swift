@@ -13,6 +13,7 @@ import os.log
 
 class MPTokenViewController : UIViewController {
     let disposeBag = DisposeBag()
+    let invalidTokenCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: ".-")).inverted
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,7 +70,7 @@ class MPTokenViewController : UIViewController {
             return nil
         }
 
-        guard token.rangeOfCharacter(from: CharacterSet.alphanumerics.inverted) == nil else {
+        guard token.rangeOfCharacter(from: invalidTokenCharacters) == nil else {
             showError(message: "Token text is not valid", fields: [tokenField])
             return nil
         }
