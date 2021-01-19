@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,23 +16,19 @@
 		A9245B362285855C0089B069 /* QRCodeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9245B352285855C0089B069 /* QRCodeViewController.swift */; };
 		A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB32268568D003B6134 /* RequestMedium.swift */; };
 		A9296AB622685704003B6134 /* UploadContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9296AB522685704003B6134 /* UploadContext.swift */; };
+		A92AB45125B5E4CC00016348 /* BlueSteel in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB45025B5E4CC00016348 /* BlueSteel */; };
+		A92AB45525B5E51400016348 /* Swifter in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB45425B5E51400016348 /* Swifter */; };
+		A92AB45925B5E54E00016348 /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB45825B5E54E00016348 /* RxCocoa */; };
+		A92AB45B25B5E54E00016348 /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB45A25B5E54E00016348 /* RxSwift */; };
+		A92AB46225B5E59600016348 /* RxSwiftExt in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB46125B5E59600016348 /* RxSwiftExt */; };
+		A92AB46625B5E5AB00016348 /* Gzip in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB46525B5E5AB00016348 /* Gzip */; };
+		A92AB46A25B5E5C200016348 /* Valet in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB46925B5E5C200016348 /* Valet */; };
+		A92AB46E25B5E5ED00016348 /* JWTDecode in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB46D25B5E5ED00016348 /* JWTDecode */; };
+		A92AB47225B5E60D00016348 /* RxAppState in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB47125B5E60D00016348 /* RxAppState */; };
+		A92AB47625B5E68500016348 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB47525B5E68500016348 /* FirebaseRemoteConfig */; };
+		A92AB47C25B5E8D400016348 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A95A811224FD202B006E9D3D /* XCTest.framework */; };
+		A92AB47E25B5E8DB00016348 /* RxTest in Frameworks */ = {isa = PBXBuildFile; productRef = A92AB47D25B5E8DB00016348 /* RxTest */; };
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
-		A937D1FB24FD307000C59AA3 /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D1FA24FD307000C59AA3 /* libc++.tbd */; };
-		A937D1FD24FD307900C59AA3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D1FC24FD307900C59AA3 /* libsqlite3.tbd */; };
-		A937D22324FD344700C59AA3 /* PromisesObjC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20924FD344600C59AA3 /* PromisesObjC.framework */; };
-		A937D22524FD344700C59AA3 /* FirebaseRemoteConfig.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20B24FD344600C59AA3 /* FirebaseRemoteConfig.framework */; };
-		A937D22924FD344700C59AA3 /* FIRAnalyticsConnector.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D20F24FD344600C59AA3 /* FIRAnalyticsConnector.framework */; };
-		A937D22C24FD344800C59AA3 /* FirebaseAnalytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21224FD344700C59AA3 /* FirebaseAnalytics.framework */; };
-		A937D22D24FD344800C59AA3 /* GoogleAppMeasurement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21324FD344700C59AA3 /* GoogleAppMeasurement.framework */; };
-		A937D22E24FD344800C59AA3 /* FirebaseInstallations.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21424FD344700C59AA3 /* FirebaseInstallations.framework */; };
-		A937D23024FD344800C59AA3 /* GoogleUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21624FD344700C59AA3 /* GoogleUtilities.framework */; };
-		A937D23324FD344800C59AA3 /* nanopb.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21924FD344700C59AA3 /* nanopb.framework */; };
-		A937D23424FD344800C59AA3 /* Protobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21A24FD344700C59AA3 /* Protobuf.framework */; };
-		A937D23524FD344800C59AA3 /* FirebaseCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21B24FD344700C59AA3 /* FirebaseCore.framework */; };
-		A937D23624FD344800C59AA3 /* Firebase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21C24FD344700C59AA3 /* Firebase.framework */; };
-		A937D23824FD344800C59AA3 /* GoogleDataTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D21E24FD344700C59AA3 /* GoogleDataTransport.framework */; };
-		A937D23A24FD344800C59AA3 /* FirebaseABTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D22024FD344700C59AA3 /* FirebaseABTesting.framework */; };
-		A937D23B24FD344800C59AA3 /* FirebaseCoreDiagnostics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A937D22124FD344700C59AA3 /* FirebaseCoreDiagnostics.framework */; };
 		A93A58EA22BA8715000A542E /* SourceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A58E922BA8715000A542E /* SourceStatus.swift */; };
 		A94E062522A521CE009E0692 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E062422A521CE009E0692 /* config.plist */; };
 		A94E064C22A530C6009E0692 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E064B22A530C6009E0692 /* GoogleService-Info.plist */; };
@@ -154,31 +150,6 @@
 		A937D1FA24FD307000C59AA3 /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
 		A937D1FC24FD307900C59AA3 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		A937D1FE24FD308100C59AA3 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
-		A937D20824FD344600C59AA3 /* RxSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwift.framework; path = Frameworks/RxSwift.framework; sourceTree = "<group>"; };
-		A937D20924FD344600C59AA3 /* PromisesObjC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PromisesObjC.framework; path = Frameworks/PromisesObjC.framework; sourceTree = "<group>"; };
-		A937D20A24FD344600C59AA3 /* Swifter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Swifter.framework; path = Frameworks/Swifter.framework; sourceTree = "<group>"; };
-		A937D20B24FD344600C59AA3 /* FirebaseRemoteConfig.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseRemoteConfig.framework; path = Frameworks/FirebaseRemoteConfig.framework; sourceTree = "<group>"; };
-		A937D20C24FD344600C59AA3 /* JWTDecode.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JWTDecode.framework; path = Frameworks/JWTDecode.framework; sourceTree = "<group>"; };
-		A937D20D24FD344600C59AA3 /* Valet.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Valet.framework; path = Frameworks/Valet.framework; sourceTree = "<group>"; };
-		A937D20E24FD344600C59AA3 /* RxRelay.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxRelay.framework; path = Frameworks/RxRelay.framework; sourceTree = "<group>"; };
-		A937D20F24FD344600C59AA3 /* FIRAnalyticsConnector.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FIRAnalyticsConnector.framework; path = Frameworks/FIRAnalyticsConnector.framework; sourceTree = "<group>"; };
-		A937D21024FD344600C59AA3 /* RxTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxTest.framework; path = Frameworks/RxTest.framework; sourceTree = "<group>"; };
-		A937D21124FD344600C59AA3 /* RxCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxCocoa.framework; path = Frameworks/RxCocoa.framework; sourceTree = "<group>"; };
-		A937D21224FD344700C59AA3 /* FirebaseAnalytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseAnalytics.framework; path = Frameworks/FirebaseAnalytics.framework; sourceTree = "<group>"; };
-		A937D21324FD344700C59AA3 /* GoogleAppMeasurement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleAppMeasurement.framework; path = Frameworks/GoogleAppMeasurement.framework; sourceTree = "<group>"; };
-		A937D21424FD344700C59AA3 /* FirebaseInstallations.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseInstallations.framework; path = Frameworks/FirebaseInstallations.framework; sourceTree = "<group>"; };
-		A937D21524FD344700C59AA3 /* RxSwiftExt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxSwiftExt.framework; path = Frameworks/RxSwiftExt.framework; sourceTree = "<group>"; };
-		A937D21624FD344700C59AA3 /* GoogleUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleUtilities.framework; path = Frameworks/GoogleUtilities.framework; sourceTree = "<group>"; };
-		A937D21724FD344700C59AA3 /* RxAppState.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxAppState.framework; path = Frameworks/RxAppState.framework; sourceTree = "<group>"; };
-		A937D21824FD344700C59AA3 /* RxBlocking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RxBlocking.framework; path = Frameworks/RxBlocking.framework; sourceTree = "<group>"; };
-		A937D21924FD344700C59AA3 /* nanopb.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = nanopb.framework; path = Frameworks/nanopb.framework; sourceTree = "<group>"; };
-		A937D21A24FD344700C59AA3 /* Protobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Protobuf.framework; path = Frameworks/Protobuf.framework; sourceTree = "<group>"; };
-		A937D21B24FD344700C59AA3 /* FirebaseCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCore.framework; path = Frameworks/FirebaseCore.framework; sourceTree = "<group>"; };
-		A937D21C24FD344700C59AA3 /* Firebase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Firebase.framework; path = Frameworks/Firebase.framework; sourceTree = "<group>"; };
-		A937D21D24FD344700C59AA3 /* BlueSteel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = BlueSteel.framework; path = Frameworks/BlueSteel.framework; sourceTree = "<group>"; };
-		A937D21E24FD344700C59AA3 /* GoogleDataTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GoogleDataTransport.framework; path = Frameworks/GoogleDataTransport.framework; sourceTree = "<group>"; };
-		A937D22024FD344700C59AA3 /* FirebaseABTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseABTesting.framework; path = Frameworks/FirebaseABTesting.framework; sourceTree = "<group>"; };
-		A937D22124FD344700C59AA3 /* FirebaseCoreDiagnostics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FirebaseCoreDiagnostics.framework; path = Frameworks/FirebaseCoreDiagnostics.framework; sourceTree = "<group>"; };
 		A93A58E922BA8715000A542E /* SourceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceStatus.swift; sourceTree = "<group>"; };
 		A94E062422A521CE009E0692 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
 		A94E064B22A530C6009E0692 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -259,22 +230,16 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A937D23324FD344800C59AA3 /* nanopb.framework in Frameworks */,
-				A937D22324FD344700C59AA3 /* PromisesObjC.framework in Frameworks */,
-				A937D23024FD344800C59AA3 /* GoogleUtilities.framework in Frameworks */,
-				A937D23624FD344800C59AA3 /* Firebase.framework in Frameworks */,
-				A937D22924FD344700C59AA3 /* FIRAnalyticsConnector.framework in Frameworks */,
-				A937D22E24FD344800C59AA3 /* FirebaseInstallations.framework in Frameworks */,
-				A937D23824FD344800C59AA3 /* GoogleDataTransport.framework in Frameworks */,
-				A937D22524FD344700C59AA3 /* FirebaseRemoteConfig.framework in Frameworks */,
-				A937D1FD24FD307900C59AA3 /* libsqlite3.tbd in Frameworks */,
-				A937D1FB24FD307000C59AA3 /* libc++.tbd in Frameworks */,
-				A937D23A24FD344800C59AA3 /* FirebaseABTesting.framework in Frameworks */,
-				A937D23524FD344800C59AA3 /* FirebaseCore.framework in Frameworks */,
-				A937D23424FD344800C59AA3 /* Protobuf.framework in Frameworks */,
-				A937D23B24FD344800C59AA3 /* FirebaseCoreDiagnostics.framework in Frameworks */,
-				A937D22D24FD344800C59AA3 /* GoogleAppMeasurement.framework in Frameworks */,
-				A937D22C24FD344800C59AA3 /* FirebaseAnalytics.framework in Frameworks */,
+				A92AB46A25B5E5C200016348 /* Valet in Frameworks */,
+				A92AB47225B5E60D00016348 /* RxAppState in Frameworks */,
+				A92AB45B25B5E54E00016348 /* RxSwift in Frameworks */,
+				A92AB46E25B5E5ED00016348 /* JWTDecode in Frameworks */,
+				A92AB46625B5E5AB00016348 /* Gzip in Frameworks */,
+				A92AB46225B5E59600016348 /* RxSwiftExt in Frameworks */,
+				A92AB45125B5E4CC00016348 /* BlueSteel in Frameworks */,
+				A92AB45925B5E54E00016348 /* RxCocoa in Frameworks */,
+				A92AB47625B5E68500016348 /* FirebaseRemoteConfig in Frameworks */,
+				A92AB45525B5E51400016348 /* Swifter in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -282,6 +247,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A92AB47E25B5E8DB00016348 /* RxTest in Frameworks */,
+				A92AB47C25B5E8D400016348 /* XCTest.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -407,31 +374,6 @@
 		A997B2A821BF9FB60029B43B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				A937D21D24FD344700C59AA3 /* BlueSteel.framework */,
-				A937D20F24FD344600C59AA3 /* FIRAnalyticsConnector.framework */,
-				A937D21C24FD344700C59AA3 /* Firebase.framework */,
-				A937D22024FD344700C59AA3 /* FirebaseABTesting.framework */,
-				A937D21224FD344700C59AA3 /* FirebaseAnalytics.framework */,
-				A937D21B24FD344700C59AA3 /* FirebaseCore.framework */,
-				A937D22124FD344700C59AA3 /* FirebaseCoreDiagnostics.framework */,
-				A937D21424FD344700C59AA3 /* FirebaseInstallations.framework */,
-				A937D20B24FD344600C59AA3 /* FirebaseRemoteConfig.framework */,
-				A937D21324FD344700C59AA3 /* GoogleAppMeasurement.framework */,
-				A937D21E24FD344700C59AA3 /* GoogleDataTransport.framework */,
-				A937D21624FD344700C59AA3 /* GoogleUtilities.framework */,
-				A937D20C24FD344600C59AA3 /* JWTDecode.framework */,
-				A937D21924FD344700C59AA3 /* nanopb.framework */,
-				A937D20924FD344600C59AA3 /* PromisesObjC.framework */,
-				A937D21A24FD344700C59AA3 /* Protobuf.framework */,
-				A937D21724FD344700C59AA3 /* RxAppState.framework */,
-				A937D21824FD344700C59AA3 /* RxBlocking.framework */,
-				A937D21124FD344600C59AA3 /* RxCocoa.framework */,
-				A937D20E24FD344600C59AA3 /* RxRelay.framework */,
-				A937D20824FD344600C59AA3 /* RxSwift.framework */,
-				A937D21524FD344700C59AA3 /* RxSwiftExt.framework */,
-				A937D21024FD344600C59AA3 /* RxTest.framework */,
-				A937D20A24FD344600C59AA3 /* Swifter.framework */,
-				A937D20D24FD344600C59AA3 /* Valet.framework */,
 				A937D1FE24FD308100C59AA3 /* AddressBook.framework */,
 				A937D1FC24FD307900C59AA3 /* libsqlite3.tbd */,
 				A937D1FA24FD307000C59AA3 /* libc++.tbd */,
@@ -567,14 +509,24 @@
 				A997B26921BEF1AB0029B43B /* Frameworks */,
 				A997B26A21BEF1AB0029B43B /* Resources */,
 				A9F9716221C0F5DB0003FF5F /* Embed Frameworks */,
-				A99AAE96226462BA005B57DA /* ShellScript */,
-				A99AAE9722646303005B57DA /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = "radar-prmt-ios";
+			packageProductDependencies = (
+				A92AB45025B5E4CC00016348 /* BlueSteel */,
+				A92AB45425B5E51400016348 /* Swifter */,
+				A92AB45825B5E54E00016348 /* RxCocoa */,
+				A92AB45A25B5E54E00016348 /* RxSwift */,
+				A92AB46125B5E59600016348 /* RxSwiftExt */,
+				A92AB46525B5E5AB00016348 /* Gzip */,
+				A92AB46925B5E5C200016348 /* Valet */,
+				A92AB46D25B5E5ED00016348 /* JWTDecode */,
+				A92AB47125B5E60D00016348 /* RxAppState */,
+				A92AB47525B5E68500016348 /* FirebaseRemoteConfig */,
+			);
 			productName = "radar-prmt-ios";
 			productReference = A997B26C21BEF1AB0029B43B /* radarPrmtIos.app */;
 			productType = "com.apple.product-type.application";
@@ -594,6 +546,9 @@
 				A997B28521BEF1AC0029B43B /* PBXTargetDependency */,
 			);
 			name = "radar-prmt-iosTests";
+			packageProductDependencies = (
+				A92AB47D25B5E8DB00016348 /* RxTest */,
+			);
 			productName = "radar-prmt-iosTests";
 			productReference = A997B28321BEF1AC0029B43B /* radar-prmt-iosTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -648,7 +603,7 @@
 				};
 			};
 			buildConfigurationList = A997B26721BEF1AB0029B43B /* Build configuration list for PBXProject "radar-prmt-ios" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 11.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -656,6 +611,17 @@
 				Base,
 			);
 			mainGroup = A997B26321BEF1AB0029B43B;
+			packageReferences = (
+				A92AB44F25B5E4CC00016348 /* XCRemoteSwiftPackageReference "BlueSteel" */,
+				A92AB45325B5E51400016348 /* XCRemoteSwiftPackageReference "swifter" */,
+				A92AB45725B5E54E00016348 /* XCRemoteSwiftPackageReference "RxSwift" */,
+				A92AB46025B5E59600016348 /* XCRemoteSwiftPackageReference "RxSwiftExt" */,
+				A92AB46425B5E5AB00016348 /* XCRemoteSwiftPackageReference "GzipSwift" */,
+				A92AB46825B5E5C200016348 /* XCRemoteSwiftPackageReference "Valet" */,
+				A92AB46C25B5E5ED00016348 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */,
+				A92AB47025B5E60D00016348 /* XCRemoteSwiftPackageReference "RxAppState" */,
+				A92AB47425B5E68500016348 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			productRefGroup = A997B26D21BEF1AB0029B43B /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -697,61 +663,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		A99AAE96226462BA005B57DA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Frameworks/BlueSteel.framework",
-				"$(SRCROOT)/Frameworks/RxSwift.framework",
-				"$(SRCROOT)/Frameworks/RxCocoa.framework",
-				"$(SRCROOT)/Frameworks/RxSwiftExt.framework",
-				"$(SRCROOT)/Frameworks/Gzip.framework",
-				"$(SRCROOT)/Frameworks/JWTDecode.framework",
-				"$(SRCROOT)/Frameworks/Valet.framework",
-				"$(SRCROOT)/Frameworks/RxRelay.framework",
-				"$(SRCROOT)/Frameworks/RxAppState.framework",
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/BlueSteel.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwift.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxCocoa.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxSwiftExt.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Gzip.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/JWTDecode.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Valet.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxRelay.framework",
-				"$(DERIVED_FILE_DIR)/$(FRAMEWORKS_FOLDER_PATH)/RxAppState.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n/usr/local/bin/carthage copy-frameworks\n";
-		};
-		A99AAE9722646303005B57DA /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n#/usr/local/bin/carthage outdated --xcode-warnings\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		A997B26821BEF1AB0029B43B /* Sources */ = {
@@ -1005,13 +916,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VFJ7769EXG;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1039,13 +944,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = VFJ7769EXG;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-					"$(PROJECT_DIR)",
-					"$(PROJECT_DIR)/lib",
-					"$(PROJECT_DIR)/Frameworks",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = "radar-prmt-ios/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -1207,6 +1106,139 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A92AB44F25B5E4CC00016348 /* XCRemoteSwiftPackageReference "BlueSteel" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/thehyve/BlueSteel.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.0;
+			};
+		};
+		A92AB45325B5E51400016348 /* XCRemoteSwiftPackageReference "swifter" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/httpswift/swifter.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.5.0;
+			};
+		};
+		A92AB45725B5E54E00016348 /* XCRemoteSwiftPackageReference "RxSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/ReactiveX/RxSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		A92AB46025B5E59600016348 /* XCRemoteSwiftPackageReference "RxSwiftExt" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RxSwiftCommunity/RxSwiftExt.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		A92AB46425B5E5AB00016348 /* XCRemoteSwiftPackageReference "GzipSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/1024jp/GzipSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.1;
+			};
+		};
+		A92AB46825B5E5C200016348 /* XCRemoteSwiftPackageReference "Valet" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/square/Valet.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.1;
+			};
+		};
+		A92AB46C25B5E5ED00016348 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/JWTDecode.swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.0;
+			};
+		};
+		A92AB47025B5E60D00016348 /* XCRemoteSwiftPackageReference "RxAppState" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pixeldock/RxAppState.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.1;
+			};
+		};
+		A92AB47425B5E68500016348 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.4.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A92AB45025B5E4CC00016348 /* BlueSteel */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB44F25B5E4CC00016348 /* XCRemoteSwiftPackageReference "BlueSteel" */;
+			productName = BlueSteel;
+		};
+		A92AB45425B5E51400016348 /* Swifter */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB45325B5E51400016348 /* XCRemoteSwiftPackageReference "swifter" */;
+			productName = Swifter;
+		};
+		A92AB45825B5E54E00016348 /* RxCocoa */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB45725B5E54E00016348 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxCocoa;
+		};
+		A92AB45A25B5E54E00016348 /* RxSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB45725B5E54E00016348 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxSwift;
+		};
+		A92AB46125B5E59600016348 /* RxSwiftExt */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB46025B5E59600016348 /* XCRemoteSwiftPackageReference "RxSwiftExt" */;
+			productName = RxSwiftExt;
+		};
+		A92AB46525B5E5AB00016348 /* Gzip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB46425B5E5AB00016348 /* XCRemoteSwiftPackageReference "GzipSwift" */;
+			productName = Gzip;
+		};
+		A92AB46925B5E5C200016348 /* Valet */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB46825B5E5C200016348 /* XCRemoteSwiftPackageReference "Valet" */;
+			productName = Valet;
+		};
+		A92AB46D25B5E5ED00016348 /* JWTDecode */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB46C25B5E5ED00016348 /* XCRemoteSwiftPackageReference "JWTDecode.swift" */;
+			productName = JWTDecode;
+		};
+		A92AB47125B5E60D00016348 /* RxAppState */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB47025B5E60D00016348 /* XCRemoteSwiftPackageReference "RxAppState" */;
+			productName = RxAppState;
+		};
+		A92AB47525B5E68500016348 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB47425B5E68500016348 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		A92AB47D25B5E8DB00016348 /* RxTest */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A92AB45725B5E54E00016348 /* XCRemoteSwiftPackageReference "RxSwift" */;
+			productName = RxTest;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		A98D39BB225F34E700385D2C /* radar_prmt_ios.xcdatamodeld */ = {

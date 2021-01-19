@@ -26,7 +26,11 @@ class AuthController {
         // Reset keychain on first load
         let defaults = UserDefaults.standard
         if !defaults.bool(forKey: "isInitialized") {
-            secureData.removeAllObjects()
+            do {
+                try secureData.removeAllObjects()
+            } catch _ {
+                os_log("Failed to remove secure data of uninitialized app", type: .error)
+            }
             defaults.set(true, forKey: "isInitialized")
         }
         self.config = config
@@ -110,7 +114,11 @@ class AuthController {
                             os_log("Failed to store user data", type: .error)
                         }
                     } else {
-                        self.secureData.removeObject(forKey: "user")
+                        do {
+                            try self.secureData.removeObject(forKey: "user")
+                        } catch {
+                            os_log("Failed to remove user data", type: .error)
+                        }
                     }
                 })
                 .disposed(by: self.disposeBag)
@@ -129,7 +137,11 @@ class AuthController {
                             os_log("Failed to store updated authentication: %@", error.localizedDescription)
                         }
                     } else {
-                        self.secureData.removeObject(forKey: "auth")
+                        do {
+                            try self.secureData.removeObject(forKey: "auth")
+                        } catch {
+                            os_log("Failed to remove authentication", type: .error)
+                        }
                     }
                 })
                 .disposed(by: self.disposeBag)
@@ -139,7 +151,11 @@ class AuthController {
     }
 
     func reset() {
-        secureData.removeObject(forKey: "auth")
+        do {
+            try secureData.removeObject(forKey: "auth")
+        } catch {
+            os_log("Failed to remove authentication")
+        }
         auth.onNext(nil)
         user.onNext(nil)
     }
