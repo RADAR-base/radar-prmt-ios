@@ -22,21 +22,23 @@ class LoginViewController: UIViewController {
             .subscribeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] granted in
                 guard let self = self else { return }
-                if granted {
-                    self.performSegue(withIdentifier: "qrCodeScanner", sender: self)
-                } else {
-                    let alert = UIAlertController(title: "Camera access denied", message: "Camera permissions are turned off for the app. To scan a QR code, please enable these permissions.", preferredStyle: .actionSheet)
-                    if let settingsUrl = NSURL(string: UIApplication.openSettingsURLString) as URL? {
-                        alert.addAction(UIAlertAction(title: "Review permissions", style: .default, handler: { action in
-                            UIApplication.shared.open(settingsUrl, options: [:], completionHandler: nil)
-                            }))
-                    }
+                DispatchQueue.main.async {
+                    if granted {
+                        self.performSegue(withIdentifier: "qrCodeScanner", sender: self)
+                    } else {
+                        let alert = UIAlertController(title: "Camera access denied", message: "Camera permissions are turned off for the app. To scan a QR code, please enable these permissions.", preferredStyle: .actionSheet)
+                        if let settingsUrl = NSURL(string: UIApplication.openSettingsURLString) as URL? {
+                            alert.addAction(UIAlertAction(title: "Review permissions", style: .default, handler: { action in
+                                UIApplication.shared.open(settingsUrl, options: [:], completionHandler: nil)
+                                }))
+                        }
 
-                    alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                    alert.addAction(UIAlertAction(title: "Enter token manually", style: .default, handler: { [weak self] action in
-                        self?.performSegue(withIdentifier: "enterToken", sender: self)
-                    }))
-                    alert.show(self, sender: sender)
+                        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+                        alert.addAction(UIAlertAction(title: "Enter token manually", style: .default, handler: { [weak self] action in
+                            self?.performSegue(withIdentifier: "enterToken", sender: self)
+                        }))
+                        self.present(alert, animated: true, completion: nil)
+                    }
                 }
             })
             .disposed(by: disposeBag)
