@@ -29,7 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let controlQueue: SchedulerType = SerialDispatchQueueScheduler(qos: .background)
     var lastServerStatus = BehaviorSubject<KafkaEvent>(value: .disconnected(Date()))
     lazy var authController = { AuthController(config: config) }()
-
+    var lastAppState: AppState = AppState.inactive
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         guard NSClassFromString("XCTestCase") == nil else {
             // Do not run main application code in tests
@@ -37,13 +38,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         authController.load()
+        
+        UIApplication.shared.rx.appState.distinctUntilChanged().subscribeOn(controlQueue)
+            .subscribe(onNext: { (state: AppState) in
+                print("AppDelegate", #line, "app state changed")
+                self.lastAppState = state //self?.latestConfig.onNext(state)
+            }, onError: {
+                os_log("Failed to update state: %@", $0.localizedDescription)
+            })
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
-                UIApplication.shared.rx.appState.distinctUntilChanged(),
                 authController.user.distinctUntilChanged(),
                 authController.auth.distinctUntilChanged(),
                 authController.isLoaded.distinctUntilChanged(),
                 config.config.distinctUntilChanged())
-            .map { RadarState(lifecycle: $0.0, user: $0.1, auth: $0.2, isAuthLoaded: $0.3, config: $0.4) }
+            .map { RadarState(lifecycle: self.lastAppState, user: $0.0, auth: $0.1, isAuthLoaded: $0.2, config: $0.3) }
             .do(onNext: { (state: RadarState) in
                 os_log("Next app state: cycle: %@, user: %@, policy %d, authValid: %d, isLoaded: %d, sources: %d, config #: %d",
                        state.lifecycle.description,
