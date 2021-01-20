@@ -39,6 +39,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         authController.load()
         
+        // On simulator, app hangs on loading page.
+        // the reason is not clear but with separate subscription for appState the issue resolved.
         UIApplication.shared.rx.appState.distinctUntilChanged().subscribeOn(controlQueue)
             .subscribe(onNext: { (state: AppState) in
                 print("AppDelegate", #line, "app state changed")
