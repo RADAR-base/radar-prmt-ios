@@ -12,58 +12,91 @@ import AVFoundation
 import RxSwift
 import os.log
 
-class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
-    @IBOutlet weak var qrPreview: QRPreviewView!
-
-    let captureSession: AVCaptureSession
-    let processingQueue: DispatchQueue
+class QRCodeViewController: UIViewController {
     let disposeBag = DisposeBag()
 
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        captureSession = AVCaptureSession()
-        processingQueue = DispatchQueue(label: "QR-processing", qos: .userInitiated)
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+//    @IBOutlet weak var statusLabel: UILabel!
+    @IBOutlet weak var qrPreview: QRPreviewView! {
+        didSet {
+            qrPreview.delegate = self
+        }
     }
-
-    required init?(coder aDecoder: NSCoder) {
-        captureSession = AVCaptureSession()
-        processingQueue = DispatchQueue(label: "QR-processing", qos: .userInitiated)
-        super.init(coder: aDecoder)
+    
+    var qrData: QRData? = nil {
+        didSet {
+            if qrData != nil {
+                guard let url = URL(string: (qrData?.codeString)!) else {
+                    return
+                }
+                appDelegate.authController.login(to: url)
+                    .subscribeOn(MainScheduler.instance)
+                    .subscribe(weak: self, onNext: { weakSelf in { mpauth in
+                        os_log("Retrieved MetaToken")
+                        DispatchQueue.main.async {
+                            weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
+                        }
+                    }}, onError: { weakSelf in { error in
+                        os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
+                        DispatchQueue.main.async {
+                            if let mpError = error as? MPAuthError {
+                                switch (mpError) {
+                                case .unauthorized:
+                                    weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
+                                    
+                                case .tokenAlreadyUsed:
+                                    weakSelf.showError(message: "This token has been used. Please generate a new one.")
+                                    
+                                default:
+                                    weakSelf.showError(message: "Cannot log in: \(mpError.errorDescription!)")
+                                }
+                            } else {
+                                weakSelf.showError(message: "Cannot log in.")
+                            }
+                        }
+                    }})
+                    .disposed(by: disposeBag)
+            }
+        }
     }
+    
+    private func showError(message: String, fields: [UITextField] = []) {
+        fields.forEach {
+            $0.backgroundColor = UIColor(hue: 0.0, saturation: 0.1, brightness: 1.0, alpha: 1.0)
+        }
+        os_log("Error registering token: %@", message)
 
+        // create the alert
+        let alert = UIAlertController(title: "Error registering token", message: message, preferredStyle: .alert)
+
+        // add an action (button)
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { [self] action in
+            if !qrPreview.isRunning {
+                qrPreview.startScanning()
+            }
+        }))
+
+        // show the alert
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
+    
+ 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
-    func setupCaptureSession() {
-        guard let videoCaptureDevice = AVCaptureDevice.default(for: .video),
-            let captureDeviceInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
-            captureSession.canAddInput(captureDeviceInput) else {
-                //The device is not available or can't be added to the session.
-                return
+        if !qrPreview.isRunning {
+            qrPreview.startScanning()
         }
-
-        let metadataOutput = AVCaptureMetadataOutput()
-        guard captureSession.canAddOutput(metadataOutput) else {
-            // The output can't be added to the session.
-            return
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if !qrPreview.isRunning {
+            qrPreview.stopScanning()
         }
-
-        captureSession.addInput(captureDeviceInput)
-        captureSession.addOutput(metadataOutput)
-
-        guard metadataOutput.availableMetadataObjectTypes.contains(.qr) else {
-            // QR code metadata output is not available on this device
-            return
-        }
-
-        metadataOutput.metadataObjectTypes = [.qr]
-        metadataOutput.setMetadataObjectsDelegate(self, queue: processingQueue)
-
-        qrPreview.videoPreviewLayer.session = captureSession
-
-        captureSession.commitConfiguration()
-        captureSession.startRunning()
     }
 
     static func requestAuthorization() -> Single<Bool> {
@@ -88,22 +121,23 @@ class QRCodeViewController: UIViewController, AVCaptureMetadataOutputObjectsDele
             return Disposables.create()
         }
     }
+}
 
-    func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
-        guard let readableObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
-                let stringValue = readableObject.stringValue,
-                let url = URL(string: stringValue) else {
-            return
-        }
-        captureSession.stopRunning()
-        appDelegate.authController.login(to: url)
-            .subscribeOn(MainScheduler.instance)
-            .subscribe(weak: self, onNext: { weakSelf in { mpauth in
-                os_log("Retrieved MetaToken")
-                weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
-            }}, onError: { _ in { error in
-                os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
-            }})
-            .disposed(by: disposeBag)
+
+extension QRCodeViewController: QRPreviewViewDelegate {
+    func qrScanningDidStop() {
+    }
+    
+    func qrScanningDidFail() {
+    }
+    
+    func qrScanningSucceededWithCode(_ str: String?) {
+        self.qrData = QRData(codeString: str)
+    }
+}
+
+
+extension QRCodeViewController {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
     }
 }
