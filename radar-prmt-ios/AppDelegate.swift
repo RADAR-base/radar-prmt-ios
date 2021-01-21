@@ -29,7 +29,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let controlQueue: SchedulerType = SerialDispatchQueueScheduler(qos: .background)
     var lastServerStatus = BehaviorSubject<KafkaEvent>(value: .disconnected(Date()))
     lazy var authController = { AuthController(config: config) }()
-
+    var appState = BehaviorSubject<AppState>(value: AppState.inactive)
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         guard NSClassFromString("XCTestCase") == nil else {
             // Do not run main application code in tests
@@ -37,8 +38,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         authController.load()
+        
+        // On simulator, app hangs on loading page.
+        // the reason is not clear but with separate subscription for appState the issue resolved.
+        UIApplication.shared.rx.appState.distinctUntilChanged().subscribeOn(controlQueue)
+            .subscribe(onNext: { (state: AppState) in
+                print("AppDelegate", #line, "app state changed")
+                self.appState.onNext(state) // = state //self?.latestConfig.onNext(state)
+            }, onError: {
+                os_log("Failed to update state: %@", $0.localizedDescription)
+            })
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
-                UIApplication.shared.rx.appState.distinctUntilChanged(),
+                appState.distinctUntilChanged(),
                 authController.user.distinctUntilChanged(),
                 authController.auth.distinctUntilChanged(),
                 authController.isLoaded.distinctUntilChanged(),
