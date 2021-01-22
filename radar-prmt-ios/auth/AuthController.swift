@@ -183,6 +183,7 @@ class AuthController {
     func login(to url: URL) -> Observable<(User, OAuthToken)> {
         return self.validAuthorizer
             .observeOn(self.controlQueue)
+            .take(1)
             .flatMap { authorizer in authorizer.metaTokenLogin(url: url) }
             .do(onNext: {[weak self] (user, token) in
                 guard let self = self else { return }
