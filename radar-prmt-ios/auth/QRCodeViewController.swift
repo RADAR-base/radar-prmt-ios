@@ -29,29 +29,25 @@ class QRCodeViewController: UIViewController {
                     return
                 }
                 appDelegate.authController.login(to: url)
-                    .subscribeOn(MainScheduler.instance)
+                    .observeOn(MainScheduler.instance)
                     .subscribe(weak: self, onNext: { weakSelf in { mpauth in
                         os_log("Retrieved MetaToken")
-                        DispatchQueue.main.async {
-                            weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
-                        }
+                        weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
                     }}, onError: { weakSelf in { error in
                         os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
-                        DispatchQueue.main.async {
-                            if let mpError = error as? MPAuthError {
-                                switch (mpError) {
-                                case .unauthorized:
-                                    weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
-                                    
-                                case .tokenAlreadyUsed:
-                                    weakSelf.showError(message: "This token has been used. Please generate a new one.")
-                                    
-                                default:
-                                    weakSelf.showError(message: "Cannot log in: \(mpError.errorDescription!)")
-                                }
-                            } else {
-                                weakSelf.showError(message: "Cannot log in.")
+                        if let mpError = error as? MPAuthError {
+                            switch (mpError) {
+                            case .unauthorized:
+                                weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
+                                
+                            case .tokenAlreadyUsed:
+                                weakSelf.showError(message: "This token has been used. Please generate a new one.")
+                                
+                            default:
+                                weakSelf.showError(message: "Cannot log in: \(mpError.errorDescription!)")
                             }
+                        } else {
+                            weakSelf.showError(message: "Cannot log in.")
                         }
                     }})
                     .disposed(by: disposeBag)
