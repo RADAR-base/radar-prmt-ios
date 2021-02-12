@@ -58,7 +58,7 @@ struct OAuthToken: Codable {
     }
 
     var isValid: Bool {
-        return accessToken != nil || expiresAt > Date()
+        return accessToken != nil && expiresAt > Date()
     }
     func addAuthorization(to request: inout URLRequest) throws {
         guard let accessToken = self.accessToken else {

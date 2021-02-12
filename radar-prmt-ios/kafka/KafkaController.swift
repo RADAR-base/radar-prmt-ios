@@ -41,6 +41,7 @@ class KafkaController {
     let resendSubject: BehaviorSubject<UploadQueueElement?> = BehaviorSubject(value: nil)
 
     init(config: [String: String], authController: AuthController, user: User, reader: AvroDataExtractor) {
+        print("**KafkaController / init")
         self.reader = reader
         self.user = user
         schemaRegistry = SchemaRegistryClient(baseUrl: user.baseUrl)
@@ -52,6 +53,7 @@ class KafkaController {
     }
 
     func start() {
+        print("**KafkaController / start")
         if !self.isStarted {
             sender.start()
         }
@@ -62,6 +64,7 @@ class KafkaController {
         if self.reachability == nil {
             self.reachability = NetworkReachability(baseUrl: self.user.baseUrl)
         }
+        print("**reachability")
         self.isStarted = true
 
         let queue = ConcurrentDispatchQueueScheduler(qos: .background)
@@ -71,6 +74,7 @@ class KafkaController {
 
         let isConnected: Observable<Void> = self.reachability.subject.filter { !$0.isEmpty }
             .map { [weak self] mode in
+                print("**updateConnection", mode)
                 self?.updateConnection(to: mode)
                 return ()
             }
@@ -128,6 +132,7 @@ class KafkaController {
     }
 
     private func updateConnection(to mode: NetworkReachability.Mode) {
+        print("**updateConnection")
         let newMode = self.context.didConnect(over: mode)
         if newMode == [.cellular, .wifiOrEthernet] {
             os_log("Network connection is available again. Restarting data uploads.")

@@ -36,6 +36,7 @@ class DataKafkaSendContext: KafkaSendContext {
     let lastEvent = BehaviorSubject<KafkaEvent>(value: .none)
 
     init(reader: AvroDataExtractor, medium: RequestMedium) {
+        print("**DataKafkaSendContext / init")
         self.reader = reader
         queue = DispatchQueue(label: "Kafka send context", qos: .background)
         retryServer = nil
@@ -45,7 +46,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didFail(for topic: String, code: Int16, message: String, recoverable: Bool = true) {
-        os_log("Kafka request failure for topic %@: %@", type: .error, topic, message)
+        os_log("**Kafka request failure for topic %@: %@", type: .error, topic, message)
         self.lastEvent.onNext(.appFailure(Date(), message))
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -62,6 +63,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didSucceed(for topic: String) {
+        print("**didSucceed", topic)
         self.lastEvent.onNext(.success(Date()))
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -72,9 +74,9 @@ class DataKafkaSendContext: KafkaSendContext {
 
     func serverFailure(for topic: String, message: String?) {
         if let message = message {
-            os_log("Kafka server failure: %@", type: .error, message)
+            os_log("**Kafka server failure: %@", type: .error, message)
         } else {
-            os_log("Kafka server failure")
+            os_log("**Kafka server failure")
         }
         self.lastEvent.onNext(.serverFailure(Date(), message))
         self.reader.rollbackUpload(for: topic)
@@ -98,6 +100,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
+        print("**didConnect")
         lastEvent.onNext(.connected(Date()))
         var mode: NetworkReachability.Mode = []
         queue.sync {
@@ -108,6 +111,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func couldNotConnect(with topic: String, over mode: NetworkReachability.Mode) {
+        print("**couldNotConnect", topic)
         lastEvent.onNext(.disconnected(Date()))
         reader.rollbackUpload(for: topic)
         queue.async { [weak self] in

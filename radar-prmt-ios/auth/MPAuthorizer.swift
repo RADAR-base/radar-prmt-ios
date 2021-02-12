@@ -119,6 +119,7 @@ class MPClient {
     }
 
     func requestMetadata(for user: User, authorizedBy auth: OAuthToken) throws -> Observable<User> {
+        //print("**requestMetadata 1")
         struct ProjectDTO: Codable {
             let sourceTypes: [SourceTypeDTO]
         }
@@ -137,12 +138,14 @@ class MPClient {
         let subjectUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)")
         var request = URLRequest(url: subjectUrl)
         try auth.addAuthorization(to: &request)
+        //print("**requestMetadata 2")
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
             .map { data in
                 let decoder = JSONDecoder()
                 let subjectDto: SubjectDTO = try decoder.decode(SubjectDTO.self, from: data)
                 var user = user
+                //print("**requestMetadata 3 /", user)
                 user.sourceTypes = subjectDto.project.sourceTypes.map { typeDto in
                     SourceType(id: typeDto.id, producer: typeDto.producer, model: typeDto.model, version: typeDto.catalogVersion, canRegisterDynamically: typeDto.canRegisterDynamically)
                 }
