@@ -94,7 +94,7 @@ class SourceManager {
         self.status.onNext(.scanning)
         delegate.startScanning()
             .subscribe(onSuccess: { [weak self] source in
-                //print("**start ", source)
+                print("**start ", source)
                 guard let self = self else { return }
                 self.activeSource = source
                 if self.delegate.registerTopics() {

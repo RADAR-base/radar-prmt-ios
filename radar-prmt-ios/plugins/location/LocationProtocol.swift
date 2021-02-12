@@ -22,6 +22,7 @@ class LocationProtocol : SourceProtocol {
     fileprivate var locationReceiver: LocationReceiver!
     
     init?(manager: SourceManager) {
+        print("**LocationProtocol / init")
         self.manager = manager
         self.usesBackgroundLocation = manager.provider.pluginDefinition.supportsBackground
         post { weakSelf in
@@ -30,7 +31,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startScanning() -> Single<Source> {
-        //print("**startScanning")
+        print("**LocationProtocol / startScanning")
         guard let manager = self.manager else { return Single.error(MPAuthError.unreferenced) }
 
         if let source = manager.findSource(where: { _ in true }) {
@@ -45,6 +46,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func registerTopics() -> Bool {
+        print("**LocationProtocol / registerTopic")
         guard let locationTopic = self.manager?.define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") else {
             return false
         }
@@ -54,6 +56,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startCollecting() {
+        print("**LocationProtocol / startCollecting")
         post { weakSelf in
             if weakSelf.usesBackgroundLocation {
                 weakSelf.startReceivingSignificantLocationChanges()
@@ -63,6 +66,8 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startReceivingLocalLocationChanges() {
+        print("**LocationProtocol / startReceivingLocalLocationChanges")
+
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
             locationManager.requestWhenInUseAuthorization()
@@ -77,6 +82,8 @@ class LocationProtocol : SourceProtocol {
     }
     
     func startReceivingSignificantLocationChanges() {
+        print("**LocationProtocol / startReceivingSignificantLocationChanges")
+
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined, .authorizedWhenInUse:
             locationManager.requestAlwaysAuthorization()
@@ -96,12 +103,16 @@ class LocationProtocol : SourceProtocol {
     }
 
     func closeForeground() {
+        print("**LocationProtocol / closeForeground")
+
         post { weakSelf in
             weakSelf.locationManager.stopUpdatingLocation()
         }
     }
 
     func close() {
+        print("**LocationProtocol / close")
+
         post { weakSelf in
             if weakSelf.usesBackgroundLocation {
                 weakSelf.locationManager.stopMonitoringSignificantLocationChanges()
@@ -110,6 +121,8 @@ class LocationProtocol : SourceProtocol {
     }
 
     private func post(action: @escaping (LocationProtocol) -> Void) {
+        print("**LocationProtocol / post")
+
         self.controlQueue
             .schedule(Void()) { [weak self] _ in
                 if let self = self {
