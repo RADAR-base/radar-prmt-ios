@@ -81,8 +81,13 @@ class KafkaController {
 
         let isAuthorized = authController.validAuthentication()
             .map { _ in () }
+            // after a login event, don't map many subsequent login / logout events for 15 seconds: publish the first and the last.
             .debounce(.seconds(15), scheduler: queue)
 
+        // Try to upload after any of the following events happen:
+        // - timer (interval) hits
+        // - isAuthorized status changes
+        // - isConnected status changes
         let uploadTrigger: Observable<Void> = Observable.merge(timer, isAuthorized, isConnected)
             .filter { [weak self] _ in self?.isConnectionValid ?? false }
             .share()
@@ -94,13 +99,7 @@ class KafkaController {
             .flatMapLatest { [weak self] _ in self?.reader.nextInQueue(minimumPriority: self!.minimumPriority) ?? Observable.empty() }
 
         let resendQueue: Observable<UploadQueueElement> = resendSubject.asObservable()
-            .filterMap { v in
-                if let v = v {
-                    return .map(v)
-                } else {
-                    return .ignore
-                }
-            }
+            .compactMap { $0 }
 
         sendFlow = Observable.merge(uploadQueue, retryQueue, resendQueue)
             .flatMap { [weak self] element in self?.prepareUpload(for: element) ?? Observable.empty() }
