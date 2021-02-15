@@ -224,6 +224,10 @@ class AuthController {
                     return Observable.just(auth)
                 } else {
                     return authorizer.refresh(for: user, auth: auth)
+                        .do(onNext: { [weak self] auth in
+                            guard let self = self else { return }
+                            self.auth.onNext(auth)
+                        })
                 }
             }
     }
