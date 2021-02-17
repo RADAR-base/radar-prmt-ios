@@ -40,6 +40,8 @@ class SourceManager {
         self.sourceType = sourceType
         self.authControl = authControl
         self.state = state
+        
+        self.sources = state.user?.sources ?? []
     }
 
     func define(topic name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
@@ -76,6 +78,7 @@ class SourceManager {
     }
 
     func findSource(where predicate: (Source) -> Bool) -> Source? {
+        print("!!! sources", self.sources)
         return self.sources.first(where: predicate)
     }
 
@@ -90,22 +93,25 @@ class SourceManager {
     }
 
     func start() {
-        //print("**start")
+        print("**!SourceManager / start")
         self.status.onNext(.scanning)
+        print("**!SourceManager / start / delegate", delegate)
+
         delegate.startScanning()
             .subscribe(onSuccess: { [weak self] source in
-                print("**start ", source)
+                print("**!SourceManager / start / source", source)
                 guard let self = self else { return }
                 self.activeSource = source
                 if self.delegate.registerTopics() {
                     self.status.onNext(.collecting)
                     self.delegate.startCollecting()
                 } else {
-                    os_log("Cannot register topics for %@", type: .error, self.name)
+                    os_log("**!Cannot register topics for %@", type: .error, self.name)
                     self.status.onNext(.invalid)
                 }
             }, onError: { error in
-                os_log("Failed to scan for source: %@", type: .error, error.localizedDescription)
+                print("**!SourceManager / start / error", error)
+                os_log("**!Failed to scan for source: %@", type: .error, error.localizedDescription)
                 self.status.onNext(.disconnected)
             })
             .disposed(by: disposeBag)

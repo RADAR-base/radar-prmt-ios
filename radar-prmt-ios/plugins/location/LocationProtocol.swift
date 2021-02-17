@@ -31,16 +31,16 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startScanning() -> Single<Source> {
-        print("**LocationProtocol / startScanning")
+        print("**!LocationProtocol / startScanning")
         guard let manager = self.manager else { return Single.error(MPAuthError.unreferenced) }
 
         if let source = manager.findSource(where: { _ in true }) {
-//            print("**startScanning Found matching source %@", source.id ?? "<unknown>")
-            os_log("Found matching source %@", source.id ?? "<unknown>")
+            print("**!LocationProtocol / startScanning / Found matching source %@", source.id ?? "<unknown>")
+//            os_log("Found matching source %@", source.id ?? "<unknown>")
             return manager.use(source: source, afterRegistration: false)
         } else {
-//            print("**startScanning Did not find matching source. Registering a new one.")
-            os_log("Did not find matching source. Registering a new one.")
+            print("**!LocationProtocol / startScanning / Did not find matching source. Registering a new one.")
+//            os_log("Did not find matching source. Registering a new one.")
             return manager.use(source: Source(type: manager.sourceType, id: nil, name: "location", expectedName: nil, attributes: nil))
         }
     }

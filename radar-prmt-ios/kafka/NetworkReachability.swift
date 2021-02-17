@@ -31,17 +31,21 @@ class NetworkReachability {
     let subject: BehaviorSubject<Mode>
 
     init?(baseUrl: URL) {
+        print("**NetworkReachability / init")
+
         guard let host = baseUrl.host, let reachability = SCNetworkReachabilityCreateWithName(nil, host) else {
             return nil
         }
 
         queue = DispatchQueue.global(qos: .background)
 
+//        self.subject = BehaviorSubject<Mode>(value: [.cellular, .wifiOrEthernet])
         self.subject = BehaviorSubject<Mode>(value: [])
         self.reachability = reachability
     }
 
     func listen() {
+        print("**NetworkReachability / listen")
         // Skips if we are already listening
         // Optional binding since `SCNetworkReachabilityCreateWithName` returns an optional object
         guard !isListening else { return }
@@ -76,6 +80,8 @@ class NetworkReachability {
     }
 
     func query() {
+        print("**NetworkReachability / query")
+
         // Runs the first time to set the current flags
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -92,6 +98,7 @@ class NetworkReachability {
 
     // Called inside `callbackClosure`
     private func updateReachability(flags: SCNetworkReachabilityFlags) {
+        print("**NetworkReachability / updateReachability")
         if currentReachabilityFlags != flags {
             // Stores the new flags
             currentReachabilityFlags = flags
@@ -104,12 +111,16 @@ class NetworkReachability {
             } else {
                 status = .wifiOrEthernet
             }
+            print("==status", status)
             subject.on(.next(status))
+            //subject.onNext(status)
         }
     }
 
     // Stops listening
     func cancel() {
+        print("**NetworkReachability / cancel")
+
         // Skips if we are not listening
         // Optional binding since `SCNetworkReachabilityCreateWithName` returns an optional object
         guard isListening else { return }

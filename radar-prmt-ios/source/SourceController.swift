@@ -21,6 +21,8 @@ class SourceController: ControlledQueue {
     var hasFlusher: Bool = false
     let authController: AuthController
 
+//    var counter = 0
+    
     init(config: BehaviorSubject<RadarState>, dataController: DataController, authController: AuthController) {
         self.dataController = dataController
         self.authController = authController
@@ -32,7 +34,11 @@ class SourceController: ControlledQueue {
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
-                self.load(state: state)
+                print("**!SourceController / init / state", state)
+//                if((state.config["plugins"] != nil) && self.counter==0){
+//                    self.counter += 1
+                    self.load(state: state)
+//                }
                 if (!state.isReadyToSend || state.lifecycle == .terminated) {
                     self.close()
                 } else if (state.lifecycle == .background) {
@@ -45,22 +51,27 @@ class SourceController: ControlledQueue {
     }
 
     private func load(state: RadarState) {
+        print("**!SourceController / load / state", state)
         guard let plugins = state.config["plugins"] else { return }
+        print("**!SourceController / load / plugins", plugins)
 
         var newProviders = Set(plugins.split(separator: " ")
             .filter { !$0.isEmpty }
             .map { String($0) }
             .compactMap { pluginName in self.sourceProviders.first { $0.pluginDefinition.pluginNames.contains(pluginName) }})
+        print("**!SourceController / load / newProviders", newProviders)
 
         newProviders.forEach { $0.update(state: state) }
+        print("**!SourceController / load / state.lifecycle ",state.lifecycle)
 
         if state.lifecycle == .background {
             newProviders = newProviders.filter { $0.pluginDefinition.supportsBackground }
         } else if state.lifecycle == .terminated || !state.isReadyToRegister {
             newProviders = []
         }
+        print("**!SourceController / load / newProviders2", newProviders)
 
-        os_log("Trying to load providers %@", newProviders.map { $0.pluginDefinition.pluginName }.joined(separator: ", "))
+        os_log("**!Trying to load providers %@", newProviders.map { $0.pluginDefinition.pluginName }.joined(separator: ", "))
 
         let existingProviders = Set(sources.map { $0.provider })
         let defunctProviders = existingProviders.subtracting(newProviders)

@@ -194,6 +194,7 @@ class BinaryUploadHandle: UploadHandle {
 extension URLSession {
     func uploadTask(with request: URLRequest, from handle: UploadHandle) -> URLSessionUploadTask {
         var request = request
+        print("**%uploadTask / request", request)
         request.httpMethod = "POST"
         handle.headers.forEach { (key, value) in
             request.setValue(value, forHTTPHeaderField: key)

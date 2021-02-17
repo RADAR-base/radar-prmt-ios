@@ -173,22 +173,25 @@ class AuthController {
 
     func ensureRegistration(of source: Source) -> Observable<Source> {
         print("**AuthController / ensureRegistration", #line, source)
-        return Observable.combineLatest(authorizer, user, validAuthentication())
+        return Observable.combineLatest(authorizer, user, validAuthentication()).take(1)
             .flatMap { (authorizer, user, auth) -> Observable<Source> in
                 guard let authorizer = authorizer, let user = user else {
                     return Observable<Source>.empty()
                 }
+                print("**!!! ensReg", source)
+                print("**!!! ensReg", user)
+                print("**!!! ensReg", auth)
                 return authorizer.ensureRegistration(of: source, for: user, authorizedBy: auth)
             }
-            .retryWhen { [weak self] obsError in
-                return obsError.flatMap { [weak self] (error: Error) -> Observable<Bool> in
-                    if case MPAuthError.unauthorized = error, let self = self {
-                        return self.validAuthentication()
-                            .map { $0.isValid }
-                    }
-                    throw error
-                }
-            }
+//            .retryWhen { [weak self] obsError in
+//                return obsError.flatMap { [weak self] (error: Error) -> Observable<Bool> in
+//                    if case MPAuthError.unauthorized = error, let self = self {
+//                        return self.validAuthentication()
+//                            .map { $0.isValid }
+//                    }
+//                    throw error
+//                }
+//            }
             .do(onNext: { [weak self] _ in
                 print("**AuthController / triggerMetadataRefresh.onNext", #line)
                     self?.triggerMetadataRefresh.onNext(true)
@@ -218,14 +221,22 @@ class AuthController {
         return Observable.combineLatest(self.validAuthorizer, self.user, self.auth)
             .flatMapLatest { (authorizer, user, auth) -> Observable<OAuthToken> in
                 guard let auth = auth, let user = user, user.userId == auth.userId else {
+                    //print("%%")
                     throw MPAuthError.unauthorized
                 }
+                //print("%%--", auth)
+                //print("%%--", auth.isValid)
                 if auth.isValid {
                     return Observable.just(auth)
                 } else {
-                    return authorizer.refresh(for: user, auth: auth)
+                    //print("%%--()" )
+                    return authorizer.refresh(for: user, auth: auth).do(onNext: { [weak self] auth in
+                        guard let self = self else { return }
+                        self.auth.onNext(auth)
+                    })
                 }
             }
+            
     }
 
     private var validAuthorizer: Observable<MPClient> {

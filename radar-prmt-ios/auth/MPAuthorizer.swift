@@ -48,20 +48,20 @@ class MPClient {
 
                 return (user, auth)
             }
-            .retryWhen { [weak self] obsError in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
-                    case 401, 403:
-                        throw MPAuthError.unauthorized
-                    case 404:
-                        throw MPAuthError.tokenNotFound
-                    case 410:
-                        throw MPAuthError.tokenAlreadyUsed
-                    default:
-                        break
-                    }
-                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
-        }
+//            .retryWhen { [weak self] obsError in
+//                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
+//                    switch (response.statusCode) {
+//                    case 401, 403:
+//                        throw MPAuthError.unauthorized
+//                    case 404:
+//                        throw MPAuthError.tokenNotFound
+//                    case 410:
+//                        throw MPAuthError.tokenAlreadyUsed
+//                    default:
+//                        break
+//                    }
+//                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
+//        }
     }
 
     func refresh(for user: User, auth: OAuthToken) -> Observable<OAuthToken> {
@@ -112,6 +112,7 @@ class MPClient {
 
     func ensureRegistration(of source: Source, for user: User, authorizedBy auth: OAuthToken) -> Observable<Source> {
         if source.id == nil {
+            print("**! register ensureRegistration")
             return register(source: source, for: user, auth: auth)
         } else {
             return update(source: source, for: user, auth: auth)
@@ -157,46 +158,53 @@ class MPClient {
                 }
                 return user
             }
-            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
-                    case 401, 403:
-                        throw MPAuthError.unauthorized
-                    case 404:
-                        throw MPAuthError.unknownSource
-                    default:
-                        break
-                    }
-                } ?? Observable<Int>.error(MPAuthError.unreferenced)
-            }
+//            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
+//                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
+//                    switch (response.statusCode) {
+//                    case 401, 403:
+//                        throw MPAuthError.unauthorized
+//                    case 404:
+//                        throw MPAuthError.unknownSource
+//                    default:
+//                        break
+//                    }
+//                } ?? Observable<Int>.error(MPAuthError.unreferenced)
+//            }
     }
 
     private func register(source: Source, for user: User, auth: OAuthToken) -> Observable<Source> {
+        print("**!MPClient / register")
         let sourceUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)/sources")
+        print("**!MPClient / register / sourceUrl", sourceUrl)
         var request = URLRequest(url: sourceUrl)
+        print("**!MPClient / register / request", request)
         do {
             try auth.addAuthorization(to: &request)
             try request.postJson(SourceDTO(sourceId: nil, sourceTypeId: source.type.id, sourceName: source.name, expectedSourceName: nil, attributes: source.attributes))
+            print("**!MPClient / register / do")
         } catch {
+            print("**!MPClient / register / error")
             return Observable<Source>.error(error)
         }
 
         let decoder = JSONDecoder()
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
-            .map { data in try source.updating(withJson: data, using: decoder) }
-            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
-                    case 401, 403:
-                        throw MPAuthError.unauthorized
-                    case 409:
-                        throw MPAuthError.sourceConflict
-                    default:
-                        break
-                    }
-                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
-        }
+            .map { data in
+                try source.updating(withJson: data, using: decoder)
+            }
+//            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
+//                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
+//                    switch (response.statusCode) {
+//                    case 401, 403:
+//                        throw MPAuthError.unauthorized
+//                    case 409:
+//                        throw MPAuthError.sourceConflict
+//                    default:
+//                        break
+//                    }
+//                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
+//        }
     }
 
     private func update(source: Source, for user: User, auth: OAuthToken) -> Observable<Source> {
@@ -214,50 +222,50 @@ class MPClient {
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
             .map { data in try source.updating(withJson: data, using: decoder) }
-            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
-                    case 401, 403:
-                        throw MPAuthError.unauthorized
-                    case 404:
-                        throw MPAuthError.unknownSource
-                    default:
-                        break
-                    }
-                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
-        }
+//            .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
+//                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
+//                    switch (response.statusCode) {
+//                    case 401, 403:
+//                        throw MPAuthError.unauthorized
+//                    case 404:
+//                        throw MPAuthError.unknownSource
+//                    default:
+//                        break
+//                    }
+//                    } ?? Observable<Int>.error(MPAuthError.unreferenced)
+//        }
     }
 
-    private func handleRetries(of errors: Observable<Error>, upToCount: Int, delay: RetryDelay, action: @escaping (HTTPURLResponse, Data?) throws -> Void) -> Observable<Int> {
-        return errors.enumerated().flatMap { [weak self] (enumerate: (index: Int, value: Error)) -> Observable<Int> in
-            guard let self = self else { return Observable<Int>.error(MPAuthError.unreferenced) }
-            let (index: i, value: error) = enumerate
-            guard i < 3 else { return Observable<Int>.error(error) }
-
-            switch (error) {
-            case let RxCocoaURLError.httpRequestFailed(response, data):
-                try action(response, data)
-                let urlString = response.url?.absoluteString ?? "<??>"
-                if let body = data {
-                    os_log("Failed to reach ManagementPortal %@ with status code %d: %@", urlString, response.statusCode, String(data: body, encoding: .utf8) ?? "??")
-                } else {
-                    os_log("Failed to reach ManagementPortal %@ with status code %d: <no content>", urlString, response.statusCode)
-                }
-            case is RxCocoaURLError:
-                os_log("Failed to make network call: %@", type: .error, error.localizedDescription)
-            case is MPAuthError:
-                throw error
-            case let DecodingError.dataCorrupted(context):
-                os_log("Invalid JSON: %@", type: .error, context.debugDescription)
-            case is DecodingError:
-                os_log("Failed to decode JSON: %@", type: .error, error.localizedDescription)
-            default:
-                break
-            }
-
-            return Observable<Int>.timer(delay.delay(for: i), scheduler: self.queue)
-            }.do(onError: { error in os_log("%@", type: .error, error.localizedDescription) })
-    }
+//    private func handleRetries(of errors: Observable<Error>, upToCount: Int, delay: RetryDelay, action: @escaping (HTTPURLResponse, Data?) throws -> Void) -> Observable<Int> {
+//        return errors.enumerated().flatMap { [weak self] (enumerate: (index: Int, value: Error)) -> Observable<Int> in
+//            guard let self = self else { return Observable<Int>.error(MPAuthError.unreferenced) }
+//            let (index: i, value: error) = enumerate
+//            guard i < 3 else { return Observable<Int>.error(error) }
+//
+//            switch (error) {
+//            case let RxCocoaURLError.httpRequestFailed(response, data):
+//                try action(response, data)
+//                let urlString = response.url?.absoluteString ?? "<??>"
+//                if let body = data {
+//                    os_log("Failed to reach ManagementPortal %@ with status code %d: %@", urlString, response.statusCode, String(data: body, encoding: .utf8) ?? "??")
+//                } else {
+//                    os_log("Failed to reach ManagementPortal %@ with status code %d: <no content>", urlString, response.statusCode)
+//                }
+//            case is RxCocoaURLError:
+//                os_log("Failed to make network call: %@", type: .error, error.localizedDescription)
+//            case is MPAuthError:
+//                throw error
+//            case let DecodingError.dataCorrupted(context):
+//                os_log("Invalid JSON: %@", type: .error, context.debugDescription)
+//            case is DecodingError:
+//                os_log("Failed to decode JSON: %@", type: .error, error.localizedDescription)
+//            default:
+//                break
+//            }
+//
+//            return Observable<Int>.timer(delay.delay(for: i), scheduler: self.queue)
+//            }.do(onError: { error in os_log("%@", type: .error, error.localizedDescription) })
+//    }
 }
 
 fileprivate struct SourceDTO : Codable {
@@ -270,7 +278,10 @@ fileprivate struct SourceDTO : Codable {
 
 fileprivate extension Source {
     func updating(withJson data: Data, using decoder: JSONDecoder) throws -> Source {
+        print("**!MPClient / update / data", data)
         let sourceDTO = try decoder.decode(SourceDTO.self, from: data)
+        print("**!MPClient / update / sourceDTO", sourceDTO)
+        print("**!MPClient / update / type", type)
         return Source(type: type, id: sourceDTO.sourceId, name: sourceDTO.sourceName, expectedName: sourceDTO.expectedSourceName, attributes: sourceDTO.attributes)
     }
 }
