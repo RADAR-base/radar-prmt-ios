@@ -112,7 +112,7 @@ class MPClient {
 
     func ensureRegistration(of source: Source, for user: User, authorizedBy auth: OAuthToken) -> Observable<Source> {
         if source.id == nil {
-            print("**! register ensureRegistration")
+//            print("**! register ensureRegistration")
             return register(source: source, for: user, auth: auth)
         } else {
             return update(source: source, for: user, auth: auth)
@@ -173,17 +173,17 @@ class MPClient {
     }
 
     private func register(source: Source, for user: User, auth: OAuthToken) -> Observable<Source> {
-        print("**!MPClient / register")
+//        print("**!MPClient / register")
         let sourceUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)/sources")
-        print("**!MPClient / register / sourceUrl", sourceUrl)
+//        print("**!MPClient / register / sourceUrl", sourceUrl)
         var request = URLRequest(url: sourceUrl)
-        print("**!MPClient / register / request", request)
+//        print("**!MPClient / register / request", request)
         do {
             try auth.addAuthorization(to: &request)
             try request.postJson(SourceDTO(sourceId: nil, sourceTypeId: source.type.id, sourceName: source.name, expectedSourceName: nil, attributes: source.attributes))
-            print("**!MPClient / register / do")
+//            print("**!MPClient / register / do")
         } catch {
-            print("**!MPClient / register / error")
+//            print("**!MPClient / register / error")
             return Observable<Source>.error(error)
         }
 
@@ -278,10 +278,10 @@ fileprivate struct SourceDTO : Codable {
 
 fileprivate extension Source {
     func updating(withJson data: Data, using decoder: JSONDecoder) throws -> Source {
-        print("**!MPClient / update / data", data)
+//        print("**!MPClient / update / data", data)
         let sourceDTO = try decoder.decode(SourceDTO.self, from: data)
-        print("**!MPClient / update / sourceDTO", sourceDTO)
-        print("**!MPClient / update / type", type)
+//        print("**!MPClient / update / sourceDTO", sourceDTO)
+//        print("**!MPClient / update / type", type)
         return Source(type: type, id: sourceDTO.sourceId, name: sourceDTO.sourceName, expectedName: sourceDTO.expectedSourceName, attributes: sourceDTO.attributes)
     }
 }

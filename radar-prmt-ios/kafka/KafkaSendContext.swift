@@ -42,14 +42,14 @@ class DataKafkaSendContext: KafkaSendContext {
         retryServer = nil
 //        networkModes = [.cellular, .wifiOrEthernet]
         networkModes = []
-        print("@@networkModes1", networkModes)
+//        print("@@networkModes1", networkModes)
         minimumPriorityForCellular = 1
         self.medium = medium
     }
 
     func didFail(for topic: String, code: Int16, message: String, recoverable: Bool = true) {
-        print("**DataKafkaSendContext / didFail")
-        os_log("**Kafka request failure for topic %@: %@", type: .error, topic, message)
+//        print("**DataKafkaSendContext / didFail")
+        os_log("Kafka request failure for topic %@: %@", type: .error, topic, message)
         self.lastEvent.onNext(.appFailure(Date(), message))
         queue.async { [weak self] in
             guard let self = self else { return }
@@ -62,7 +62,7 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     func mayRetry(topic: String) {
-        print("**DataKafkaSendContext / mayRetry")
+//        print("**DataKafkaSendContext / mayRetry")
         self.reader.rollbackUpload(for: topic)
     }
 
@@ -80,9 +80,9 @@ class DataKafkaSendContext: KafkaSendContext {
         print("**DataKafkaSendContext / serverFailure")
 
         if let message = message {
-            os_log("**Kafka server failure: %@", type: .error, message)
+            os_log("Kafka server failure: %@", type: .error, message)
         } else {
-            os_log("**Kafka server failure")
+            os_log("Kafka server failure")
         }
         self.lastEvent.onNext(.serverFailure(Date(), message))
         self.reader.rollbackUpload(for: topic)
@@ -98,35 +98,35 @@ class DataKafkaSendContext: KafkaSendContext {
     var availableNetworkModes: NetworkReachability.Mode {
         get {
             var mode: NetworkReachability.Mode = []
-            print("@@mode1", mode)
+//            print("@@mode1", mode)
             queue.sync {
-                print("@@networkModes2", networkModes)
+//                print("@@networkModes2", networkModes)
                 mode = self.networkModes
             }
-            print("@@mode2", mode)
+//            print("@@mode2", mode)
             return mode
         }
     }
 
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
-        print("**DataKafkaSendContext / didConnect1", mode)
+//        print("**DataKafkaSendContext / didConnect1", mode)
         lastEvent.onNext(.connected(Date()))
         var newMode: NetworkReachability.Mode = []
-        print("**DataKafkaSendContext / didConnect2", newMode)
+//        print("**DataKafkaSendContext / didConnect2", newMode)
 
         queue.sync {
             self.networkModes.formUnion(mode)
             newMode = self.networkModes
-            print("**DataKafkaSendContext / didConnect3", newMode)
+//            print("**DataKafkaSendContext / didConnect3", newMode)
 
         }
-        print("**DataKafkaSendContext / didConnect4", newMode)
+//        print("**DataKafkaSendContext / didConnect4", newMode)
 
         return newMode
     }
 
     func couldNotConnect(with topic: String, over mode: NetworkReachability.Mode) {
-        print("**DataKafkaSendContext / couldNotConnect")
+//        print("**DataKafkaSendContext / couldNotConnect")
         lastEvent.onNext(.disconnected(Date()))
         reader.rollbackUpload(for: topic)
         queue.async { [weak self] in

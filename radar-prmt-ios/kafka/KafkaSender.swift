@@ -68,14 +68,14 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
                     throw MPAuthError.unreferenced
                 }
                 let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
-
                 var request = URLRequest(url: self.baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
+                print("** after request")
                 try auth.addAuthorization(to: &request)
                 return session.uploadTask(with: request, from: handle)
             }
             .subscribe(onNext: { [weak self] uploadTask in
                 guard let self = self else { return }
-                print("**%send / uploadTask",uploadTask)
+                print("**KafkaSender / uploadTask", uploadTask)
                 self.receivedData[uploadTask] = Data()
                 uploadTask.resume()
             })
@@ -83,12 +83,12 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        print("**%KafkaSender / urlSession", session, task, error)
+        print("**KafkaSender / urlSession", session, task, error)
         guard let topic = task.originalRequest?.url?.extractTopic() else {
-            os_log("**%Cannot extract log from request %@", task.originalRequest?.url?.absoluteString ?? "")
+            os_log("Cannot extract log from request %@", task.originalRequest?.url?.absoluteString ?? "")
             return
         }
-        print("**%KafkaSender / urlSession / topic", topic)
+        print("**KafkaSender / urlSession / topic", topic)
 
         if let error = error {
             let nsError = error as NSError

@@ -23,7 +23,7 @@ class AuthController {
     let triggerMetadataRefresh = PublishSubject<Bool>()
 
     init(config: RadarConfiguration) {
-        print("**AuthController / init", #line)
+//        print("**AuthController / init", #line)
         // Reset keychain on first load
         let defaults = UserDefaults.standard
         if !defaults.bool(forKey: "isInitialized") {
@@ -44,10 +44,10 @@ class AuthController {
                 guard let self = self else { return }
                 let clientId = config["oauth2_client_id"] ?? "pRMT"
                 if let clientSecret = config["oauth2_client_secret"] {
-                    print("**AuthController / authorizer.onNext", #line, MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
+//                    print("**AuthController / authorizer.onNext", #line, MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
                     self.authorizer.onNext(MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
                 } else {
-                    os_log("**OAuth 2.0 client secret %@ must be configured", config["oauth2_client_secret"] ?? "<empty>")
+                    os_log("OAuth 2.0 client secret %@ must be configured", config["oauth2_client_secret"] ?? "<empty>")
                 }
             })
             .disposed(by: self.disposeBag)
@@ -80,33 +80,33 @@ class AuthController {
             .retry()
             .subscribeOn(concurrentScheduler)
             .subscribe(onNext: { [weak self] user in
-                print("**AuthController / user.onNext", #line, user)
+//                print("**AuthController / user.onNext", #line, user)
                 self?.user.onNext(user)
             })
             .disposed(by: self.disposeBag)
     }
 
     func load() {
-        print("**AuthController / load", #line)
+//        print("**AuthController / load", #line)
 
         controlQueue.schedule(Void()) { [weak self] _ in
             guard let self = self else { return Disposables.create() }
             do {
                 if let storedAuth = try self.secureData.load(type: OAuthToken.self, forKey: "auth") {
-                    os_log("**Loaded authentication")
-                    print("**AuthController / auth.onNext", #line, storedAuth)
+                    os_log("Loaded authentication")
+//                    print("**AuthController / auth.onNext", #line, storedAuth)
                     self.auth.onNext(storedAuth)
                 }
 
                 if let storedUser = try self.secureData.load(type: User.self, forKey: "user") {
-                    os_log("**Loaded user metadata")
-                    print("**AuthController / user.onNext", #line, storedUser)
+                    os_log("Loaded user metadata")
+//                    print("**AuthController / user.onNext", #line, storedUser)
                     self.user.onNext(storedUser)
                 }
             } catch {
-                os_log("**Failed to decode stored authentication: %@", type: .error, error.localizedDescription)
+                os_log("Failed to decode stored authentication: %@", type: .error, error.localizedDescription)
             }
-            print("**AuthController / isLoaded.onNext", #line)
+//            print("**AuthController / isLoaded.onNext", #line)
             self.isLoaded.onNext(true)
 
             self.user
@@ -119,13 +119,13 @@ class AuthController {
                         do {
                             try self.secureData.store(codable: user, forKey: "user")
                         } catch {
-                            os_log("**Failed to store user data", type: .error)
+                            os_log("Failed to store user data", type: .error)
                         }
                     } else {
                         do {
                             try self.secureData.removeObject(forKey: "user")
                         } catch {
-                            os_log("**Failed to remove user data", type: .error)
+                            os_log("Failed to remove user data", type: .error)
                         }
                     }
                 })
@@ -138,17 +138,17 @@ class AuthController {
                 .subscribe(onNext: { [weak self] auth in
                     guard let self = self else { return }
                     if let auth = auth {
-                        os_log("**Storing updated authentication")
+                        os_log("Storing updated authentication")
                         do {
                             try self.secureData.store(codable: auth, forKey: "auth")
                         } catch {
-                            os_log("**Failed to store updated authentication: %@", error.localizedDescription)
+                            os_log("Failed to store updated authentication: %@", error.localizedDescription)
                         }
                     } else {
                         do {
                             try self.secureData.removeObject(forKey: "auth")
                         } catch {
-                            os_log("**Failed to remove authentication", type: .error)
+                            os_log("Failed to remove authentication", type: .error)
                         }
                     }
                 })
@@ -159,28 +159,28 @@ class AuthController {
     }
 
     func reset() {
-        print("**AuthController / reset", #line)
+//        print("**AuthController / reset", #line)
         do {
             try secureData.removeObject(forKey: "auth")
         } catch {
-            os_log("**Failed to remove authentication")
+            os_log("Failed to remove authentication")
         }
-        print("**AuthController / auth.onNext", #line)
-        print("**AuthController / user.onNext", #line)
+//        print("**AuthController / auth.onNext", #line)
+//        print("**AuthController / user.onNext", #line)
         auth.onNext(nil)
         user.onNext(nil)
     }
 
     func ensureRegistration(of source: Source) -> Observable<Source> {
-        print("**AuthController / ensureRegistration", #line, source)
+//        print("**AuthController / ensureRegistration", #line, source)
         return Observable.combineLatest(authorizer, user, validAuthentication()).take(1)
             .flatMap { (authorizer, user, auth) -> Observable<Source> in
                 guard let authorizer = authorizer, let user = user else {
                     return Observable<Source>.empty()
                 }
-                print("**!!! ensReg", source)
-                print("**!!! ensReg", user)
-                print("**!!! ensReg", auth)
+//                print("**!!! ensReg", source)
+//                print("**!!! ensReg", user)
+//                print("**!!! ensReg", auth)
                 return authorizer.ensureRegistration(of: source, for: user, authorizedBy: auth)
             }
 //            .retryWhen { [weak self] obsError in
@@ -193,21 +193,21 @@ class AuthController {
 //                }
 //            }
             .do(onNext: { [weak self] _ in
-                print("**AuthController / triggerMetadataRefresh.onNext", #line)
+//                print("**AuthController / triggerMetadataRefresh.onNext", #line)
                     self?.triggerMetadataRefresh.onNext(true)
             })
     }
 
     func login(to url: URL) -> Observable<(User, OAuthToken)> {
-        print("**AuthController / login", #line, url)
+//        print("**AuthController / login", #line, url)
         return self.validAuthorizer
             .observeOn(self.controlQueue)
             .take(1)
             .flatMap { authorizer in authorizer.metaTokenLogin(url: url) }
             .do(onNext: {[weak self] (user, token) in
                 guard let self = self else { return }
-                print("**AuthController / auth.onNext", #line, token)
-                print("**AuthController / user.onNext", #line, user)
+//                print("**AuthController / auth.onNext", #line, token)
+//                print("**AuthController / user.onNext", #line, user)
                 self.auth.onNext(token)
                 self.user.onNext(user)
 
@@ -217,7 +217,7 @@ class AuthController {
     }
 
     func validAuthentication() -> Observable<OAuthToken> {
-        print("**AuthController / validAuthentication", #line)
+//        print("**AuthController / validAuthentication", #line)
         return Observable.combineLatest(self.validAuthorizer, self.user, self.auth)
             .flatMapLatest { (authorizer, user, auth) -> Observable<OAuthToken> in
                 guard let auth = auth, let user = user, user.userId == auth.userId else {
@@ -241,7 +241,7 @@ class AuthController {
 
     private var validAuthorizer: Observable<MPClient> {
         get {
-            print("**AuthController / validAuthorizer", #line)
+//            print("**AuthController / validAuthorizer", #line)
             return self.authorizer
                 .map { (authorizer) in
                     if let authorizer = authorizer {
@@ -254,12 +254,12 @@ class AuthController {
     }
 
     func requestMetadata() -> Observable<User> {
-        print("**AuthController / requestMetadata", #line)
+//        print("**AuthController / requestMetadata", #line)
         return Observable.empty()
     }
 
     func acceptPrivacyPolicy(for userId: String) -> Observable<User> {
-        print("**AuthController / acceptPrivacyPolicy", #line, userId)
+//        print("**AuthController / acceptPrivacyPolicy", #line, userId)
 
         return user
             .take(1)
@@ -276,13 +276,13 @@ class AuthController {
                 return user
             }
             .do(onNext: { [weak self] (user: User) in
-                print("**AuthController / user.onNext", #line, user)
+//                print("**AuthController / user.onNext", #line, user)
                 self?.user.onNext(user)
             })
     }
 
     func invalidate(accessToken: String) {
-        print("**AuthController / invalidate", #line, accessToken)
+//        print("**AuthController / invalidate", #line, accessToken)
         self.auth
             .take(1)
             .subscribeOn(self.controlQueue)
@@ -294,7 +294,7 @@ class AuthController {
                 }
             }
             .subscribe(onNext: { oldAuth in
-                print("**AuthController / auth.onNext", #line, oldAuth)
+//                print("**AuthController / auth.onNext", #line, oldAuth)
                 self.auth.onNext(try? OAuthToken(refreshToken: oldAuth!.refreshToken))
             })
             .disposed(by: disposeBag)

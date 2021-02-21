@@ -62,7 +62,7 @@ struct OAuthToken: Codable {
         return accessToken != nil && expiresAt > Date()
     }
     func addAuthorization(to request: inout URLRequest) throws {
-        print("!!! add authorization")
+//        print("!!! add authorization")
         guard let accessToken = self.accessToken else {
             throw MPAuthError.unauthorized
         }

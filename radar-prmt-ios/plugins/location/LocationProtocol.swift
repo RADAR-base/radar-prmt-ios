@@ -22,7 +22,7 @@ class LocationProtocol : SourceProtocol {
     fileprivate var locationReceiver: LocationReceiver!
     
     init?(manager: SourceManager) {
-        print("**LocationProtocol / init")
+//        print("**LocationProtocol / init")
         self.manager = manager
         self.usesBackgroundLocation = manager.provider.pluginDefinition.supportsBackground
         post { weakSelf in
@@ -31,22 +31,22 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startScanning() -> Single<Source> {
-        print("**!LocationProtocol / startScanning")
+//        print("**!LocationProtocol / startScanning")
         guard let manager = self.manager else { return Single.error(MPAuthError.unreferenced) }
 
         if let source = manager.findSource(where: { _ in true }) {
-            print("**!LocationProtocol / startScanning / Found matching source %@", source.id ?? "<unknown>")
-//            os_log("Found matching source %@", source.id ?? "<unknown>")
+//            print("**!LocationProtocol / startScanning / Found matching source %@", source.id ?? "<unknown>")
+            os_log("Found matching source %@", source.id ?? "<unknown>")
             return manager.use(source: source, afterRegistration: false)
         } else {
-            print("**!LocationProtocol / startScanning / Did not find matching source. Registering a new one.")
-//            os_log("Did not find matching source. Registering a new one.")
+//            print("**!LocationProtocol / startScanning / Did not find matching source. Registering a new one.")
+            os_log("Did not find matching source. Registering a new one.")
             return manager.use(source: Source(type: manager.sourceType, id: nil, name: "location", expectedName: nil, attributes: nil))
         }
     }
 
     func registerTopics() -> Bool {
-        print("**LocationProtocol / registerTopic")
+//        print("**LocationProtocol / registerTopic")
         guard let locationTopic = self.manager?.define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") else {
             return false
         }
@@ -56,7 +56,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startCollecting() {
-        print("**LocationProtocol / startCollecting")
+//        print("**LocationProtocol / startCollecting")
         post { weakSelf in
             if weakSelf.usesBackgroundLocation {
                 weakSelf.startReceivingSignificantLocationChanges()
@@ -66,7 +66,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func startReceivingLocalLocationChanges() {
-        print("**LocationProtocol / startReceivingLocalLocationChanges")
+//        print("**LocationProtocol / startReceivingLocalLocationChanges")
 
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined:
@@ -82,7 +82,7 @@ class LocationProtocol : SourceProtocol {
     }
     
     func startReceivingSignificantLocationChanges() {
-        print("**LocationProtocol / startReceivingSignificantLocationChanges")
+//        print("**LocationProtocol / startReceivingSignificantLocationChanges")
 
         switch CLLocationManager.authorizationStatus() {
         case .notDetermined, .authorizedWhenInUse:
@@ -103,7 +103,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func closeForeground() {
-        print("**LocationProtocol / closeForeground")
+//        print("**LocationProtocol / closeForeground")
 
         post { weakSelf in
             weakSelf.locationManager.stopUpdatingLocation()
@@ -111,7 +111,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     func close() {
-        print("**LocationProtocol / close")
+//        print("**LocationProtocol / close")
 
         post { weakSelf in
             if weakSelf.usesBackgroundLocation {
@@ -121,7 +121,7 @@ class LocationProtocol : SourceProtocol {
     }
 
     private func post(action: @escaping (LocationProtocol) -> Void) {
-        print("**LocationProtocol / post")
+//        print("**LocationProtocol / post")
 
         self.controlQueue
             .schedule(Void()) { [weak self] _ in
@@ -158,9 +158,24 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager,  didUpdateLocations locations: [CLLocation]) {
         for location in locations {
             os_log("Did update location to lat %f lon %f", type: .debug, location.coordinate.latitude, location.coordinate.longitude)
+            print("##", location.coordinate.latitude)
+            let recordTemp = [
+            "time": location.timestamp.timeIntervalSince1970,
+            "timeReceived": Date().timeIntervalSince1970,
+            "offsetReference": location.coordinate.latitude,
+            "provider": "UNKNOWN",
+            "latitude": location.coordinate.latitude,
+            "longitude": location.coordinate.longitude,
+            "altitude": location.altitude,
+            "accuracy": location.horizontalAccuracy,
+            "speed": location.speed,
+            "bearing": location.course,
+            ] as [String : Any]
+            print("##", recordTemp)
             locationTopic.add(record: [
                 "time": location.timestamp.timeIntervalSince1970,
                 "timeReceived": Date().timeIntervalSince1970,
+                "offsetReference": 234,
                 "provider": "UNKNOWN",
                 "latitude": location.coordinate.latitude,
                 "longitude": location.coordinate.longitude,

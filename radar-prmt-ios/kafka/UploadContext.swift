@@ -194,18 +194,24 @@ class BinaryUploadHandle: UploadHandle {
 extension URLSession {
     func uploadTask(with request: URLRequest, from handle: UploadHandle) -> URLSessionUploadTask {
         var request = request
-        print("**%uploadTask / request", request)
+        print("**uploadTask / request", request)
         request.httpMethod = "POST"
+        print("**uploadTask / request.httpMethod", request.httpMethod)
         handle.headers.forEach { (key, value) in
+            print("**uploadTask / request / key", key)
+            print("**uploadTask / request / value", value)
             request.setValue(value, forHTTPHeaderField: key)
         }
-
+        print("**uploadTask / handle.mediumHandle", handle.mediumHandle)
         switch handle.mediumHandle {
         case let fileHandle as FileMediumHandle:
+            print("**uploadTask / request / fileHandle", request)
             return uploadTask(with: request, fromFile: fileHandle.file)
         case let dataHandle as DataMediumHandle:
+            print("**uploadTask / request / dataHandle", request)
             return uploadTask(with: request, from: dataHandle.data)
         default:
+            print("**uploadTask / request / Cannot send data type", request)
             fatalError("Cannot send data type")
         }
     }
