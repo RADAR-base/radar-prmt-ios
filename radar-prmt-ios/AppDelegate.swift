@@ -102,7 +102,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
-                //print("**manageKafkaController", state)
                 if !state.isReadyToSend || state.lifecycle == .terminated {
                     self.stopKafkaController()
                 } else if state.lifecycle == .background {
@@ -114,19 +113,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func ensureKafkaController(user: User, config: [String: String]) {
-        print("**ensureKafkaController", user, config)
         if let controller = kafkaController {
-            os_log("**Updating Kafka controller configuration")
+            os_log("Updating Kafka controller configuration")
             controller.config = KafkaControllerConfig(config: config)
         } else {
-            os_log("**Starting Kafka controller")
+            os_log("Starting Kafka controller")
             let controller = KafkaController(config: config, authController: authController, user: user, reader: self.dataController.reader)
             controller.start()
             self.kafkaController = controller
             controller.context.lastEvent
                 .subscribeOn(self.controlQueue)
                 .subscribe(onNext: { [weak self] event in
-                    print("**ensureKafkaController event", event)
                     self?.lastServerStatus.onNext(event)
                 })
                 .disposed(by: controller.disposeBag)
@@ -160,9 +157,7 @@ struct RadarState {
     }
 
     var isReadyToSend: Bool {
-        //print("**isReadyToSend 0")
         guard let user = user else { return false }
-        //print("**isReadyToSend 1", isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false))
         return isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false)
     }
 }

@@ -58,7 +58,6 @@ class AvroDataExtractor {
     }
 
     func nextInQueue(minimumPriority: Int?) -> Observable<UploadQueueElement> {
-        print("**AvroDataExtractor / nextInQueue")
         return observeMoc(describedBy: "get record data") { moc, observe in
             let request: NSFetchRequest<RecordSetGroup> = RecordSetGroup.fetchRequest()
             var predicates: [NSPredicate] = []

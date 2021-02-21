@@ -25,7 +25,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     var receivedData = [URLSessionTask: Data]()
 
     init(authController: AuthController, user: User, context: KafkaSendContext) {
-        print("**KafkaSender / init", #line)
         var kafkaUrl = user.baseUrl
         kafkaUrl.appendPathComponent("kafka", isDirectory: true)
         kafkaUrl.appendPathComponent("topics", isDirectory: true)
@@ -36,8 +35,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     public func start() {
-        print("**KafkaSender / start", #line)
-
         guard queue == nil else { return }
 
         queue = DispatchQueue(label: "KafkaSender", qos: .background)
@@ -57,8 +54,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     func send(handle: UploadHandle) {
-        print("**KafkaSender / send", #line)
-
         assert(queue != nil, "Cannot send data without starting KafkaSender")
         self.authController.validAuthentication()
             .take(1)
@@ -69,13 +64,11 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
                 }
                 let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
                 var request = URLRequest(url: self.baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
-                print("** after request")
                 try auth.addAuthorization(to: &request)
                 return session.uploadTask(with: request, from: handle)
             }
             .subscribe(onNext: { [weak self] uploadTask in
                 guard let self = self else { return }
-                print("**KafkaSender / uploadTask", uploadTask)
                 self.receivedData[uploadTask] = Data()
                 uploadTask.resume()
             })
@@ -83,12 +76,10 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        print("**KafkaSender / urlSession", session, task, error)
         guard let topic = task.originalRequest?.url?.extractTopic() else {
             os_log("Cannot extract log from request %@", task.originalRequest?.url?.absoluteString ?? "")
             return
         }
-        print("**KafkaSender / urlSession / topic", topic)
 
         if let error = error {
             let nsError = error as NSError
@@ -131,8 +122,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        print("**KafkaSender / urlSessionDidFinishEvents", #line)
-
         let completionHandler: (() -> Void)?
         switch session {
         case highPrioritySession:
@@ -150,8 +139,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     }
 
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        print("**KafkaSender / urlSession", #line)
-
         receivedData[dataTask]?.append(data)
     }
 }

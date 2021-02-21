@@ -120,7 +120,6 @@ class MPClient {
     }
 
     func requestMetadata(for user: User, authorizedBy auth: OAuthToken) throws -> Observable<User> {
-        //print("**requestMetadata 1")
         struct ProjectDTO: Codable {
             let sourceTypes: [SourceTypeDTO]
         }
@@ -139,14 +138,12 @@ class MPClient {
         let subjectUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)")
         var request = URLRequest(url: subjectUrl)
         try auth.addAuthorization(to: &request)
-        //print("**requestMetadata 2")
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
             .map { data in
                 let decoder = JSONDecoder()
                 let subjectDto: SubjectDTO = try decoder.decode(SubjectDTO.self, from: data)
                 var user = user
-                //print("**requestMetadata 3 /", user)
                 user.sourceTypes = subjectDto.project.sourceTypes.map { typeDto in
                     SourceType(id: typeDto.id, producer: typeDto.producer, model: typeDto.model, version: typeDto.catalogVersion, canRegisterDynamically: typeDto.canRegisterDynamically)
                 }
@@ -173,17 +170,12 @@ class MPClient {
     }
 
     private func register(source: Source, for user: User, auth: OAuthToken) -> Observable<Source> {
-//        print("**!MPClient / register")
         let sourceUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)/sources")
-//        print("**!MPClient / register / sourceUrl", sourceUrl)
         var request = URLRequest(url: sourceUrl)
-//        print("**!MPClient / register / request", request)
         do {
             try auth.addAuthorization(to: &request)
             try request.postJson(SourceDTO(sourceId: nil, sourceTypeId: source.type.id, sourceName: source.name, expectedSourceName: nil, attributes: source.attributes))
-//            print("**!MPClient / register / do")
         } catch {
-//            print("**!MPClient / register / error")
             return Observable<Source>.error(error)
         }
 
@@ -278,10 +270,7 @@ fileprivate struct SourceDTO : Codable {
 
 fileprivate extension Source {
     func updating(withJson data: Data, using decoder: JSONDecoder) throws -> Source {
-//        print("**!MPClient / update / data", data)
         let sourceDTO = try decoder.decode(SourceDTO.self, from: data)
-//        print("**!MPClient / update / sourceDTO", sourceDTO)
-//        print("**!MPClient / update / type", type)
         return Source(type: type, id: sourceDTO.sourceId, name: sourceDTO.sourceName, expectedName: sourceDTO.expectedSourceName, attributes: sourceDTO.attributes)
     }
 }
