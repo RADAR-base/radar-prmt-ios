@@ -112,7 +112,6 @@ class MPClient {
 
     func ensureRegistration(of source: Source, for user: User, authorizedBy auth: OAuthToken) -> Observable<Source> {
         if source.id == nil {
-//            print("**! register ensureRegistration")
             return register(source: source, for: user, auth: auth)
         } else {
             return update(source: source, for: user, auth: auth)

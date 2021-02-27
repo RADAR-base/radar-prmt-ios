@@ -31,7 +31,6 @@
 		A9350E5E21CC1DEF004BECCA /* OAuth.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9350E5D21CC1DEF004BECCA /* OAuth.swift */; };
 		A93A58EA22BA8715000A542E /* SourceStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93A58E922BA8715000A542E /* SourceStatus.swift */; };
 		A94E062522A521CE009E0692 /* config.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E062422A521CE009E0692 /* config.plist */; };
-		A94E064C22A530C6009E0692 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = A94E064B22A530C6009E0692 /* GoogleService-Info.plist */; };
 		A94E064F22A55CE3009E0692 /* Valet+Codable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94E064E22A55CE3009E0692 /* Valet+Codable.swift */; };
 		A974A8632296ECD000795ED8 /* RadarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974A8622296ECD000795ED8 /* RadarConfiguration.swift */; };
 		A974A8652296EDD400795ED8 /* FirebaseRadarConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = A974A8642296EDD400795ED8 /* FirebaseRadarConfiguration.swift */; };
@@ -95,6 +94,8 @@
 		A9DFFFCC231FC6C400AB3208 /* RetryDelay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9DFFFCB231FC6C400AB3208 /* RetryDelay.swift */; };
 		A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9F970B321C03C340003FF5F /* SourceManager.swift */; };
 		A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A9F9715D21C040370003FF5F /* radar-schemas.bundle */; };
+		F39107BC25E5988E00D70E37 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39107BB25E5988E00D70E37 /* HealthKit.framework */; };
+		F39107C325E59BCA00D70E37 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F39107C225E59BCA00D70E37 /* GoogleService-Info.plist */; };
 		F3953F1225B8AE960010DBCB /* QRData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3953F1125B8AE950010DBCB /* QRData.swift */; };
 /* End PBXBuildFile section */
 
@@ -153,7 +154,6 @@
 		A937D1FE24FD308100C59AA3 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 		A93A58E922BA8715000A542E /* SourceStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceStatus.swift; sourceTree = "<group>"; };
 		A94E062422A521CE009E0692 /* config.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = config.plist; sourceTree = "<group>"; };
-		A94E064B22A530C6009E0692 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		A94E064E22A55CE3009E0692 /* Valet+Codable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Valet+Codable.swift"; sourceTree = "<group>"; };
 		A95A811224FD202B006E9D3D /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Platforms/iPhoneOS.platform/Developer/Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		A974A8622296ECD000795ED8 /* RadarConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RadarConfiguration.swift; sourceTree = "<group>"; };
@@ -224,6 +224,9 @@
 		A9DFFFCB231FC6C400AB3208 /* RetryDelay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetryDelay.swift; sourceTree = "<group>"; };
 		A9F970B321C03C340003FF5F /* SourceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceManager.swift; sourceTree = "<group>"; };
 		A9F9715D21C040370003FF5F /* radar-schemas.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = "radar-schemas.bundle"; sourceTree = "<group>"; };
+		F39107BA25E5988D00D70E37 /* radarPrmtIos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = radarPrmtIos.entitlements; sourceTree = "<group>"; };
+		F39107BB25E5988E00D70E37 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		F39107C225E59BCA00D70E37 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F3953F1125B8AE950010DBCB /* QRData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRData.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -234,6 +237,7 @@
 			files = (
 				A92AB46A25B5E5C200016348 /* Valet in Frameworks */,
 				A92AB47225B5E60D00016348 /* RxAppState in Frameworks */,
+				F39107BC25E5988E00D70E37 /* HealthKit.framework in Frameworks */,
 				A92AB45B25B5E54E00016348 /* RxSwift in Frameworks */,
 				A92AB46E25B5E5ED00016348 /* JWTDecode in Frameworks */,
 				A92AB46625B5E5AB00016348 /* Gzip in Frameworks */,
@@ -329,6 +333,7 @@
 		A997B26E21BEF1AB0029B43B /* radar-prmt-ios */ = {
 			isa = PBXGroup;
 			children = (
+				F39107BA25E5988D00D70E37 /* radarPrmtIos.entitlements */,
 				A974A8612296ECC200795ED8 /* config */,
 				A9CC806F21DE609D0067FA77 /* plugins */,
 				A9350E5C21CC1DDC004BECCA /* auth */,
@@ -342,8 +347,8 @@
 				A997B27921BEF1AC0029B43B /* Assets.xcassets */,
 				A9245B31228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png */,
 				A997B27B21BEF1AC0029B43B /* LaunchScreen.storyboard */,
+				F39107C225E59BCA00D70E37 /* GoogleService-Info.plist */,
 				A997B27E21BEF1AC0029B43B /* Info.plist */,
-				A94E064B22A530C6009E0692 /* GoogleService-Info.plist */,
 				A9F9715D21C040370003FF5F /* radar-schemas.bundle */,
 				A97DE0312289BA3D0069DFE3 /* MainViewController.swift */,
 				A94E062422A521CE009E0692 /* config.plist */,
@@ -376,6 +381,7 @@
 		A997B2A821BF9FB60029B43B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F39107BB25E5988E00D70E37 /* HealthKit.framework */,
 				A937D1FE24FD308100C59AA3 /* AddressBook.framework */,
 				A937D1FC24FD307900C59AA3 /* libsqlite3.tbd */,
 				A937D1FA24FD307000C59AA3 /* libc++.tbd */,
@@ -642,12 +648,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				A997B27D21BEF1AC0029B43B /* LaunchScreen.storyboard in Resources */,
+				F39107C325E59BCA00D70E37 /* GoogleService-Info.plist in Resources */,
 				A997B27A21BEF1AC0029B43B /* Assets.xcassets in Resources */,
 				A94E062522A521CE009E0692 /* config.plist in Resources */,
 				A9245B32228581ED0089B069 /* QR_code_for_mobile_English_Wikipedia.svg.png in Resources */,
 				A9F9715E21C0403A0003FF5F /* radar-schemas.bundle in Resources */,
 				A997B27521BEF1AB0029B43B /* Main.storyboard in Resources */,
-				A94E064C22A530C6009E0692 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -918,6 +924,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "radar-prmt-ios/radarPrmtIos.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R96N8LKUNC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -935,7 +942,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.radarbase.prmt;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.ios-prmt";
 				PRODUCT_NAME = radarPrmtIos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -946,6 +953,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "radar-prmt-ios/radarPrmtIos.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = R96N8LKUNC;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
@@ -963,7 +971,7 @@
 					"$(inherited)",
 					"-ObjC",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = org.radarbase.prmt;
+				PRODUCT_BUNDLE_IDENTIFIER = "org.radarbase.ios-prmt";
 				PRODUCT_NAME = radarPrmtIos;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

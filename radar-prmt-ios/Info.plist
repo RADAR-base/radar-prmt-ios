@@ -31,6 +31,10 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Camera is needed to scan the QR code to log in. It is not used afterwards.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Allow this app to share your Health data to doctors and clinicians.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Allow this app to write health data provided from your doctor or clinician.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Monitor daily movement</string>
 	<key>NSLocationWhenInUseUsageDescription</key>

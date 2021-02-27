@@ -105,7 +105,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 if !state.isReadyToSend || state.lifecycle == .terminated {
                     self.stopKafkaController()
                 } else if state.lifecycle == .background {
-                    self.stopKafkaController()
+                    //self.stopKafkaController()
                 } else if state.lifecycle == .active, let user = state.user {
                     self.ensureKafkaController(user: user, config: state.config)
                 }

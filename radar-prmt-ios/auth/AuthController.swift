@@ -161,22 +161,23 @@ class AuthController {
     }
 
     func ensureRegistration(of source: Source) -> Observable<Source> {
-        return Observable.combineLatest(authorizer, user, validAuthentication()).take(1)
+        return Observable.combineLatest(authorizer, user, validAuthentication())
+            .take(1)
             .flatMap { (authorizer, user, auth) -> Observable<Source> in
                 guard let authorizer = authorizer, let user = user else {
                     return Observable<Source>.empty()
                 }
                 return authorizer.ensureRegistration(of: source, for: user, authorizedBy: auth)
             }
-//            .retryWhen { [weak self] obsError in
-//                return obsError.flatMap { [weak self] (error: Error) -> Observable<Bool> in
-//                    if case MPAuthError.unauthorized = error, let self = self {
-//                        return self.validAuthentication()
-//                            .map { $0.isValid }
-//                    }
-//                    throw error
-//                }
-//            }
+            .retryWhen { [weak self] obsError in
+                return obsError.flatMap { [weak self] (error: Error) -> Observable<Bool> in
+                    if case MPAuthError.unauthorized = error, let self = self {
+                        return self.validAuthentication()
+                            .map { $0.isValid }
+                    }
+                    throw error
+                }
+            }
             .do(onNext: { [weak self] _ in
                     self?.triggerMetadataRefresh.onNext(true)
             })
@@ -198,7 +199,7 @@ class AuthController {
     }
 
     func validAuthentication() -> Observable<OAuthToken> {
-        return Observable.combineLatest(self.validAuthorizer, self.user, self.auth)
+        return Observable.combineLatest(self.validAuthorizer, self.user, self.auth).take(1)
             .flatMapLatest { (authorizer, user, auth) -> Observable<OAuthToken> in
                 guard let auth = auth, let user = user, user.userId == auth.userId else {
                     throw MPAuthError.unauthorized
