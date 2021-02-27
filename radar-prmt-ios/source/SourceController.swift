@@ -62,14 +62,14 @@ class SourceController: ControlledQueue {
 
         os_log("Trying to load providers %@", newProviders.map { $0.pluginDefinition.pluginName }.joined(separator: ", "))
 
-        let existingProviders = Set(sources.map { $0.provider })
-        let defunctProviders = existingProviders.subtracting(newProviders)
-        let defunctIndex = sources.partition { defunctProviders.contains($0.provider)  }
-        let defunctSources = sources[defunctIndex ..< sources.endIndex]
-        sources.removeSubrange(defunctIndex ..< sources.endIndex)
-        defunctSources.forEach { $0.close() }
+//        let existingProviders = Set(sources.map { $0.provider })
+//        let defunctProviders = existingProviders.subtracting(newProviders)
+//        let defunctIndex = sources.partition { defunctProviders.contains($0.provider)  }
+//        let defunctSources = sources[defunctIndex ..< sources.endIndex]
+//        sources.removeSubrange(defunctIndex ..< sources.endIndex)
+//        defunctSources.forEach { $0.close() }
 
-        let newSources = newProviders.subtracting(existingProviders)
+        let newSources = newProviders//.subtracting(existingProviders)
             .compactMap { (provider: DelegatedSourceProvider) -> SourceManager? in
                 let matchingSourceType: SourceType?
 

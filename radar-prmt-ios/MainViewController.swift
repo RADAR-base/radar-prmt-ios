@@ -42,7 +42,6 @@ class MainViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] event in
                 guard let self = self else { return }
-                print("**MainViewController event", event)
                 switch (event) {
                 case .none:
                     self.serverStatusLabel.text = "–"
