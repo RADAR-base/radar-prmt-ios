@@ -162,6 +162,7 @@ class AuthController {
 
     func ensureRegistration(of source: Source) -> Observable<Source> {
         return Observable.combineLatest(authorizer, user, validAuthentication())
+            .take(1)
             .flatMap { (authorizer, user, auth) -> Observable<Source> in
                 guard let authorizer = authorizer, let user = user else {
                     return Observable<Source>.empty()
@@ -177,12 +178,15 @@ class AuthController {
                     throw error
                 }
             }
-            .do(onNext: { [weak self] _ in self?.triggerMetadataRefresh.onNext(true) })
+            .do(onNext: { [weak self] _ in
+                    self?.triggerMetadataRefresh.onNext(true)
+            })
     }
 
     func login(to url: URL) -> Observable<(User, OAuthToken)> {
         return self.validAuthorizer
             .observeOn(self.controlQueue)
+            .take(1)
             .flatMap { authorizer in authorizer.metaTokenLogin(url: url) }
             .do(onNext: {[weak self] (user, token) in
                 guard let self = self else { return }
@@ -203,7 +207,10 @@ class AuthController {
                 if auth.isValid {
                     return Observable.just(auth)
                 } else {
-                    return authorizer.refresh(for: user, auth: auth)
+                    return authorizer.refresh(for: user, auth: auth).do(onNext: { [weak self] auth in
+                        guard let self = self else { return }
+                        self.auth.onNext(auth)
+                    })
                 }
             }
     }

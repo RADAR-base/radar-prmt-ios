@@ -66,7 +66,7 @@ class KafkaController {
 
         let queue = ConcurrentDispatchQueueScheduler(qos: .background)
 
-        let timer: Observable<Void> = Observable<Int>.interval(config.interval, scheduler: queue)
+        let timer: Observable<Void> = Observable<Int>.interval(config.interval, scheduler: queue) // 30 secs
             .map { _ in () }
 
         let isConnected: Observable<Void> = self.reachability.subject.filter { !$0.isEmpty }
@@ -84,7 +84,10 @@ class KafkaController {
             .share()
 
         let retryQueue: Observable<UploadQueueElement> = uploadTrigger
-            .flatMapLatest { [weak self] _ in self?.reader.nextRetry(minimumPriority: self!.minimumPriority) ?? Observable.empty() }
+            .flatMapLatest { [weak self] _ in
+                self?.reader.nextRetry(minimumPriority: self!.minimumPriority) ?? Observable.empty()
+            }
+
 
         let uploadQueue: Observable<UploadQueueElement> = uploadTrigger
             .flatMapLatest { [weak self] _ in self?.reader.nextInQueue(minimumPriority: self!.minimumPriority) ?? Observable.empty() }
@@ -97,6 +100,7 @@ class KafkaController {
                     return .ignore
                 }
             }
+
 
         sendFlow = Observable.merge(uploadQueue, retryQueue, resendQueue)
             .flatMap { [weak self] element in self?.prepareUpload(for: element) ?? Observable.empty() }
@@ -121,6 +125,7 @@ class KafkaController {
             reachability.listen()
             return false
         }
+        
         if let retryServer = context.retryServer, retryServer.at > Date() {
             return false
         }
@@ -129,7 +134,9 @@ class KafkaController {
 
     private func updateConnection(to mode: NetworkReachability.Mode) {
         let newMode = self.context.didConnect(over: mode)
+        
         if newMode == [.cellular, .wifiOrEthernet] {
+            
             os_log("Network connection is available again. Restarting data uploads.")
             self.reachability.cancel()
             self.start()
@@ -138,6 +145,7 @@ class KafkaController {
 
     var minimumPriority: Int? {
         let availableModes = context.availableNetworkModes
+
         if availableModes.contains(.wifiOrEthernet) {
             return nil
         } else {

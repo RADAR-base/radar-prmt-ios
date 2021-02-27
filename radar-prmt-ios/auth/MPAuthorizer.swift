@@ -181,7 +181,9 @@ class MPClient {
         let decoder = JSONDecoder()
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
-            .map { data in try source.updating(withJson: data, using: decoder) }
+            .map { data in
+                try source.updating(withJson: data, using: decoder)
+            }
             .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
                 return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
                     switch (response.statusCode) {

@@ -29,6 +29,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let controlQueue: SchedulerType = SerialDispatchQueueScheduler(qos: .background)
     var lastServerStatus = BehaviorSubject<KafkaEvent>(value: .disconnected(Date()))
     lazy var authController = { AuthController(config: config) }()
+    var appState = BehaviorSubject<AppState>(value: AppState.inactive)
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         guard NSClassFromString("XCTestCase") == nil else {
@@ -37,12 +38,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
 
         authController.load()
+        
+        // On simulator, app hangs on loading page.
+        // the reason is not clear but with separate subscription for appState the issue resolved.
+        UIApplication.shared.rx.appState.distinctUntilChanged().subscribeOn(controlQueue)
+            .subscribe(onNext: { (state: AppState) in
+                print("AppDelegate", #line, "app state changed")
+                self.appState.onNext(state) // = state //self?.latestConfig.onNext(state)
+            }, onError: {
+                os_log("Failed to update state: %@", $0.localizedDescription)
+            })
+            .disposed(by: disposeBag)
+        
         Observable.combineLatest(
-                UIApplication.shared.rx.appState.distinctUntilChanged(),
-                authController.user.distinctUntilChanged(),
-                authController.auth.distinctUntilChanged(),
-                authController.isLoaded.distinctUntilChanged(),
-                config.config.distinctUntilChanged())
+            appState.distinctUntilChanged(),
+            authController.user.distinctUntilChanged(),
+            authController.auth.distinctUntilChanged(),
+            authController.isLoaded.distinctUntilChanged(),
+            config.config.distinctUntilChanged())
             .map { RadarState(lifecycle: $0.0, user: $0.1, auth: $0.2, isAuthLoaded: $0.3, config: $0.4) }
             .do(onNext: { (state: RadarState) in
                 os_log("Next app state: cycle: %@, user: %@, policy %d, authValid: %d, isLoaded: %d, sources: %d, config #: %d",
@@ -102,11 +115,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
-
                 if !state.isReadyToSend || state.lifecycle == .terminated {
                     self.stopKafkaController()
                 } else if state.lifecycle == .background {
-                    self.stopKafkaController()
+                    //self.stopKafkaController()
                 } else if state.lifecycle == .active, let user = state.user {
                     self.ensureKafkaController(user: user, config: state.config)
                 }

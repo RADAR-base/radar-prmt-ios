@@ -25,7 +25,7 @@ class MainViewController: UIViewController {
 
         appDelegate.authController.user
             .compactMap { $0 }
-            .subscribeOn(MainScheduler.instance)
+            .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [weak self] user in
                 guard let self = self else { return }
                 self.projectIdLabel.text = user.projectId

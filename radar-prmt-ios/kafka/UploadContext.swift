@@ -198,7 +198,6 @@ extension URLSession {
         handle.headers.forEach { (key, value) in
             request.setValue(value, forHTTPHeaderField: key)
         }
-
         switch handle.mediumHandle {
         case let fileHandle as FileMediumHandle:
             return uploadTask(with: request, fromFile: fileHandle.file)

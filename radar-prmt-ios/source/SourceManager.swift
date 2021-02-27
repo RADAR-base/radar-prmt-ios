@@ -40,6 +40,8 @@ class SourceManager {
         self.sourceType = sourceType
         self.authControl = authControl
         self.state = state
+        
+        self.sources = state.user?.sources ?? []
     }
 
     func define(topic name: String, valueSchemaPath: String, priority: Int16 = 0) -> AvroTopicCacheContext? {
@@ -91,6 +93,7 @@ class SourceManager {
 
     func start() {
         self.status.onNext(.scanning)
+
         delegate.startScanning()
             .subscribe(onSuccess: { [weak self] source in
                 guard let self = self else { return }

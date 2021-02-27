@@ -39,7 +39,7 @@ class DataKafkaSendContext: KafkaSendContext {
         self.reader = reader
         queue = DispatchQueue(label: "Kafka send context", qos: .background)
         retryServer = nil
-        networkModes = [.cellular, .wifiOrEthernet]
+        networkModes = []
         minimumPriorityForCellular = 1
         self.medium = medium
     }
@@ -99,12 +99,14 @@ class DataKafkaSendContext: KafkaSendContext {
 
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
         lastEvent.onNext(.connected(Date()))
-        var mode: NetworkReachability.Mode = []
+        var newMode: NetworkReachability.Mode = []
+
         queue.sync {
             self.networkModes.formUnion(mode)
-            mode = self.networkModes
+            newMode = self.networkModes
         }
-        return mode
+
+        return newMode
     }
 
     func couldNotConnect(with topic: String, over mode: NetworkReachability.Mode) {

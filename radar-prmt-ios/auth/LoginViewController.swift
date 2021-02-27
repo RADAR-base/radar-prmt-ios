@@ -19,7 +19,7 @@ class LoginViewController: UIViewController {
 
     @IBAction func onScanQrCode(_ sender: Any) {
         QRCodeViewController.requestAuthorization()
-            .subscribeOn(MainScheduler.instance)
+            .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [weak self] granted in
                 guard let self = self else { return }
                 if granted {
@@ -36,7 +36,7 @@ class LoginViewController: UIViewController {
                     alert.addAction(UIAlertAction(title: "Enter token manually", style: .default, handler: { [weak self] action in
                         self?.performSegue(withIdentifier: "enterToken", sender: self)
                     }))
-                    alert.show(self, sender: sender)
+                    self.present(alert, animated: true, completion: nil)
                 }
             })
             .disposed(by: disposeBag)

@@ -63,7 +63,6 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
                     throw MPAuthError.unreferenced
                 }
                 let session: URLSession! = handle.priority >= self.context.minimumPriorityForCellular ? self.highPrioritySession : self.lowPrioritySession
-
                 var request = URLRequest(url: self.baseUrl.appendingPathComponent(handle.topic, isDirectory: false))
                 try auth.addAuthorization(to: &request)
                 return session.uploadTask(with: request, from: handle)

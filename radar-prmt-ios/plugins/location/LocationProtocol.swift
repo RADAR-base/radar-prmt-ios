@@ -145,6 +145,7 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
             locationTopic.add(record: [
                 "time": location.timestamp.timeIntervalSince1970,
                 "timeReceived": Date().timeIntervalSince1970,
+                "offsetReference": 0,
                 "provider": "UNKNOWN",
                 "latitude": location.coordinate.latitude,
                 "longitude": location.coordinate.longitude,

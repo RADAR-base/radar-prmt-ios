@@ -32,7 +32,7 @@ class SourceController: ControlledQueue {
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
-                self.load(state: state)
+                    self.load(state: state)
                 if (!state.isReadyToSend || state.lifecycle == .terminated) {
                     self.close()
                 } else if (state.lifecycle == .background) {
@@ -62,14 +62,14 @@ class SourceController: ControlledQueue {
 
         os_log("Trying to load providers %@", newProviders.map { $0.pluginDefinition.pluginName }.joined(separator: ", "))
 
-        let existingProviders = Set(sources.map { $0.provider })
-        let defunctProviders = existingProviders.subtracting(newProviders)
-        let defunctIndex = sources.partition { defunctProviders.contains($0.provider)  }
-        let defunctSources = sources[defunctIndex ..< sources.endIndex]
-        sources.removeSubrange(defunctIndex ..< sources.endIndex)
-        defunctSources.forEach { $0.close() }
+//        let existingProviders = Set(sources.map { $0.provider })
+//        let defunctProviders = existingProviders.subtracting(newProviders)
+//        let defunctIndex = sources.partition { defunctProviders.contains($0.provider)  }
+//        let defunctSources = sources[defunctIndex ..< sources.endIndex]
+//        sources.removeSubrange(defunctIndex ..< sources.endIndex)
+//        defunctSources.forEach { $0.close() }
 
-        let newSources = newProviders.subtracting(existingProviders)
+        let newSources = newProviders//.subtracting(existingProviders)
             .compactMap { (provider: DelegatedSourceProvider) -> SourceManager? in
                 let matchingSourceType: SourceType?
 
