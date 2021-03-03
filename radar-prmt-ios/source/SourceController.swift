@@ -25,7 +25,7 @@ class SourceController: ControlledQueue {
         self.dataController = dataController
         self.authController = authController
         self.sources = []
-        let providers: [SourceProvider] = [LocationProvider(), SpamProvider()]
+        let providers: [SourceProvider] = [LocationProvider(), SpamProvider(), HKStepProvider()]
         self.sourceProviders = providers.map { DelegatedSourceProvider($0) }
         self.controlQueue = SerialDispatchQueueScheduler(qos: .background)
         config

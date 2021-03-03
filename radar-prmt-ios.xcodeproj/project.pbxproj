@@ -97,6 +97,8 @@
 		F39107BC25E5988E00D70E37 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F39107BB25E5988E00D70E37 /* HealthKit.framework */; };
 		F39107C325E59BCA00D70E37 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = F39107C225E59BCA00D70E37 /* GoogleService-Info.plist */; };
 		F3953F1225B8AE960010DBCB /* QRData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3953F1125B8AE950010DBCB /* QRData.swift */; };
+		F3E0FDB325EEB8CE00D09903 /* HKStepProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDB225EEB8CE00D09903 /* HKStepProtocol.swift */; };
+		F3E0FDB725EEB8E100D09903 /* HKStepProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -228,6 +230,8 @@
 		F39107BB25E5988E00D70E37 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
 		F39107C225E59BCA00D70E37 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		F3953F1125B8AE950010DBCB /* QRData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRData.swift; sourceTree = "<group>"; };
+		F3E0FDB225EEB8CE00D09903 /* HKStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKStepProtocol.swift; sourceTree = "<group>"; };
+		F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKStepProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -449,6 +453,7 @@
 		A9CC806F21DE609D0067FA77 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				F3E0FDB125EEB89400D09903 /* hk-steps */,
 				A9D9280B21F87EED007BB030 /* spammer */,
 				A9CC807021DE60B00067FA77 /* location */,
 			);
@@ -505,6 +510,15 @@
 				A9DFFFB8231FA24A00AB3208 /* DelegatedSourceProvider.swift */,
 			);
 			path = source;
+			sourceTree = "<group>";
+		};
+		F3E0FDB125EEB89400D09903 /* hk-steps */ = {
+			isa = PBXGroup;
+			children = (
+				F3E0FDB225EEB8CE00D09903 /* HKStepProtocol.swift */,
+				F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */,
+			);
+			path = "hk-steps";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -686,6 +700,7 @@
 				A9D9280D21F8A917007BB030 /* KafkaSender.swift in Sources */,
 				A9DFFFB3231FA17500AB3208 /* SourceProtocol.swift in Sources */,
 				A9D9281921F8C1B2007BB030 /* SourceController.swift in Sources */,
+				F3E0FDB725EEB8E100D09903 /* HKStepProvider.swift in Sources */,
 				A9DFFFCC231FC6C400AB3208 /* RetryDelay.swift in Sources */,
 				A9DFFFBD231FC22700AB3208 /* MPAuthorizer.swift in Sources */,
 				A90EDF9B2276E6B200DC8517 /* DeflateRequestMedium.swift in Sources */,
@@ -708,6 +723,7 @@
 				A99AAE5F225F390D005B57DA /* RecordSet+CoreDataProperties.swift in Sources */,
 				A99AAE60225F390D005B57DA /* RecordSet+CoreDataClass.swift in Sources */,
 				F3953F1225B8AE960010DBCB /* QRData.swift in Sources */,
+				F3E0FDB325EEB8CE00D09903 /* HKStepProtocol.swift in Sources */,
 				A9B4364122B13D7200BC3C2C /* AuthController.swift in Sources */,
 				A9CC807221DE60C90067FA77 /* LocationProtocol.swift in Sources */,
 				A9DFFFB5231FA19700AB3208 /* SourceProvider.swift in Sources */,
