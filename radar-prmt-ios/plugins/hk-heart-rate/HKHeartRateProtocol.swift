@@ -1,8 +1,8 @@
 //
-//  HKStepProtocol.swift
+//  HKHeartRateProtocol.swift
 //  radar-prmt-ios
 //
-//  Created by Peyman Mohtashami on 02/03/2021.
+//  Created by Peyman Mohtashami on 03/03/2021.
 //  Copyright © 2021 Joris Borgdorff. All rights reserved.
 //
 
@@ -12,11 +12,11 @@ import os.log
 import RxSwift
 import HealthKit
 
-class HKStepProtocol : SourceProtocol {
+class HKHeartRateProtocol : SourceProtocol {
     weak var manager: SourceManager?
     let usesBackgroundHKStep: Bool
     let controlQueue = MainScheduler.instance
-    var hkStepTopic: AvroTopicCacheContext!
+    var hkHeartRateTopic: AvroTopicCacheContext!
 
     var healthStore: HKHealthStore?
     var statisticsCollectionQuery: HKStatisticsCollectionQuery?
@@ -51,20 +51,20 @@ class HKStepProtocol : SourceProtocol {
 //        guard let hkStepTopic = self.manager?.define(topic: "ios_hk_step", valueSchemaPath: "passive/phone/phone_hk_step") else {
 //            return false
 //        }
-        guard let hkStepTopic = self.manager?.define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") else {
+        guard let hkHeartRateTopic = self.manager?.define(topic: "ios_location", valueSchemaPath: "passive/phone/phone_relative_location") else {
             return false
         }
-        self.hkStepTopic = hkStepTopic
+        self.hkHeartRateTopic = hkHeartRateTopic
         return true
     }
 
     func startCollecting() {
-        let stepType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!
-        self.healthStore?.requestAuthorization(toShare: [stepType], read: [stepType]) {
+        let heartRateType = HKQuantityType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!
+        self.healthStore?.requestAuthorization(toShare: nil, read: [heartRateType]) {
             (succes, error) in
             if succes {
                 // self.calculateDailyStepCountForPastWeek()
-                self.getLastStepCount()
+                self.getLastHeartRate()
             }else{
                 print("Authorization is not successful")
             }
@@ -83,28 +83,27 @@ class HKStepProtocol : SourceProtocol {
         }
     }
 
-    func getLastStepCount(){
-        let stepType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!
+    func getLastHeartRate(){
+        let heartRateType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!
         let sort = [NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: false)]
        
-        self.sampleQuery = HKSampleQuery(sampleType: stepType, predicate: nil, limit: 1, sortDescriptors: sort) {
+        self.sampleQuery = HKSampleQuery(sampleType: heartRateType, predicate: nil, limit: 1, sortDescriptors: sort) {
             query, results, error in
                 guard error == nil else { print("error"); return }
-                self.printResultOfOneDay(results: results)
+                self.printResultOfSampleQuery(results: results)
         }
         self.healthStore?.execute(sampleQuery!)
     }
     
-    private func printResultOfOneDay(results:[HKSample]?) {
+    private func printResultOfSampleQuery(results:[HKSample]?) {
         guard let results = results else {
             return
         }
         for result in results {
             guard let result:HKQuantitySample = result as? HKQuantitySample else { return }
-            os_log("Did update HK Step to step count: %f start date %f end date %f", type: .debug, result.quantity.doubleValue(for: HKUnit.count()), result.startDate.timeIntervalSince1970, result.endDate.timeIntervalSince1970)
-
+            os_log("Did update HK HeartRate to heart rate: %f start date %f end date %f", type: .debug, result.quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())), result.startDate.timeIntervalSince1970, result.endDate.timeIntervalSince1970)
             print("---------------------------------\n")
-            print("Step count: \(result.quantity.doubleValue(for: HKUnit.count()))")
+            print("Heart Rate: \(result.quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())))")
             print("quantityType: \(result.quantityType)")
             print("Start Date: \(result.startDate)")
             print("End Date: \(result.endDate)")
@@ -114,13 +113,13 @@ class HKStepProtocol : SourceProtocol {
             print("Device: \(String(describing: result.device))")
             print("---------------------------------\n")
             
-            self.hkStepTopic.add(record: [
+            self.hkHeartRateTopic.add(record: [
                 "time": result.startDate.timeIntervalSince1970,
                 "timeReceived": Date().timeIntervalSince1970,
                 "offsetReference": 0,
                 "provider": "UNKNOWN",
-                "latitude": result.quantity.doubleValue(for: HKUnit.count()),
-                "longitude": result.quantity.doubleValue(for: HKUnit.count()),
+                "latitude": result.quantity.doubleValue(for: HKUnit.count().unitDivided(by: HKUnit.minute())),
+                "longitude": 0,
                 "altitude": 0,
                 "accuracy": 0,
                 "speed": 0,
@@ -141,8 +140,8 @@ class HKStepProtocol : SourceProtocol {
         }
     }
     
-    func calculateDailyStepCountForPastWeek(){
-        let stepType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.stepCount)!
+    func calculateDailyHearRateCountForPastWeek(){
+        let heartRateType = HKSampleType.quantityType(forIdentifier: HKQuantityTypeIdentifier.heartRate)!
         
         let monday = createAnchorDate()
         let daily = DateComponents(day: 1)
@@ -150,13 +149,13 @@ class HKStepProtocol : SourceProtocol {
         let exactlySevenDaysAgo = Calendar.current.date(byAdding: DateComponents(day: -7), to: Date())!
         let oneWeekAgo = HKQuery.predicateForSamples(withStart: exactlySevenDaysAgo, end: nil, options: .strictStartDate)
 
-        self.statisticsCollectionQuery = HKStatisticsCollectionQuery(quantityType: stepType, quantitySamplePredicate: oneWeekAgo, options: .cumulativeSum, anchorDate: monday, intervalComponents: daily)
+        self.statisticsCollectionQuery = HKStatisticsCollectionQuery(quantityType: heartRateType, quantitySamplePredicate: oneWeekAgo, options: .cumulativeSum, anchorDate: monday, intervalComponents: daily)
 
         self.statisticsCollectionQuery?.initialResultsHandler = {
             query, statisticsCollection, error in
             if let statisticsCollection = statisticsCollection {
                 print("statisticsCollection Update UI")
-                self.printResultsOfOneWeek(statisticsCollection)
+                self.printResultsOfStatisticsCollectionQuery(statisticsCollection)
             }else{
                 print("No statisticsCollection")
             }
@@ -165,7 +164,7 @@ class HKStepProtocol : SourceProtocol {
         self.statisticsCollectionQuery?.statisticsUpdateHandler = { query, statistics, statisticsCollection, error in
             if let statisticsCollection = statisticsCollection {
                 print("statisticsCollection Update UI - update")
-                self.printResultsOfOneWeek(statisticsCollection)
+                self.printResultsOfStatisticsCollectionQuery(statisticsCollection)
             }else{
                 print("No statisticsCollection - update")
             }
@@ -188,7 +187,7 @@ class HKStepProtocol : SourceProtocol {
         return anchorDate
     }
     
-    func printResultsOfOneWeek(_ statisticsCollection: HKStatisticsCollection){
+    func printResultsOfStatisticsCollectionQuery(_ statisticsCollection: HKStatisticsCollection){
         self.dataValues = []
         let startDate = Calendar.current.date(byAdding: .day, value: -6, to: Date())!
         let endDate = Date()

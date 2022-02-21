@@ -99,6 +99,8 @@
 		F3953F1225B8AE960010DBCB /* QRData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3953F1125B8AE950010DBCB /* QRData.swift */; };
 		F3E0FDB325EEB8CE00D09903 /* HKStepProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDB225EEB8CE00D09903 /* HKStepProtocol.swift */; };
 		F3E0FDB725EEB8E100D09903 /* HKStepProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */; };
+		F3E0FDBC25EFEDBB00D09903 /* HKHeartRateProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDBB25EFEDBB00D09903 /* HKHeartRateProtocol.swift */; };
+		F3E0FDC025EFEDD000D09903 /* HKHeartRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3E0FDBF25EFEDD000D09903 /* HKHeartRateProvider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -232,6 +234,8 @@
 		F3953F1125B8AE950010DBCB /* QRData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRData.swift; sourceTree = "<group>"; };
 		F3E0FDB225EEB8CE00D09903 /* HKStepProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKStepProtocol.swift; sourceTree = "<group>"; };
 		F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKStepProvider.swift; sourceTree = "<group>"; };
+		F3E0FDBB25EFEDBB00D09903 /* HKHeartRateProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKHeartRateProtocol.swift; sourceTree = "<group>"; };
+		F3E0FDBF25EFEDD000D09903 /* HKHeartRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HKHeartRateProvider.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -453,6 +457,7 @@
 		A9CC806F21DE609D0067FA77 /* plugins */ = {
 			isa = PBXGroup;
 			children = (
+				F3E0FDBA25EFED8C00D09903 /* hk-heart-rate */,
 				F3E0FDB125EEB89400D09903 /* hk-steps */,
 				A9D9280B21F87EED007BB030 /* spammer */,
 				A9CC807021DE60B00067FA77 /* location */,
@@ -519,6 +524,15 @@
 				F3E0FDB625EEB8E100D09903 /* HKStepProvider.swift */,
 			);
 			path = "hk-steps";
+			sourceTree = "<group>";
+		};
+		F3E0FDBA25EFED8C00D09903 /* hk-heart-rate */ = {
+			isa = PBXGroup;
+			children = (
+				F3E0FDBB25EFEDBB00D09903 /* HKHeartRateProtocol.swift */,
+				F3E0FDBF25EFEDD000D09903 /* HKHeartRateProvider.swift */,
+			);
+			path = "hk-heart-rate";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -717,6 +731,7 @@
 				A920C3462203429F000F6337 /* KafkaSendContext.swift in Sources */,
 				A9F970B421C03C340003FF5F /* SourceManager.swift in Sources */,
 				A99AAE5C225F390D005B57DA /* KafkaTopic+CoreDataClass.swift in Sources */,
+				F3E0FDBC25EFEDBB00D09903 /* HKHeartRateProtocol.swift in Sources */,
 				A99C124B2271F6EC0042DF60 /* GzipRequestMedium.swift in Sources */,
 				A9DFFFBB231FA29800AB3208 /* AvroTopicCacheContext.swift in Sources */,
 				A920C3422202F3F8000F6337 /* NetworkReachability.swift in Sources */,
@@ -735,6 +750,7 @@
 				A9296AB42268568D003B6134 /* RequestMedium.swift in Sources */,
 				A9CC807521DE63B40067FA77 /* AvroTopic.swift in Sources */,
 				A97DE02E228975250069DFE3 /* QRPreviewView.swift in Sources */,
+				F3E0FDC025EFEDD000D09903 /* HKHeartRateProvider.swift in Sources */,
 				A9245B362285855C0089B069 /* QRCodeViewController.swift in Sources */,
 				A9DFFFCA231FC66D00AB3208 /* UserMetadata.swift in Sources */,
 				A93A58EA22BA8715000A542E /* SourceStatus.swift in Sources */,
