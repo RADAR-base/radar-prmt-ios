@@ -17,7 +17,7 @@ class SourceController: ControlledQueue {
     let controlQueue: SchedulerType
     let finalDisposeBag = DisposeBag()
     var disposeBag = DisposeBag()
-    var flusher: Disposable? = nil
+    var flusher: Disposable?
     var hasFlusher: Bool = false
     let authController: AuthController
 
@@ -33,11 +33,11 @@ class SourceController: ControlledQueue {
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
                 self.load(state: state)
-                if (!state.isReadyToSend || state.lifecycle == .terminated) {
+                if !state.isReadyToSend || state.lifecycle == .terminated {
                     self.close()
-                } else if (state.lifecycle == .background) {
+                } else if state.lifecycle == .background {
                     self.closeForeground()
-                } else if (state.lifecycle == .active) {
+                } else if state.lifecycle == .active {
                     self.start()
                 }
             })
@@ -96,8 +96,7 @@ class SourceController: ControlledQueue {
 
     private func startFlusher() {
         Observable<Int>.interval(.seconds(10), scheduler: self.controlQueue)
-            .subscribe(weak: self, onNext: { weakSelf in
-                { _ in weakSelf.flush() }
+            .subscribe(weak: self, onNext: { weakSelf in { _ in weakSelf.flush() }
             })
             .disposed(by: self.disposeBag)
     }
@@ -105,7 +104,7 @@ class SourceController: ControlledQueue {
     func start() {
         schedule { [weak self] in
             guard let self = self else { return }
-            if (!self.hasFlusher) {
+            if !self.hasFlusher {
                 self.startFlusher()
                 self.hasFlusher = true
             }
@@ -132,8 +131,7 @@ class SourceController: ControlledQueue {
     }
 }
 
-
-protocol ControlledQueue: class {
+protocol ControlledQueue: AnyObject {
     var controlQueue: SchedulerType { get }
     var disposeBag: DisposeBag { get set }
 }

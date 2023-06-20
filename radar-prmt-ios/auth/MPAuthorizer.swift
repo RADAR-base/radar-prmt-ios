@@ -44,13 +44,15 @@ class MPClient {
                 let refreshJwt = try metaToken.parseRefreshToken()
                 let baseUrl = try metaToken.parseBaseUrl()
                 let privacyPolicyUrl = metaToken.parsePrivacyPolicyUrl() ?? URL(string: "http://info.thehyve.nl/radar-cns-privacy-policy")!
-                let user = User(baseUrl: baseUrl, privacyPolicyUrl: privacyPolicyUrl, projectId: refreshJwt.projectId, userId: refreshJwt.userId, requiresUserMetadata: true, privacyPolicyAccepted: false, sources: nil, sourceTypes: nil)
+                let user = User(baseUrl: baseUrl, privacyPolicyUrl: privacyPolicyUrl, projectId: refreshJwt.projectId,
+                                userId: refreshJwt.userId, requiresUserMetadata: true, privacyPolicyAccepted: false,
+                                sources: nil, sourceTypes: nil)
 
                 return (user, auth)
             }
             .retryWhen { [weak self] obsError in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
+                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, _ in
+                    switch response.statusCode {
                     case 401, 403:
                         throw MPAuthError.unauthorized
                     case 404:
@@ -80,17 +82,19 @@ class MPClient {
                 return try OAuthToken(refreshToken: response.refreshToken, accessToken: response.accessToken)
             }
             .retryWhen { obsError in
-                return obsError.zip(with: Observable.range(start: 1, count: 3)) { error, i throws -> Int in
-                    switch (error) {
+                return obsError.zip(with: Observable.range(start: 1, count: 3)) { error, index throws -> Int in
+                    switch error {
                     case let RxCocoaURLError.httpRequestFailed(response, data):
-                        switch (response.statusCode) {
+                        switch response.statusCode {
                         case 401, 403:
                             throw MPAuthError.unauthorized
                         default:
                             if let body = data {
-                                os_log("Failed to reach ManagementPortal %@ with status code %d: %@", tokenUrl.absoluteString, response.statusCode, String(data: body, encoding: .utf8) ?? "??")
+                                os_log("Failed to reach ManagementPortal %@ with status code %d: %@",
+                                       tokenUrl.absoluteString, response.statusCode, String(data: body, encoding: .utf8) ?? "??")
                             } else {
-                                os_log("Failed to reach ManagementPortal %@ with status code %d: <no content>", tokenUrl.absoluteString, response.statusCode)
+                                os_log("Failed to reach ManagementPortal %@ with status code %d: <no content>",
+                                       tokenUrl.absoluteString, response.statusCode)
                             }
                         }
                     case is RxCocoaURLError:
@@ -104,7 +108,7 @@ class MPClient {
                     default:
                         break
                     }
-                    return i
+                    return index
                 }
             }
             .do(onError: {error in os_log("%@", error.localizedDescription)})
@@ -119,7 +123,7 @@ class MPClient {
     }
 
     func requestMetadata(for user: User, authorizedBy auth: OAuthToken) throws -> Observable<User> {
-        //print("**requestMetadata 1")
+        // print("**requestMetadata 1")
         struct ProjectDTO: Codable {
             let sourceTypes: [SourceTypeDTO]
         }
@@ -138,14 +142,14 @@ class MPClient {
         let subjectUrl = user.baseUrl.appendingPathComponent("managementportal/api/subjects/\(user.userId)")
         var request = URLRequest(url: subjectUrl)
         try auth.addAuthorization(to: &request)
-        //print("**requestMetadata 2")
+        // print("**requestMetadata 2")
         return URLSession.shared.rx.data(request: request)
             .subscribeOn(queue)
             .map { data in
                 let decoder = JSONDecoder()
                 let subjectDto: SubjectDTO = try decoder.decode(SubjectDTO.self, from: data)
                 var user = user
-                //print("**requestMetadata 3 /", user)
+                // print("**requestMetadata 3 /", user)
                 user.sourceTypes = subjectDto.project.sourceTypes.map { typeDto in
                     SourceType(id: typeDto.id, producer: typeDto.producer, model: typeDto.model, version: typeDto.catalogVersion, canRegisterDynamically: typeDto.canRegisterDynamically)
                 }
@@ -158,8 +162,8 @@ class MPClient {
                 return user
             }
             .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
+                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, _ in
+                    switch response.statusCode {
                     case 401, 403:
                         throw MPAuthError.unauthorized
                     case 404:
@@ -186,8 +190,8 @@ class MPClient {
             .subscribeOn(queue)
             .map { data in try source.updating(withJson: data, using: decoder) }
             .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
+                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, _ in
+                    switch response.statusCode {
                     case 401, 403:
                         throw MPAuthError.unauthorized
                     case 409:
@@ -215,8 +219,8 @@ class MPClient {
             .subscribeOn(queue)
             .map { data in try source.updating(withJson: data, using: decoder) }
             .retryWhen { [weak self] (obsError: Observable<Error>) -> Observable<Int> in
-                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, data in
-                    switch (response.statusCode) {
+                return self?.handleRetries(of: obsError, upToCount: 3, delay: .exponential(base: .seconds(5), factor: .seconds(5), min: .seconds(5), max: .seconds(1800))) { response, _ in
+                    switch response.statusCode {
                     case 401, 403:
                         throw MPAuthError.unauthorized
                     case 404:
@@ -229,12 +233,12 @@ class MPClient {
     }
 
     private func handleRetries(of errors: Observable<Error>, upToCount: Int, delay: RetryDelay, action: @escaping (HTTPURLResponse, Data?) throws -> Void) -> Observable<Int> {
-        return errors.enumerated().flatMap { [weak self] (enumerate: (index: Int, value: Error)) -> Observable<Int> in
+        return errors.enumerated().flatMap { [weak self] (enumerate: (index: Int, element: Error)) -> Observable<Int> in
             guard let self = self else { return Observable<Int>.error(MPAuthError.unreferenced) }
-            let (index: i, value: error) = enumerate
-            guard i < 3 else { return Observable<Int>.error(error) }
+            let (index: index, element: error) = enumerate
+            guard index < 3 else { return Observable<Int>.error(error) }
 
-            switch (error) {
+            switch error {
             case let RxCocoaURLError.httpRequestFailed(response, data):
                 try action(response, data)
                 let urlString = response.url?.absoluteString ?? "<??>"
@@ -255,12 +259,12 @@ class MPClient {
                 break
             }
 
-            return Observable<Int>.timer(delay.delay(for: i), scheduler: self.queue)
+            return Observable<Int>.timer(delay.delay(for: index), scheduler: self.queue)
             }.do(onError: { error in os_log("%@", type: .error, error.localizedDescription) })
     }
 }
 
-fileprivate struct SourceDTO : Codable {
+private struct SourceDTO: Codable {
     let sourceId: String?
     let sourceTypeId: Int64?
     let sourceName: String?

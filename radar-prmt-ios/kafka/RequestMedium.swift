@@ -73,7 +73,7 @@ class FileRequestMedium: RequestMedium {
 }
 
 class FileMediumHandle: MediumHandle {
-    let headers: [String : String] = [:]
+    let headers: [String: String] = [:]
     let fileHandle: FileHandle?
     let file: URL
     var isComplete: Bool
@@ -104,7 +104,7 @@ struct DataRequestMedium: RequestMedium {
 }
 
 class DataMediumHandle: MediumHandle {
-    let headers: [String : String] = [:]
+    let headers: [String: String] = [:]
     var isComplete: Bool = false
     var data: Data = Data()
 

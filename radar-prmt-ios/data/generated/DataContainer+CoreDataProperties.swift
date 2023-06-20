@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension DataContainer {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<DataContainer> {

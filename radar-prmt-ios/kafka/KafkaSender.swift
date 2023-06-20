@@ -20,8 +20,8 @@ class KafkaSender: NSObject, URLSessionTaskDelegate, URLSessionDataDelegate {
     let baseUrl: URL
     var highPrioritySession: URLSession!
     var lowPrioritySession: URLSession!
-    var highPrioritySessionCompletionHandler: (() -> Void)? = nil
-    var lowPrioritySessionCompletionHandler: (() -> Void)? = nil
+    var highPrioritySessionCompletionHandler: (() -> Void)?
+    var lowPrioritySessionCompletionHandler: (() -> Void)?
     var receivedData = [URLSessionTask: Data]()
 
     init(authController: AuthController, user: User, context: KafkaSendContext) {

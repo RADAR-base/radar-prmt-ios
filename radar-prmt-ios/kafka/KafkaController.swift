@@ -36,7 +36,7 @@ class KafkaController {
     let medium: RequestMedium = FileRequestMedium(writeDirectory: URL(fileURLWithPath: NSTemporaryDirectory()))
     let readContext: UploadContext
     let disposeBag = DisposeBag()
-    var sendFlow: Disposable? = nil
+    var sendFlow: Disposable?
     let user: User
     let resendSubject: BehaviorSubject<UploadQueueElement?> = BehaviorSubject(value: nil)
 
@@ -105,11 +105,11 @@ class KafkaController {
             .flatMap { [weak self] element in self?.prepareUpload(for: element) ?? Observable.empty() }
             .withLatestFrom(authController.validAuthentication()) { (handle, auth) in (handle, auth) }
             .subscribeOn(queue)
-            .subscribe(onNext: { [weak self] (uploadHandle, auth) in
+            .subscribe(onNext: { [weak self] (uploadHandle, _) in
                 guard let self = self else { return }
                 let (handle, hasMore) = uploadHandle
                 self.sender.send(handle: handle)
-                if (hasMore) {
+                if hasMore {
                     self.resendSubject.onNext(handle.uploadQueueElement)
                 }
             }, onError: { error in

@@ -332,7 +332,7 @@ class AvroDataExtractor {
                         return
                     }
                     do {
-                        try action(self.moc) { t in observer.onNext(t) }
+                        try action(self.moc) { value in observer.onNext(value) }
                         observer.onCompleted()
                     } catch {
                         os_log("Failed to %@: %@", description, error.localizedDescription)
@@ -369,13 +369,11 @@ enum UploadQueueElement {
     case retry(topic: String, uploadId: NSManagedObjectID)
 
     var topic: String {
-        get {
-            switch self {
-            case let .fresh(topic: topic, dataGroupId: _):
-                return topic
-            case let .retry(topic: topic, uploadId: _):
-                return topic
-            }
+        switch self {
+        case let .fresh(topic: topic, dataGroupId: _):
+            return topic
+        case let .retry(topic: topic, uploadId: _):
+            return topic
         }
     }
 }

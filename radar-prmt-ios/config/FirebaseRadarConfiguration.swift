@@ -11,7 +11,7 @@ import Firebase
 import RxSwift
 import os.log
 
-class FirebaseRadarConfiguration : RadarConfiguration {
+class FirebaseRadarConfiguration: RadarConfiguration {
     let localConfiguration = UserDefaults.standard
     let remoteConfig: RemoteConfig
     private var combinedNames = Set<String>()
@@ -35,7 +35,7 @@ class FirebaseRadarConfiguration : RadarConfiguration {
     }
 
     func fetch(withDelay: TimeInterval = 0.0) {
-        remoteConfig.fetch(withExpirationDuration: withDelay, completionHandler: Optional.some({[weak self] status, err in
+        remoteConfig.fetch(withExpirationDuration: withDelay, completionHandler: Optional.some({[weak self] _, _ in
             guard let self = self else { return }
             self.remoteConfig.activate(completion: { (_, _) in self.update() })
         }))

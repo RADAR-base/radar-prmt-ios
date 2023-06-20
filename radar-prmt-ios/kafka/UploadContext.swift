@@ -56,7 +56,7 @@ class JsonUploadHandle: UploadHandle {
     let headers = ["Content-Type": "application/vnd.kafka.avro.v2+json"]
 
     var isComplete: Bool {
-        get { return mediumHandle.isComplete }
+        return mediumHandle.isComplete
     }
 
     let mediumHandle: MediumHandle
@@ -66,9 +66,7 @@ class JsonUploadHandle: UploadHandle {
     let valueSchema: SchemaMetadata
 
     var topic: String {
-        get {
-            return uploadQueueElement.topic
-        }
+        return uploadQueueElement.topic
     }
     var first: Bool = true
     var count: Int = 0
@@ -100,7 +98,7 @@ class JsonUploadHandle: UploadHandle {
             return
         }
         guard let keyData = keyData else { return }
-        if (first) {
+        if first {
             first = false
         } else {
             try mediumHandle.append(data: JsonUploadHandle.separator)
@@ -120,7 +118,6 @@ class JsonUploadHandle: UploadHandle {
     }
 }
 
-
 class BinaryUploadHandle: UploadHandle {
     let headers = ["Content-Type": "application/vnd.radarbase.avro.v1+binary"]
 
@@ -134,7 +131,7 @@ class BinaryUploadHandle: UploadHandle {
     static let requestEnd = "]}".data(using: .ascii)!
 
     var isComplete: Bool {
-        get { return mediumHandle.isComplete }
+        return mediumHandle.isComplete
     }
 
     let mediumHandle: MediumHandle
@@ -144,9 +141,7 @@ class BinaryUploadHandle: UploadHandle {
     let valueSchema: SchemaMetadata
 
     var topic: String {
-        get {
-            return uploadQueueElement.topic
-        }
+        return uploadQueueElement.topic
     }
     var first: Bool = true
     var count: Int = 0
@@ -173,7 +168,7 @@ class BinaryUploadHandle: UploadHandle {
             return
         }
         guard let keyData = keyData else { return }
-        if (first) {
+        if first {
             try mediumHandle.append(data: JsonUploadHandle.separator)
         }
         try mediumHandle.append(data: JsonUploadHandle.recordKey)

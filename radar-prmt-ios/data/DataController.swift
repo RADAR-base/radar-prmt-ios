@@ -17,7 +17,7 @@ class DataController {
 
     init() {
         persistentContainer = NSPersistentContainer(name: "radar_prmt_ios")
-        persistentContainer.loadPersistentStores(completionHandler: { (storeDescription, error) in
+        persistentContainer.loadPersistentStores(completionHandler: { (_, error) in
             if let error = error as NSError? {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
@@ -62,4 +62,3 @@ public extension NSManagedObject {
         self.init(entity: entity, insertInto: context)
     }
 }
-

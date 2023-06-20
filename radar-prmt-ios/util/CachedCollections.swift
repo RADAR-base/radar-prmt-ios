@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct DictionaryCache<Key, Value> where Key : Hashable {
+struct DictionaryCache<Key, Value> where Key: Hashable {
     fileprivate var backing: [Key: CacheItem<Value>]
     let defaultInvalidationInterval: TimeInterval
 
@@ -19,7 +19,7 @@ struct DictionaryCache<Key, Value> where Key : Hashable {
 
     public subscript(key: Key) -> Value? {
         get {
-            return backing[key]?.value
+            return backing[key]?.validValue
         }
         set(newValue) {
             if let newValue = newValue {
@@ -42,12 +42,12 @@ struct DictionaryCache<Key, Value> where Key : Hashable {
     @discardableResult
     mutating func updateValue(_ value: Value, forKey key: Key, invalidateAfter interval: TimeInterval? = nil) -> Value? {
         let item = CacheItem(value, invalidateAfter: interval ?? self.defaultInvalidationInterval)
-        return backing.updateValue(item, forKey: key)?.value
+        return backing.updateValue(item, forKey: key)?.validValue
     }
 
     @discardableResult
     mutating func removeValue(forKey key: Key) -> Value? {
-        return backing.removeValue(forKey: key)?.value
+        return backing.removeValue(forKey: key)?.validValue
     }
 
     func invalidationInterval(forKey key: Key) -> TimeInterval? {
@@ -69,7 +69,7 @@ extension DictionaryCache: Sequence {
 
         mutating func next() -> (key: Key, value: Value)? {
             while let entry = subIterator.next() {
-                if let value = entry.value.value {
+                if let value = entry.value.validValue {
                     return (key: entry.key, value: value)
                 }
             }
@@ -132,17 +132,17 @@ extension SetCache: Sequence {
     }
 }
 
-fileprivate struct CacheItem<Item> {
-    var value: Item? {
-        return isValid() ? _value : nil
+private struct CacheItem<Item> {
+    var validValue: Item? {
+        return isValid() ? value : nil
     }
-    let _value: Item
+    private let value: Item
 
-    let validUntil: Date
+    private let validUntil: Date
     let invalidationInterval: TimeInterval
 
     init(_ value: Item, invalidateAfter interval: TimeInterval = 3600.0) {
-        self._value = value
+        self.value = value
         self.invalidationInterval = interval
         self.validUntil = Date().addingTimeInterval(interval)
     }
@@ -152,12 +152,12 @@ fileprivate struct CacheItem<Item> {
     }
 }
 
-extension CacheItem : Hashable, Equatable where Item : Hashable {
+extension CacheItem: Hashable, Equatable where Item: Hashable {
     func hash(hasher: inout Hasher) {
-        hasher.combine(value)
+        hasher.combine(validValue)
     }
 
     static func ==(_ lhs: CacheItem<Item>, _ rhs: CacheItem<Item>) -> Bool {
-        return lhs.value == rhs.value
+        return lhs.validValue == rhs.validValue
     }
 }

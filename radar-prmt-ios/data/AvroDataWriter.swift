@@ -12,7 +12,7 @@ import os.log
 
 class AvroDataWriter {
     let moc: NSManagedObjectContext
-    
+
     init(container: NSPersistentContainer) {
         self.moc = container.newBackgroundContext()
         self.moc.mergePolicy = NSMergePolicy.mergeByPropertyStoreTrump
@@ -45,7 +45,7 @@ class AvroDataWriter {
             }
         }
     }
-    
+
     func register(topic: AvroTopic, sourceId: String) -> NSManagedObjectID? {
         var result: NSManagedObjectID?
         moc.performAndWait {
@@ -69,8 +69,8 @@ class AvroDataWriter {
                 }
 
                 let recordDataGroup: RecordSetGroup
-                if let group = (kafkaTopic.dataGroups as? Set<RecordSetGroup>)?.first(where: { g in
-                    g.valueSchema == topic.valueSchemaString && g.sourceId == sourceId
+                if let group = (kafkaTopic.dataGroups as? Set<RecordSetGroup>)?.first(where: { group in
+                    group.valueSchema == topic.valueSchemaString && group.sourceId == sourceId
                 }) {
                     recordDataGroup = group
                 } else {

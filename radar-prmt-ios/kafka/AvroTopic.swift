@@ -15,7 +15,7 @@ struct AvroTopic {
     let valueSchema: Schema
     var priority: Int16 = 0
     let valueSchemaString: String
-    
+
     init(name: String, valueSchema: String) throws {
         self.name = name
         let parsedSchema = try Schema(json: valueSchema)

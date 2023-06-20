@@ -46,14 +46,14 @@ extension RxTimeInterval {
     var nanoseconds: UInt64 {
         get {
             switch self {
-            case let .seconds(t):
-                return UInt64(t) * 1000000000
-            case let .milliseconds(t):
-                return UInt64(t) * 1000000
-            case let .microseconds(t):
-                return UInt64(t) * 1000
-            case let .nanoseconds(t):
-                return UInt64(t)
+            case let .seconds(time):
+                return UInt64(time) * 1000000000
+            case let .milliseconds(time):
+                return UInt64(time) * 1000000
+            case let .microseconds(time):
+                return UInt64(time) * 1000
+            case let .nanoseconds(time):
+                return UInt64(time)
             case .never:
                 return DispatchTime.distantFuture.uptimeNanoseconds - DispatchTime.now().uptimeNanoseconds
             @unknown default:
@@ -75,7 +75,7 @@ extension RxTimeInterval {
     }
 }
 
-extension RxTimeInterval : Comparable {
+extension RxTimeInterval: Comparable {
     public static func <(lhs: RxTimeInterval, rhs: RxTimeInterval) -> Bool {
         return lhs.nanoseconds < rhs.nanoseconds
     }

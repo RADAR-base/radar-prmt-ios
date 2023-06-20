@@ -74,7 +74,6 @@ class AvroTopicCacheContext {
     }
 }
 
-
 extension Data {
     init<T>(from value: T) {
         self = Swift.withUnsafeBytes(of: value) { Data($0) }

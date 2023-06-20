@@ -21,8 +21,8 @@ class QRCodeViewController: UIViewController {
             qrPreview.delegate = self
         }
     }
-    
-    var qrData: QRData? = nil {
+
+    var qrData: QRData? {
         didSet {
             if qrData != nil {
                 guard let url = URL(string: (qrData?.codeString)!) else {
@@ -30,19 +30,19 @@ class QRCodeViewController: UIViewController {
                 }
                 appDelegate.authController.login(to: url)
                     .observeOn(MainScheduler.instance)
-                    .subscribe(weak: self, onNext: { weakSelf in { mpauth in
+                    .subscribe(weak: self, onNext: { weakSelf in { _ in
                         os_log("Retrieved MetaToken")
                         weakSelf.performSegue(withIdentifier: "mainFromQr", sender: self)
                     }}, onError: { weakSelf in { error in
                         os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
                         if let mpError = error as? MPAuthError {
-                            switch (mpError) {
+                            switch mpError {
                             case .unauthorized:
                                 weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
-                                
+
                             case .tokenAlreadyUsed:
                                 weakSelf.showError(message: "This token has been used. Please generate a new one.")
-                                
+
                             default:
                                 weakSelf.showError(message: "Cannot log in: \(mpError.errorDescription!)")
                             }
@@ -54,7 +54,7 @@ class QRCodeViewController: UIViewController {
             }
         }
     }
-    
+
     private func showError(message: String, fields: [UITextField] = []) {
         fields.forEach {
             $0.backgroundColor = UIColor(hue: 0.0, saturation: 0.1, brightness: 1.0, alpha: 1.0)
@@ -65,7 +65,7 @@ class QRCodeViewController: UIViewController {
         let alert = UIAlertController(title: "Error registering token", message: message, preferredStyle: .alert)
 
         // add an action (button)
-        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { [self] action in
+        alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: { [self] _ in
             if !qrPreview.isRunning {
                 qrPreview.startScanning()
             }
@@ -74,12 +74,11 @@ class QRCodeViewController: UIViewController {
         // show the alert
         self.present(alert, animated: true, completion: nil)
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
- 
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -87,7 +86,7 @@ class QRCodeViewController: UIViewController {
             qrPreview.startScanning()
         }
     }
-    
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         if !qrPreview.isRunning {
@@ -119,19 +118,17 @@ class QRCodeViewController: UIViewController {
     }
 }
 
-
 extension QRCodeViewController: QRPreviewViewDelegate {
     func qrScanningDidStop() {
     }
-    
+
     func qrScanningDidFail() {
     }
-    
+
     func qrScanningSucceededWithCode(_ str: String?) {
         self.qrData = QRData(codeString: str)
     }
 }
-
 
 extension QRCodeViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

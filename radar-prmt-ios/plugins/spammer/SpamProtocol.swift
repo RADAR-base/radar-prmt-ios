@@ -9,7 +9,7 @@
 import Foundation
 import RxSwift
 
-class SpamProtocol : SourceProtocol {
+class SpamProtocol: SourceProtocol {
     let queue = DispatchQueue(label: "spammer", qos: .userInitiated)
     private var queueIsSuspended = false
     var spamTopic: AvroTopicCacheContext!
@@ -28,7 +28,7 @@ class SpamProtocol : SourceProtocol {
     }
 
     func startCollecting() {
-        if (queueIsSuspended) {
+        if queueIsSuspended {
             queue.resume()
             queueIsSuspended = false
         }
@@ -59,7 +59,7 @@ class SpamProtocol : SourceProtocol {
     }
 
     func closeForeground() {
-        if (!queueIsSuspended) {
+        if !queueIsSuspended {
             queue.suspend()
             queueIsSuspended = true
         }

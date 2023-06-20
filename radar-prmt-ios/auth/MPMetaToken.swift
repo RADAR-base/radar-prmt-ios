@@ -59,6 +59,6 @@ extension JWT {
         return roles?
             .map { $0.split(separator: ":") }
             .first { $0.last == "ROLE_PARTICIPANT" }
-            .map { r in r[r.startIndex ..< r.endIndex - 1].joined(separator: ":") }
+            .map { role in role[role.startIndex ..< role.endIndex - 1].joined(separator: ":") }
     }
 }

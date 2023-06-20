@@ -17,12 +17,11 @@ extension URLRequest {
         addValue("Basic \(credentials)", forHTTPHeaderField: "Authorization")
     }
 
-
     /// Populate the HTTPBody of `application/x-www-form-urlencoded` request
     ///
     /// - parameter parameters:   A dictionary of keys and values to be added to the request
 
-    mutating func postForm(_ form: [String : String]) {
+    mutating func postForm(_ form: [String: String]) {
         httpMethod = "POST"
         addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
         httpBody = form.map { (key, value) -> String in

@@ -11,12 +11,12 @@ import UIKit
 import SafariServices
 import RxSwift
 
-class PrivacyPolicyViewController : UIViewController, SFSafariViewControllerDelegate {
+class PrivacyPolicyViewController: UIViewController, SFSafariViewControllerDelegate {
     @IBOutlet weak var baseUrlLabel: UILabel!
     @IBOutlet weak var projectIdLabel: UILabel!
     @IBOutlet weak var userIdLabel: UILabel!
     let disposeBag = DisposeBag()
-    var privacyPolicyUrl: URL? = nil
+    var privacyPolicyUrl: URL?
 
     override func viewDidLoad() {
         self.navigationItem.hidesBackButton = true

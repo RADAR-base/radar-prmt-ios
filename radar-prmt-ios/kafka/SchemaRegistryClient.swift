@@ -14,7 +14,7 @@ import RxCocoa
 import RxSwiftExt
 
 class SchemaRegistryClient {
-    static let CACHE_TIMEOUT = 3600 as TimeInterval
+    static let CacheTimeout = 3600 as TimeInterval
 
     let schemaUrl: URL
     private var cache: DictionaryCache<String, SchemaMetadata>
@@ -26,7 +26,7 @@ class SchemaRegistryClient {
         url.appendPathComponent("schema", isDirectory: true)
         url.appendPathComponent("subjects", isDirectory: true)
         self.schemaUrl = url
-        self.cache = DictionaryCache(invalidateAfter: SchemaRegistryClient.CACHE_TIMEOUT)
+        self.cache = DictionaryCache(invalidateAfter: SchemaRegistryClient.CacheTimeout)
         self.queue = DispatchQueue(label: "Schema Registry", qos: .background)
     }
 
@@ -61,7 +61,7 @@ class SchemaRegistryClient {
                         } else {
                             bodyString = "<empty>"
                         }
-                        if (response.statusCode >= 500) {
+                        if response.statusCode >= 500 {
                             os_log("Retriable server error %d: %@", response.statusCode, bodyString)
                             return true
                         } else {

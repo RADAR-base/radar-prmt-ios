@@ -29,7 +29,7 @@ class SourceManager {
     let provider: DelegatedSourceProvider
     let sourceType: SourceType
     var sources: [Source] = []
-    var activeSource: Source? = nil
+    var activeSource: Source?
     let authControl: AuthController
     let state: RadarState
     let disposeBag = DisposeBag()
@@ -90,7 +90,7 @@ class SourceManager {
     }
 
     func start() {
-        //print("**start")
+        // print("**start")
         self.status.onNext(.scanning)
         delegate.startScanning()
             .subscribe(onSuccess: { [weak self] source in

@@ -12,7 +12,7 @@ import BlueSteel
 import os.log
 import RxSwift
 
-class LocationProtocol : SourceProtocol {
+class LocationProtocol: SourceProtocol {
     var locationManager: CLLocationManager!
     weak var manager: SourceManager?
     let disposeBag = DisposeBag()
@@ -20,7 +20,7 @@ class LocationProtocol : SourceProtocol {
     let controlQueue = MainScheduler.instance
 
     fileprivate var locationReceiver: LocationReceiver!
-    
+
     init?(manager: SourceManager) {
         print("**LocationProtocol / init")
         self.manager = manager
@@ -77,10 +77,10 @@ class LocationProtocol : SourceProtocol {
             // User has not authorized access to location information.
             return
         }
-        
+
         locationManager.startUpdatingLocation()
     }
-    
+
     func startReceivingSignificantLocationChanges() {
         print("**LocationProtocol / startReceivingSignificantLocationChanges")
 
@@ -93,12 +93,12 @@ class LocationProtocol : SourceProtocol {
             // User has not authorized access to location information.
             return
         }
-        
+
         if !CLLocationManager.significantLocationChangeMonitoringAvailable() {
             // The service is not available.
             return
         }
-        
+
         locationManager.startMonitoringSignificantLocationChanges()
     }
 
@@ -134,10 +134,10 @@ class LocationProtocol : SourceProtocol {
     }
 }
 
-fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
+private class LocationReceiver: NSObject, CLLocationManagerDelegate {
     let locationProtocol: LocationProtocol
     let locationTopic: AvroTopicCacheContext
-    
+
     init(locationProtocol: LocationProtocol, topic: AvroTopicCacheContext) {
         self.locationProtocol = locationProtocol
         self.locationTopic = topic
@@ -154,8 +154,8 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
             break
         }
     }
-    
-    func locationManager(_ manager: CLLocationManager,  didUpdateLocations locations: [CLLocation]) {
+
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         for location in locations {
             os_log("Did update location to lat %f lon %f", type: .debug, location.coordinate.latitude, location.coordinate.longitude)
             locationTopic.add(record: [
@@ -167,7 +167,7 @@ fileprivate class LocationReceiver : NSObject, CLLocationManagerDelegate {
                 "altitude": location.altitude,
                 "accuracy": location.horizontalAccuracy,
                 "speed": location.speed,
-                "bearing": location.course,
+                "bearing": location.course
                 ])
         }
     }

@@ -24,6 +24,8 @@ class AuthController {
 
     init(config: RadarConfiguration) {
         print("**AuthController / init", #line)
+        self.config = config
+
         // Reset keychain on first load
         let defaults = UserDefaults.standard
         if !defaults.bool(forKey: "isInitialized") {
@@ -34,45 +36,64 @@ class AuthController {
             }
             defaults.set(true, forKey: "isInitialized")
         }
-        self.config = config
 
+        self.listenForConfigUpdates()
+        self.listenForUpdates()
+    }
+
+    private func listenForConfigUpdates() {
         self.config.config
             .filter { !$0.isEmpty }
             .distinctUntilChanged()
             .subscribeOn(self.controlQueue)
             .subscribe(onNext: { [weak self] config in
                 guard let self = self else { return }
-                let clientId = config["oauth2_client_id"] ?? "pRMT"
-                if let clientSecret = config["oauth2_client_secret"] {
-                    print("**AuthController / authorizer.onNext", #line, MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
-                    self.authorizer.onNext(MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
-                } else {
-                    os_log("**OAuth 2.0 client secret %@ must be configured", config["oauth2_client_secret"] ?? "<empty>")
-                }
+                self.updateClientCredentials(clientId: config["oauth2_client_id"], clientSecret: config["oauth2_client_secret"])
             })
             .disposed(by: self.disposeBag)
+    }
 
+    private func updateClientCredentials(clientId: String?, clientSecret: String?) {
+        let clientId = clientId ?? "pRMT"
+        if let clientSecret = clientSecret {
+            print("**AuthController / authorizer.onNext", #line, MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
+            self.authorizer.onNext(MPClient(controller: self, clientId: clientId, clientSecret: clientSecret))
+        } else {
+            os_log("**OAuth 2.0 client secret %@ must be configured", config["oauth2_client_secret"] ?? "<empty>")
+        }
+    }
+
+    private func listenForUpdates() {
         let concurrentScheduler = ConcurrentDispatchQueueScheduler(qos: .background)
 
-        Observable<Bool>.merge([
-            self.auth
-                .compactMap { auth in
-                    if let isValid = auth?.isValid, isValid {
-                        return true
-                    } else {
-                        return nil
-                    }
-                },
-            Observable<Int>.timer(.seconds(2), period: .seconds(3600), scheduler: concurrentScheduler)
-                .map { _ in false },
-            self.triggerMetadataRefresh
-                .filter { !$0 }
-                .throttle(.seconds(1800), scheduler: concurrentScheduler),
-            self.triggerMetadataRefresh
-                .filter { $0 }
+        let validAuth = self.auth
+            .compactMap { auth in
+                if let isValid = auth?.isValid, isValid {
+                    return true
+                } else {
+                    return nil
+                }
+            }
+
+        let timer = Observable<Int>.timer(.seconds(2), period: .seconds(3600), scheduler: concurrentScheduler)
+            .map { _ in false }
+
+        let throttledTrigger = self.triggerMetadataRefresh
+            .filter { !$0 }
+            .throttle(.seconds(1800), scheduler: concurrentScheduler)
+
+        let urgentTrigger = self.triggerMetadataRefresh.filter { $0 }
+
+        let updateObservable = Observable<Bool>.merge([
+            validAuth,
+            timer,
+            throttledTrigger,
+            urgentTrigger
             ])
+
+        updateObservable
             .debounce(.seconds(5), scheduler: concurrentScheduler)
-            .withLatestFrom(Observable.combineLatest(self.authorizer, self.user, self.validAuthentication())) { (b, authValues) in authValues }
+            .withLatestFrom(Observable.combineLatest(self.authorizer, self.user, self.validAuthentication())) { (_, authValues) in authValues }
             .flatMapLatest { (authorizer, user, auth) -> Observable<User> in
                 guard let authorizer = authorizer, let user = user else { return Observable<User>.empty() }
                 return try authorizer.requestMetadata(for: user, authorizedBy: auth)
@@ -115,19 +136,7 @@ class AuthController {
                 .subscribeOn(self.controlQueue)
                 .subscribe(onNext: { [weak self] user in
                     guard let self = self else { return }
-                    if let user = user {
-                        do {
-                            try self.secureData.store(codable: user, forKey: "user")
-                        } catch {
-                            os_log("**Failed to store user data", type: .error)
-                        }
-                    } else {
-                        do {
-                            try self.secureData.removeObject(forKey: "user")
-                        } catch {
-                            os_log("**Failed to remove user data", type: .error)
-                        }
-                    }
+                    self.persist(value: user, forKey: "user")
                 })
                 .disposed(by: self.disposeBag)
 
@@ -137,25 +146,28 @@ class AuthController {
                 .subscribeOn(self.controlQueue)
                 .subscribe(onNext: { [weak self] auth in
                     guard let self = self else { return }
-                    if let auth = auth {
-                        os_log("**Storing updated authentication")
-                        do {
-                            try self.secureData.store(codable: auth, forKey: "auth")
-                        } catch {
-                            os_log("**Failed to store updated authentication: %@", error.localizedDescription)
-                        }
-                    } else {
-                        do {
-                            try self.secureData.removeObject(forKey: "auth")
-                        } catch {
-                            os_log("**Failed to remove authentication", type: .error)
-                        }
-                    }
+                    self.persist(value: auth, forKey: "auth")
                 })
                 .disposed(by: self.disposeBag)
 
             return Disposables.create()
         }.disposed(by: disposeBag)
+    }
+
+    private func persist<T: Codable>(value: T?, forKey key: String) {
+        if let value = value {
+            do {
+                try self.secureData.store(codable: value, forKey: key)
+            } catch {
+                os_log("**Failed to store %@ data", type: .error, key)
+            }
+        } else {
+            do {
+                try self.secureData.removeObject(forKey: key)
+            } catch {
+                os_log("**Failed to remove %@ data", type: .error, key)
+            }
+        }
     }
 
     func reset() {
@@ -257,16 +269,12 @@ class AuthController {
         return user
             .take(1)
             .compactMap { (user: User?) -> User? in
-                if let user = user, user.userId == userId, !user.privacyPolicyAccepted {
+                if var user = user, user.userId == userId, !user.privacyPolicyAccepted {
+                    user.privacyPolicyAccepted = true
                     return user
                 } else {
                     return nil
                 }
-            }
-            .map { user -> User in
-                var user = user
-                user.privacyPolicyAccepted = true
-                return user
             }
             .do(onNext: { [weak self] (user: User) in
                 print("**AuthController / user.onNext", #line, user)
@@ -287,7 +295,7 @@ class AuthController {
                 }
             }
             .subscribe(onNext: { oldAuth in
-                print("**AuthController / auth.onNext", #line, oldAuth)
+                print("**AuthController / auth.onNext", #line, oldAuth ?? "no old auth")
                 self.auth.onNext(try? OAuthToken(refreshToken: oldAuth!.refreshToken))
             })
             .disposed(by: disposeBag)

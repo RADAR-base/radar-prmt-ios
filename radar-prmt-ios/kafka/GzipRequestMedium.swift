@@ -29,11 +29,9 @@ class GzipRequestMedium: RequestMedium {
 
 class GzipMediumHandle: MediumHandle {
     let handle: MediumHandle
-    let headers: [String : String]
+    let headers: [String: String]
     var isComplete: Bool {
-        get {
-            return handle.isComplete
-        }
+        return handle.isComplete
     }
 
     var data: Data? = Data()

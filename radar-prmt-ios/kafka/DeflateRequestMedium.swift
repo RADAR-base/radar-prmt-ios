@@ -39,11 +39,9 @@ class DeflateRequestMedium: RequestMedium {
 
 class DeflateMediumHandle: MediumHandle {
     let handle: MediumHandle
-    let headers: [String : String]
+    let headers: [String: String]
     var isComplete: Bool {
-        get {
-            return handle.isComplete
-        }
+        return handle.isComplete
     }
 
     var stream: compression_stream = compression_stream()
@@ -113,7 +111,6 @@ class DeflateMediumHandle: MediumHandle {
 
         stream.dst_ptr = destinationBufferPointer
     }
-
 
     func finalize() throws {
         defer {

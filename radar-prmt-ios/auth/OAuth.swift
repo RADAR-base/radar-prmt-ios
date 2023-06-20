@@ -18,8 +18,8 @@ struct User: Codable, Equatable {
     let userId: String
     let requiresUserMetadata: Bool
     var privacyPolicyAccepted: Bool = false
-    var sources: [Source]? = nil
-    var sourceTypes: [SourceType]? = nil
+    var sources: [Source]?
+    var sourceTypes: [SourceType]?
 }
 
 extension User: Hashable {
@@ -68,13 +68,13 @@ struct OAuthToken: Codable {
     }
 }
 
-extension OAuthToken : Equatable {
+extension OAuthToken: Equatable {
     static func ==(lhs: OAuthToken, rhs: OAuthToken) -> Bool {
         return lhs.refreshToken == rhs.refreshToken
     }
 }
 
-extension OAuthToken : Hashable {
+extension OAuthToken: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(refreshToken)
     }

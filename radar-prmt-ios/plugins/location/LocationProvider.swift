@@ -8,12 +8,12 @@
 
 import Foundation
 
-class LocationProvider : SourceProvider {
+class LocationProvider: SourceProvider {
     var pluginDefinition = PluginDefinition(pluginNames: ["location", "ios_location", "LocationProvider"], supportsBackground: true)
-    let defaultSourceType = SourceType(id: 1, producer: "Apple", model: "iOS", version: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.1", canRegisterDynamically: false)
+    let defaultSourceType = SourceType(id: 20901, producer: "Apple", model: "iOS", version: "0.0.1", canRegisterDynamically: true)
 
     func update(state: RadarState) {
-        pluginDefinition.supportsBackground = Bool(state.config["ios_location_background_enabled",  default: "true"]) ?? true
+        pluginDefinition.supportsBackground = Bool(state.config["ios_location_background_enabled", default: "true"]) ?? true
     }
 
     func provide(sourceManager: SourceManager) -> SourceProtocol? {

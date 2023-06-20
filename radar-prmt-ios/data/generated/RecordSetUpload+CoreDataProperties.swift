@@ -10,7 +10,6 @@
 import Foundation
 import CoreData
 
-
 extension RecordSetUpload {
 
     @nonobjc public class func fetchRequest() -> NSFetchRequest<RecordSetUpload> {

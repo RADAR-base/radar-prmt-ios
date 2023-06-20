@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -280,17 +280,17 @@
 			isa = PBXGroup;
 			children = (
 				A9DFFFC4231FC61400AB3208 /* model */,
-				A9350E5D21CC1DEF004BECCA /* OAuth.swift */,
-				A9245B33228582CC0089B069 /* LoginViewController.swift */,
-				A9245B352285855C0089B069 /* QRCodeViewController.swift */,
-				A97DE02D228975250069DFE3 /* QRPreviewView.swift */,
-				A97DE02F22899D050069DFE3 /* MPTokenViewController.swift */,
-				A9B4363C22B131A300BC3C2C /* PrivacyPolicyViewController.swift */,
 				A9B4364022B13D7200BC3C2C /* AuthController.swift */,
+				A9245B33228582CC0089B069 /* LoginViewController.swift */,
+				A9DFFFC2231FC5CA00AB3208 /* MPAuthError.swift */,
 				A9DFFFBC231FC22700AB3208 /* MPAuthorizer.swift */,
 				A9DFFFBE231FC32E00AB3208 /* MPMetaToken.swift */,
+				A97DE02F22899D050069DFE3 /* MPTokenViewController.swift */,
+				A9350E5D21CC1DEF004BECCA /* OAuth.swift */,
+				A9B4363C22B131A300BC3C2C /* PrivacyPolicyViewController.swift */,
+				A9245B352285855C0089B069 /* QRCodeViewController.swift */,
+				A97DE02D228975250069DFE3 /* QRPreviewView.swift */,
 				A9DFFFC0231FC58E00AB3208 /* URLRequest+RESTJSON.swift */,
-				A9DFFFC2231FC5CA00AB3208 /* MPAuthError.swift */,
 			);
 			path = auth;
 			sourceTree = "<group>";
@@ -388,16 +388,16 @@
 			isa = PBXGroup;
 			children = (
 				A9CC807421DE63B40067FA77 /* AvroTopic.swift */,
-				A9D9280C21F8A917007BB030 /* KafkaSender.swift */,
-				A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */,
-				A9D9281C21F8C4E0007BB030 /* KafkaController.swift */,
-				A920C3412202F3F8000F6337 /* NetworkReachability.swift */,
-				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
-				A9296AB32268568D003B6134 /* RequestMedium.swift */,
-				A9296AB522685704003B6134 /* UploadContext.swift */,
-				A99C124A2271F6EC0042DF60 /* GzipRequestMedium.swift */,
-				A90EDF9A2276E6B200DC8517 /* DeflateRequestMedium.swift */,
 				A9DFFFBA231FA29800AB3208 /* AvroTopicCacheContext.swift */,
+				A90EDF9A2276E6B200DC8517 /* DeflateRequestMedium.swift */,
+				A99C124A2271F6EC0042DF60 /* GzipRequestMedium.swift */,
+				A9D9281C21F8C4E0007BB030 /* KafkaController.swift */,
+				A920C3452203429F000F6337 /* KafkaSendContext.swift */,
+				A9D9280C21F8A917007BB030 /* KafkaSender.swift */,
+				A920C3412202F3F8000F6337 /* NetworkReachability.swift */,
+				A9296AB32268568D003B6134 /* RequestMedium.swift */,
+				A9D9281021F8AA62007BB030 /* SchemaRegistryClient.swift */,
+				A9296AB522685704003B6134 /* UploadContext.swift */,
 			);
 			path = kafka;
 			sourceTree = "<group>";
@@ -580,8 +580,9 @@
 		A997B26421BEF1AB0029B43B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				BuildIndependentTargetsInParallel = YES;
 				LastSwiftUpdateCheck = 1010;
-				LastUpgradeCheck = 1200;
+				LastUpgradeCheck = 1430;
 				ORGANIZATIONNAME = "Joris Borgdorff";
 				TargetAttributes = {
 					A997B26B21BEF1AB0029B43B = {

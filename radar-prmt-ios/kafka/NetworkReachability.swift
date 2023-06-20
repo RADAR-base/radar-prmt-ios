@@ -51,8 +51,7 @@ class NetworkReachability {
         // Sets `self` as listener object
         context.info = UnsafeMutableRawPointer(Unmanaged<NetworkReachability>.passUnretained(self).toOpaque())
 
-        let callbackClosure: SCNetworkReachabilityCallBack? = {
-            (reachability:SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
+        let callbackClosure: SCNetworkReachabilityCallBack? = { (_: SCNetworkReachability, flags: SCNetworkReachabilityFlags, info: UnsafeMutableRawPointer?) in
             guard let info = info else { return }
 
             // Gets the `Handler` object from the context info

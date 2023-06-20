@@ -40,7 +40,9 @@ let package = Package(
           .process("config.plist"),
           .process("radar-schemas.bundle"),
           .process("QR_code_for_mobile_English_Wikipedia.svg.png"),
-        ]),
+        ],
+        plugins: [.plugin(name: "SwiftLintPlugin", package: "SwiftLint")]
+        ),
     .testTarget(
         name: "radar-prmt-iosTests",
         dependencies: ["radar-prmt-ios"],

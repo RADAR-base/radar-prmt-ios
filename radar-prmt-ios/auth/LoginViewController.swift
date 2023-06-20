@@ -25,15 +25,17 @@ class LoginViewController: UIViewController {
                 if granted {
                     self.performSegue(withIdentifier: "qrCodeScanner", sender: self)
                 } else {
-                    let alert = UIAlertController(title: "Camera access denied", message: "Camera permissions are turned off for the app. To scan a QR code, please enable these permissions.", preferredStyle: .actionSheet)
+                    let alert = UIAlertController(title: "Camera access denied",
+                                                  message: "Camera permissions are turned off for the app. To scan a QR code, please enable these permissions.",
+                                                  preferredStyle: .actionSheet)
                     if let settingsUrl = NSURL(string: UIApplication.openSettingsURLString) as URL? {
-                        alert.addAction(UIAlertAction(title: "Review permissions", style: .default, handler: { action in
+                        alert.addAction(UIAlertAction(title: "Review permissions", style: .default, handler: { _ in
                             UIApplication.shared.open(settingsUrl, options: [:], completionHandler: nil)
                             }))
                     }
 
                     alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-                    alert.addAction(UIAlertAction(title: "Enter token manually", style: .default, handler: { [weak self] action in
+                    alert.addAction(UIAlertAction(title: "Enter token manually", style: .default, handler: { [weak self] _ in
                         self?.performSegue(withIdentifier: "enterToken", sender: self)
                     }))
                     self.present(alert, animated: true, completion: nil)

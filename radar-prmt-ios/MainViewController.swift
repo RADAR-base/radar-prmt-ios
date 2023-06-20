@@ -17,7 +17,7 @@ class MainViewController: UIViewController {
     @IBOutlet weak var serverStatusLabel: UILabel!
 
     override func viewWillAppear(_ animated: Bool) {
-        navigationItem.hidesBackButton = true;
+        navigationItem.hidesBackButton = true
     }
 
     override func viewDidLoad() {
@@ -43,7 +43,7 @@ class MainViewController: UIViewController {
             .subscribe(onNext: { [weak self] event in
                 guard let self = self else { return }
                 print("**MainViewController event", event)
-                switch (event) {
+                switch event {
                 case .none:
                     self.serverStatusLabel.text = "–"
                 case let .disconnected(date):

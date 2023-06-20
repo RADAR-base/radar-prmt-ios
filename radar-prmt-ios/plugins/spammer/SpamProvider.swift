@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SpamProvider : SourceProvider {
+class SpamProvider: SourceProvider {
     let defaultSourceType: SourceType = SourceType(id: 2, producer: "Apple_ios", model: "spam", version: "1.0.0", canRegisterDynamically: false)
     let pluginDefinition = PluginDefinition(pluginNames: ["spam", "ios_spam", "SpamProvider"])
 

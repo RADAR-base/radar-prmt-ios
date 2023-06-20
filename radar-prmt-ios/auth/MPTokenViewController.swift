@@ -11,7 +11,7 @@ import UIKit
 import RxSwift
 import os.log
 
-class MPTokenViewController : UIViewController {
+class MPTokenViewController: UIViewController {
     let disposeBag = DisposeBag()
     let invalidTokenCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: ".-")).inverted
 
@@ -42,14 +42,14 @@ class MPTokenViewController : UIViewController {
         appDelegate.authController.login(to: url)
             .subscribeOn(ConcurrentDispatchQueueScheduler.init(qos: .background))
             .observeOn(MainScheduler.instance)
-            .subscribe(weak: self, onNext: { weakSelf in { mpauth in
+            .subscribe(weak: self, onNext: { weakSelf in { _ in
                     os_log("Retrieved MetaToken")
                     weakSelf.performSegue(withIdentifier: "mainFromToken", sender: self)
                 }
             }, onError: { weakSelf in { error in
                 os_log("Failed to retrieve MetaToken: %@", error.localizedDescription)
                 if let mpError = error as? MPAuthError {
-                    switch (mpError) {
+                    switch mpError {
                     case .unauthorized:
                         weakSelf.showError(message: "This app is not correctly configured in the RADAR-base installation.")
                     case .tokenAlreadyUsed:

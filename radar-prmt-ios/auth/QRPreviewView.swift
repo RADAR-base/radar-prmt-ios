@@ -11,19 +11,19 @@ import UIKit
 import AVFoundation
 
 // Delegate callback for the QRScannerView.
-protocol QRPreviewViewDelegate: class {
+protocol QRPreviewViewDelegate: AnyObject {
     func qrScanningDidFail()
     func qrScanningSucceededWithCode(_ str: String?)
     func qrScanningDidStop()
 }
 
 class QRPreviewView: UIView {
-    
+
     weak var delegate: QRPreviewViewDelegate?
-    
+
     // capture settion which allows us to start and stop scanning.
     var captureSession: AVCaptureSession?
-    
+
     // Init methods..
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -33,9 +33,9 @@ class QRPreviewView: UIView {
         super.init(frame: frame)
         doInitialSetup()
     }
-    
-    //overriding the layerClass to return `AVCaptureVideoPreviewLayer`.
-    override class var layerClass: AnyClass  {
+
+    // overriding the layerClass to return `AVCaptureVideoPreviewLayer`.
+    override class var layerClass: AnyClass {
         return AVCaptureVideoPreviewLayer.self
     }
     override var layer: AVCaptureVideoPreviewLayer {
@@ -44,20 +44,20 @@ class QRPreviewView: UIView {
 }
 
 extension QRPreviewView {
-    
+
     var isRunning: Bool {
         return captureSession?.isRunning ?? false
     }
-    
+
     func startScanning() {
        captureSession?.startRunning()
     }
-    
+
     func stopScanning() {
         captureSession?.stopRunning()
         delegate?.qrScanningDidStop()
     }
-    
+
     // Does the initial setup for captureSession
     private func doInitialSetup() {
         clipsToBounds = true
@@ -72,7 +72,7 @@ extension QRPreviewView {
             return
         }
 
-        if (captureSession?.canAddInput(videoInput) ?? false) {
+        if captureSession?.canAddInput(videoInput) ?? false {
             captureSession?.addInput(videoInput)
         } else {
             scanningDidFail()
@@ -81,7 +81,7 @@ extension QRPreviewView {
 
         let metadataOutput = AVCaptureMetadataOutput()
 
-        if (captureSession?.canAddOutput(metadataOutput) ?? false) {
+        if captureSession?.canAddOutput(metadataOutput) ?? false {
             captureSession?.addOutput(metadataOutput)
             metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
             metadataOutput.metadataObjectTypes = [.qr, .ean8, .ean13, .pdf417]
@@ -99,11 +99,11 @@ extension QRPreviewView {
         delegate?.qrScanningDidFail()
         captureSession = nil
     }
-    
+
     func found(code: String) {
         delegate?.qrScanningSucceededWithCode(code)
     }
-    
+
 }
 
 extension QRPreviewView: AVCaptureMetadataOutputObjectsDelegate {
@@ -120,4 +120,3 @@ extension QRPreviewView: AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 }
-

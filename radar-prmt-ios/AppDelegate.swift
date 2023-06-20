@@ -38,11 +38,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         authController.load()
         Observable.combineLatest(
-                UIApplication.shared.rx.appState.distinctUntilChanged(),
+                UIApplication.shared.rx.appState,
                 authController.user.distinctUntilChanged(),
                 authController.auth.distinctUntilChanged(),
                 authController.isLoaded.distinctUntilChanged(),
                 config.config.distinctUntilChanged())
+            .observeOn(controlQueue)
             .map { RadarState(lifecycle: $0.0, user: $0.1, auth: $0.2, isAuthLoaded: $0.3, config: $0.4) }
             .do(onNext: { (state: RadarState) in
                 os_log("Next app state: cycle: %@, user: %@, policy %d, authValid: %d, isLoaded: %d, sources: %d, config #: %d",
@@ -54,7 +55,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                        Int(state.user?.sources?.count ?? -1),
                        state.config.count)
             })
-            .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 self?.latestConfig.onNext(state)
             }, onError: {
@@ -68,31 +68,40 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        // Sent when the application is about to move from active to inactive state. This can occur for certain types
+        // of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the
+        // application and it begins the transition to the background state.
+        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks.
+        // Games should use this method to pause the game.
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        // Use this method to release shared resources, save user data, invalidate timers, and store enough application
+        // state information to restore your application to its current state in case it is terminated later.
+        // If your application supports background execution, this method is called instead of
+        // applicationWillTerminate: when the user quits.
         self.dataController.saveContext()
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
+        // Called as part of the transition from the background to the active state; here you can undo many of the
+        // changes made on entering the background.
     }
 
     func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the
+        // application was previously in the background, optionally refresh the user interface.
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        // Called when the application is about to terminate. Save data if appropriate. See also
+        // applicationDidEnterBackground:.
         // Saves changes in the application's managed object context before the application terminates.
         self.dataController.saveContext()
     }
 
-    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String, completionHandler: @escaping () -> Void) {
+    func application(_ application: UIApplication, handleEventsForBackgroundURLSession identifier: String,
+                     completionHandler: @escaping () -> Void) {
         // FIXME: handle background URL sessions
         completionHandler()
     }
@@ -102,10 +111,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .subscribeOn(controlQueue)
             .subscribe(onNext: { [weak self] state in
                 guard let self = self else { return }
-                //print("**manageKafkaController", state)
-                if !state.isReadyToSend || state.lifecycle == .terminated {
-                    self.stopKafkaController()
-                } else if state.lifecycle == .background {
+                // print("**manageKafkaController", state)
+                if !state.isReadyToSend || state.lifecycle == .terminated || state.lifecycle == .background {
                     self.stopKafkaController()
                 } else if state.lifecycle == .active, let user = state.user {
                     self.ensureKafkaController(user: user, config: state.config)
@@ -120,7 +127,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             controller.config = KafkaControllerConfig(config: config)
         } else {
             os_log("**Starting Kafka controller")
-            let controller = KafkaController(config: config, authController: authController, user: user, reader: self.dataController.reader)
+            let controller = KafkaController(config: config, authController: authController, user: user,
+                                             reader: self.dataController.reader)
             controller.start()
             self.kafkaController = controller
             controller.context.lastEvent
@@ -138,7 +146,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             os_log("Disposing Kafka controller")
             kafkaController = nil
             let value = try? lastServerStatus.value()
-            if let value = value, case .disconnected(_) = value {
+            if let value = value, case .disconnected = value {
                 // already disconnected
             } else {
                 lastServerStatus.onNext(.disconnected(Date()))
@@ -160,9 +168,9 @@ struct RadarState {
     }
 
     var isReadyToSend: Bool {
-        //print("**isReadyToSend 0")
+        // print("**isReadyToSend 0")
         guard let user = user else { return false }
-        //print("**isReadyToSend 1", isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false))
+        // print("**isReadyToSend 1", isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false))
         return isReadyToRegister && (!user.requiresUserMetadata || user.sourceTypes?.isEmpty == false)
     }
 }

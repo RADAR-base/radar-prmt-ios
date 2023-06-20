@@ -90,13 +90,11 @@ class DataKafkaSendContext: KafkaSendContext {
     }
 
     var availableNetworkModes: NetworkReachability.Mode {
-        get {
-            var mode: NetworkReachability.Mode = []
-            queue.sync {
-                mode = self.networkModes
-            }
-            return mode
+        var mode: NetworkReachability.Mode = []
+        queue.sync {
+            mode = self.networkModes
         }
+        return mode
     }
 
     func didConnect(over mode: NetworkReachability.Mode) -> NetworkReachability.Mode {
